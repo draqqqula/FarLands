@@ -6,26 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.Xna;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace VideoGame
 {
-    public static class TileMapBuilder
+    public class TileMapBuilder
     {
-        private static readonly Dictionary<Color, byte> ColorByteExchanger =
-            new Dictionary<Color, byte>
-            {
-                { Color.White, 0 },
-                { Color.Black, 1 },
-                { Color.Red, 2 },
-                { Color.Orange, 3 },
-                { Color.Yellow, 4 },
-                { Color.Green, 5 },
-                { Color.LightBlue, 6 },
-                { Color.Blue, 7 },
-                { Color.Purple, 8 }
-            };
-        public static byte[,] BuildFromFiles(string level)
+        private readonly Dictionary<Color, byte> ColorByteExchanger;
+        public byte[,] BuildFromFiles(string level)
         {
             var mapImage = Global.Variables.MainContent.Load<Texture2D>(level);
             Color[] colorMap = new Color[mapImage.Width*mapImage.Height];
@@ -64,6 +51,30 @@ namespace VideoGame
             }
             return result.Select(e => e.ToArray()).ToArray();
         }
+
+        public TileMapBuilder(params Color[] colors)
+        {
+            if (colors.Length == 0)
+            {
+                colors = new Color[8] {
+                Color.Black,
+                Color.Red,
+                Color.Orange,
+                Color.Yellow,
+                Color.Green,
+                Color.LightBlue,
+                Color.Blue,
+                Color.Purple
+            };
+            }
+            ColorByteExchanger = Enumerable.Range(0, colors.Length).ToDictionary(n => colors[n], n => (byte)(n + 1));
+            ColorByteExchanger.Add(Color.White, 0);
+        }
+
+        public TileMapBuilder() :
+            this(new Color[0])
+        {
+        }
     }
 
     public class TileMap
@@ -90,20 +101,21 @@ namespace VideoGame
             }
         }
 
-        public TileMap(Vector2 position, string level, string fileName, Rectangle tileFrame, Layer layer, Vector2 scale, int tileCount) :
+        public TileMap(Vector2 position, string level, string fileName, Rectangle tileFrame, Layer layer, Vector2 scale, int tileCount, params Color[] colors) :
             this(
                 position, 
-                TileMapBuilder.BuildFromFiles(level), 
+                new TileMapBuilder().BuildFromFiles(level), 
                 Global.Variables.MainContent.Load<Texture2D>(fileName), 
                 tileFrame,
                 layer, 
                 scale,
-                tileCount
+                tileCount,
+                colors
                 )
         {
         }
 
-        public TileMap(Vector2 position, byte[,] map, Texture2D sheet, Rectangle tileFrame, Layer layer, Vector2 scale, int tileCount)
+        public TileMap(Vector2 position, byte[,] map, Texture2D sheet, Rectangle tileFrame, Layer layer, Vector2 scale, int tileCount, params Color[] colors)
             : 
         this(
             position,
@@ -112,20 +124,20 @@ namespace VideoGame
             tileFrame,
             layer,
             scale,
-            Enumerable.Range(0, tileCount).Select(e => (new Rectangle(tileFrame.Location + new Point(tileFrame.Width * e, 0), tileFrame.Size), Point.Zero, true)).ToArray()
+            Enumerable.Range(0, tileCount).Select(n => (new Rectangle(tileFrame.Location + new Point(tileFrame.Width * n, 0), tileFrame.Size), Point.Zero, true)).ToArray()
         )
         {
         }
 
-        public TileMap(Vector2 position, string level, string fileName, Rectangle tileFrame, Layer layer, Vector2 scale, (Rectangle, Point, bool)[] tiles) :
+        public TileMap(Vector2 position, string level, string fileName, Rectangle tileFrame, Layer layer, Vector2 scale, (Rectangle, Point, bool, Color)[] tiles) :
     this(
         position,
-        TileMapBuilder.BuildFromFiles(level),
+        new TileMapBuilder(tiles.Select(t => t.Item4).ToArray()).BuildFromFiles(level),
         Global.Variables.MainContent.Load<Texture2D>(fileName),
         tileFrame,
         layer,
         scale,
-        tiles
+        tiles.Select(t => (t.Item1, t.Item2, t.Item3)).ToArray()
         )
         {
         }

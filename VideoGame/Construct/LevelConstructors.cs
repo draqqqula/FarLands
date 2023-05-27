@@ -34,6 +34,25 @@ namespace VideoGame
             return keyboard_controls;
         }
 
+        public static void CreateSkyAndClouds(Layer skyLayer, Layer cloudsLayer)
+        {
+            new TileMap(Vector2.Zero, new byte[4, 4] {
+                { 2, 1, 3, 3 },
+                { 2, 1, 3, 3 },
+                { 2, 1, 3, 3 },
+                { 2, 1, 3, 3 } },
+                Global.Variables.MainContent.Load<Texture2D>("Sky"),
+            new Rectangle(0, 0, 396, 100), skyLayer, new Vector2(3, 3), 3);
+
+            new TileMap(new Vector2(0, 400), new byte[4, 1] {
+                { 1 },
+                { 1 },
+                { 1 },
+                { 1 } },
+                Global.Variables.MainContent.Load<Texture2D>("Clouds"),
+                new Rectangle(0, 0, 439, 115), cloudsLayer, new Vector2(3, 3), 3);
+        }
+
         public static IGameState LoadLevel1()
         {
             var state = new LocationState();
@@ -51,15 +70,14 @@ namespace VideoGame
 
 
             state.MainTileMap = new TileMap(Vector2.Zero, "level1", "rocks", new Rectangle(0, 0, 12, 12), surfacesLayer, new Vector2(3, 3),
-                new (Rectangle, Point, bool)[]
+                new (Rectangle, Point, bool, Color)[]
                 {
-                    (new Rectangle(0, 0, 12, 12), new Point(0, 0), true),
-                    (new Rectangle(12, 0, 12, 12), new Point(0, 0), true),
-                    (new Rectangle(24, 0, 50, 83), new Point(10, 67), false)
+                    (new Rectangle(0, 0, 12, 12), new Point(0, 0), true, Color.Black),
+                    (new Rectangle(12, 0, 12, 12), new Point(0, 0), true, Color.Red),
+                    (new Rectangle(24, 0, 50, 83), new Point(10, 67), false, Color.Orange)
                 });
 
-            new TileMap(Vector2.Zero, "SkyGround", "Sky", new Rectangle(0, 0, 396, 100), backgroundLayer, new Vector2(3, 3), 3);
-            new TileMap(new Vector2(0, 400), "CloudMap", "Clouds", new Rectangle(0, 0, 439, 115), cloudsLayer, new Vector2(3, 3), 3);
+            CreateSkyAndClouds(backgroundLayer, cloudsLayer);
 
             state.Player = CreatePlayer(new Vector2(100, 100), mainLayer, state.MainTileMap, state);
             camera.LinkTo(state.Player);
@@ -87,16 +105,22 @@ namespace VideoGame
 
             b.AddBehavior(new Sine(0, 12, new Vector2(0, 1), 2));
 
+
             state.MainTileMap = new TileMap(Vector2.Zero, "level2", "rocks", new Rectangle(0, 0, 12, 12), surfacesLayer, new Vector2(3, 3),
-                new (Rectangle, Point, bool)[]
+                new (Rectangle, Point, bool, Color)[]
                 {
-                    (new Rectangle(0, 0, 12, 12), new Point(0, 0), true),
-                    (new Rectangle(12, 0, 12, 12), new Point(0, 0), true),
-                    (new Rectangle(24, 0, 50, 83), new Point(10, 67), false)
+                    (new Rectangle(0, 0, 12, 12), new Point(0, 0), true, Color.Black),
+                    (new Rectangle(12, 0, 12, 12), new Point(0, 0), true, new Color(255, 242, 0)),
+                    (new Rectangle(24, 0, 12, 12), new Point(0, 0), true, new Color(255, 201, 14)),
+                    (new Rectangle(110, 0, 49, 83), new Point(25, 83 - 12), false, new Color(127, 127, 127)),
+                    (new Rectangle(163, 12, 51, 71), new Point(25, 71 - 12), false, new Color(195, 195, 195)),
+                    (new Rectangle(224, 0, 18, 85), new Point(9, 85 - 12), false, new Color(185, 122, 87)),
+                    (new Rectangle(252, 5, 46, 78), new Point(23, 78 - 12), false, new Color(82, 82, 82)),
+                    (new Rectangle(162, 12, 51, 71), new Point(25, 71 - 12), false, new Color(226, 226, 226)),
+                    (new Rectangle(307, 8, 50, 75), new Point(25, 75 - 12), false, new Color(53, 53, 53))
                 });
 
-            new TileMap(Vector2.Zero, "SkyGround", "Sky", new Rectangle(0, 0, 396, 100), backgroundLayer, new Vector2(3, 3), 3);
-            new TileMap(new Vector2(0, 400), "CloudMap", "Clouds", new Rectangle(0, 0, 439, 115), cloudsLayer, new Vector2(3, 3), 3);
+            CreateSkyAndClouds(backgroundLayer, cloudsLayer);
 
             state.Player = CreatePlayer(new Vector2(300, 300), mainLayer, state.MainTileMap, state);
             camera.LinkTo(state.Player);
