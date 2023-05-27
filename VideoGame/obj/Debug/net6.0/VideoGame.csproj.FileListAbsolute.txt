@@ -75,3 +75,5 @@ C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\Clou
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\level2.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\Element_Selector.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Element_Selector_properties.txt
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\Hood.xnb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Hood_properties.txt

@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Reflection.Emit;
+using VideoGame.Construct.Behaviors;
 
 namespace VideoGame
 {
@@ -82,6 +83,9 @@ namespace VideoGame
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
+            var b = new GameObject(state, "Hood", "Default", new Rectangle(-30, -30, 60, 60), new Vector2(700, 700), mainLayer, false);
+
+            b.AddBehavior(new Sine(0, 12, new Vector2(0, 1), 2));
 
             state.MainTileMap = new TileMap(Vector2.Zero, "level2", "rocks", new Rectangle(0, 0, 12, 12), surfacesLayer, new Vector2(3, 3),
                 new (Rectangle, Point, bool)[]
@@ -94,7 +98,7 @@ namespace VideoGame
             new TileMap(Vector2.Zero, "SkyGround", "Sky", new Rectangle(0, 0, 396, 100), backgroundLayer, new Vector2(3, 3), 3);
             new TileMap(new Vector2(0, 400), "CloudMap", "Clouds", new Rectangle(0, 0, 439, 115), cloudsLayer, new Vector2(3, 3), 3);
 
-            state.Player = CreatePlayer(new Vector2(100, 100), mainLayer, state.MainTileMap, state);
+            state.Player = CreatePlayer(new Vector2(300, 300), mainLayer, state.MainTileMap, state);
             camera.LinkTo(state.Player);
             camera.SetOuterBorders(state.MainTileMap.Frame);
             return state;
