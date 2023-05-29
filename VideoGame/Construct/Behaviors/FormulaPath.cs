@@ -28,6 +28,7 @@ namespace VideoGame.Construct.Behaviors
         public string Name => "FormulaPath";
 
         public GameObject Parent { get; set; }
+        public bool Enabled { get; set; }
 
         public void Act()
         {
@@ -40,11 +41,12 @@ namespace VideoGame.Construct.Behaviors
             return parameters;
         }
 
-        public FormulaPath(Func<double, Vector2> function, double t0, Vector2 start)
+        public FormulaPath(Func<double, Vector2> function, double t0, Vector2 start, bool enabled)
         {
             Function = function;
             t = t0;
             Start = start;
+            Enabled = enabled;
         }
     }
 }

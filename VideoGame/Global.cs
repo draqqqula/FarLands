@@ -29,9 +29,14 @@ namespace Global
 
     public static class Updates
     {
+        public static void ExcludeDestroyed()
+        {
+            AllObjects.RemoveAll(e => e.ToDestroy);
+        }
+
         public static void UpdateAnimations()
         {
-            foreach (var sprite in Containers.AllObjects)
+            foreach (var sprite in AllObjects)
             {
                 sprite.UpdateAnimation();
             }
@@ -39,23 +44,24 @@ namespace Global
 
         public static void UpdateBehaviors()
         {
-            foreach (var sprite in Containers.AllObjects)
+            foreach (var sprite in AllObjects)
             {
-                foreach(var behavior in sprite.Behaviors.Values)
+                foreach(var behavior in sprite.ActiveBehaviors.Values)
                 {
                    behavior.Act();
                 }
             }
         }
-    }
 
-    public static class Containers
-    {
-        public static List<GameObject> AllObjects
+        private static List<GameObject> AllObjects
         {
             get
             {
                 return Global.Variables.MainGame._world.CurrentLevel.GameState.AllObjects;
+            }
+            set
+            {
+                Global.Variables.MainGame._world.CurrentLevel.GameState.AllObjects = value;
             }
         }
     }

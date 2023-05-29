@@ -13,6 +13,7 @@ namespace VideoGame
     {
         public string Name { get; }
         public GameObject Parent { get; set; }
+        public bool Enabled { get; set; }
         public DrawingParameters ChangeAppearance(DrawingParameters parameters);
         public void Act();
     }

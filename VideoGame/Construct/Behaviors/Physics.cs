@@ -153,6 +153,7 @@ namespace VideoGame
 
         public string Name { get => "Physics"; }
         public GameObject Parent { get; set; }
+        public bool Enabled { get; set; }
 
         public void Act()
         {
@@ -185,11 +186,12 @@ namespace VideoGame
             return parameters;
         }
 
-        public Physics(Rectangle[][] surfaceMap, int surfaceWidth)
+        public Physics(Rectangle[][] surfaceMap, int surfaceWidth, bool enabled)
         {
             SurfaceMap = surfaceMap;
             SurfaceWidth = surfaceWidth;
             Vectors = new Dictionary<string, MovementVector>();
+            Enabled = enabled;
 
             Faces = new Dictionary<Side, bool>();
             foreach (Side side in (Side[])Enum.GetValues(typeof(Side)))

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VideoGame.Construct.Behaviors
+namespace VideoGame
 {
     public class Sine : IBehavior
     {
@@ -18,6 +18,7 @@ namespace VideoGame.Construct.Behaviors
         public string Name => "Sine";
 
         public GameObject Parent { get; set; }
+        public bool Enabled { get; set; }
 
         public void Act()
         {
@@ -30,12 +31,13 @@ namespace VideoGame.Construct.Behaviors
             return parameters;
         }
 
-        public Sine(double t0, double amplitude, Vector2 direction, double factor)
+        public Sine(double t0, double amplitude, Vector2 direction, double factor, bool enabled)
         {
             t = t0;
             Amplitude = amplitude;
             Direction = direction;
             Factor = factor;
+            Enabled = enabled;
         }
     }
 }

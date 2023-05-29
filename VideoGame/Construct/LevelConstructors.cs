@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Reflection.Emit;
 using VideoGame.Construct.Behaviors;
+using System.Security.Cryptography.X509Certificates;
 
 namespace VideoGame
 {
@@ -18,8 +19,9 @@ namespace VideoGame
         public static GameObject CreatePlayer(Vector2 position, Layer layer, TileMap tileMap, IGameState state)
         {
             var player = new GameObject(state, "Player", "Default", new Rectangle(-22, -60, 44, 120), position, layer, false);
-            player.AddBehavior(new Physics(tileMap.VerticalSurfaceMap, tileMap.TileFrame.Width * (int)tileMap.Scale.X));
-            player.AddBehavior(new Dummy(15, null, Team.player, null, null));
+            player.AddBehavior(new Physics(tileMap.VerticalSurfaceMap, tileMap.TileFrame.Width * (int)tileMap.Scale.X, true));
+            player.AddBehavior(new Dummy(15, null, Team.player, null, null, true));
+            player.AddBehavior(new TimerHandler(true));
             player.GetBehavior<Physics>("Physics").AddVector("Gravity", new MovementVector(new Vector2(0, 10), 0, TimeSpan.Zero, true));
             return player;
         }
@@ -53,6 +55,23 @@ namespace VideoGame
                 new Rectangle(0, 0, 439, 115), cloudsLayer, new Vector2(3, 3), 3);
         }
 
+        public static TileMap CreateForestTilemap(Vector2 position, Layer layer)
+        {
+            return new TileMap(position, "level2", "rocks", new Rectangle(0, 0, 12, 12), layer, new Vector2(3, 3),
+                new (Rectangle, Point, bool, Color)[]
+                {
+                    (new Rectangle(0, 0, 12, 12), new Point(0, 0), true, Color.Black),
+                    (new Rectangle(12, 0, 12, 12), new Point(0, 0), true, new Color(255, 242, 0)),
+                    (new Rectangle(24, 0, 12, 12), new Point(0, 0), true, new Color(255, 201, 14)),
+                    (new Rectangle(110, 0, 49, 83), new Point(25, 83 - 12), false, new Color(127, 127, 127)),
+                    (new Rectangle(163, 12, 51, 71), new Point(25, 71 - 12), false, new Color(195, 195, 195)),
+                    (new Rectangle(224, 0, 18, 85), new Point(9, 85 - 12), false, new Color(185, 122, 87)),
+                    (new Rectangle(252, 5, 46, 78), new Point(23, 78 - 12), false, new Color(82, 82, 82)),
+                    (new Rectangle(162, 12, 51, 71), new Point(25, 71 - 12), false, new Color(226, 226, 226)),
+                    (new Rectangle(307, 8, 50, 75), new Point(25, 75 - 12), false, new Color(53, 53, 53))
+                });
+        }
+
         public static IGameState LoadLevel1()
         {
             var state = new LocationState();
@@ -65,18 +84,11 @@ namespace VideoGame
             Layer surfacesLayer = new Layer("Surfaces", a => camera.ApplyParalax(a, 1, 1), 0.2);
             Layer cloudsLayer = new Layer("Clouds", a => camera.ApplyParalax(a, 0.07f, 0.03f), 0.1);
             Layer interfaceLayer = new Layer("Interface", a => a, 1);
-            Layer rightBottomBound = new Layer("RightBottomBound", a => a - camera.RightBottomCorner, 1);
+            Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound);
 
 
-            state.MainTileMap = new TileMap(Vector2.Zero, "level1", "rocks", new Rectangle(0, 0, 12, 12), surfacesLayer, new Vector2(3, 3),
-                new (Rectangle, Point, bool, Color)[]
-                {
-                    (new Rectangle(0, 0, 12, 12), new Point(0, 0), true, Color.Black),
-                    (new Rectangle(12, 0, 12, 12), new Point(0, 0), true, Color.Red),
-                    (new Rectangle(24, 0, 50, 83), new Point(10, 67), false, Color.Orange)
-                });
-
+            state.MainTileMap = CreateForestTilemap(Vector2.Zero, surfacesLayer);
             CreateSkyAndClouds(backgroundLayer, cloudsLayer);
 
             state.Player = CreatePlayer(new Vector2(100, 100), mainLayer, state.MainTileMap, state);
@@ -96,29 +108,18 @@ namespace VideoGame
             Layer backgroundLayer = new Layer("BackGround", a => a, 0);
             Layer surfacesLayer = new Layer("Surfaces", a => camera.ApplyParalax(a, 1, 1), 0.2);
             Layer cloudsLayer = new Layer("Clouds", a => camera.ApplyParalax(a, 0.07f, 0.03f), 0.1);
+            Layer particlesLayer = new Layer("Particles", a => camera.ApplyParalax(a, 1, 1), 0.1);
             Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
             Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
-            state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound);
+            state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesLayer);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
             var b = new GameObject(state, "Hood", "Default", new Rectangle(-30, -30, 60, 60), new Vector2(700, 700), mainLayer, false);
 
-            b.AddBehavior(new Sine(0, 12, new Vector2(0, 1), 2));
+            b.AddBehavior(new Sine(0, 12, new Vector2(0, 1), 2, true));
 
 
-            state.MainTileMap = new TileMap(Vector2.Zero, "level2", "rocks", new Rectangle(0, 0, 12, 12), surfacesLayer, new Vector2(3, 3),
-                new (Rectangle, Point, bool, Color)[]
-                {
-                    (new Rectangle(0, 0, 12, 12), new Point(0, 0), true, Color.Black),
-                    (new Rectangle(12, 0, 12, 12), new Point(0, 0), true, new Color(255, 242, 0)),
-                    (new Rectangle(24, 0, 12, 12), new Point(0, 0), true, new Color(255, 201, 14)),
-                    (new Rectangle(110, 0, 49, 83), new Point(25, 83 - 12), false, new Color(127, 127, 127)),
-                    (new Rectangle(163, 12, 51, 71), new Point(25, 71 - 12), false, new Color(195, 195, 195)),
-                    (new Rectangle(224, 0, 18, 85), new Point(9, 85 - 12), false, new Color(185, 122, 87)),
-                    (new Rectangle(252, 5, 46, 78), new Point(23, 78 - 12), false, new Color(82, 82, 82)),
-                    (new Rectangle(162, 12, 51, 71), new Point(25, 71 - 12), false, new Color(226, 226, 226)),
-                    (new Rectangle(307, 8, 50, 75), new Point(25, 75 - 12), false, new Color(53, 53, 53))
-                });
+            state.MainTileMap = CreateForestTilemap(Vector2.Zero, surfacesLayer);
 
             CreateSkyAndClouds(backgroundLayer, cloudsLayer);
 
@@ -133,6 +134,8 @@ namespace VideoGame
     {
         public static void UpdatePlayer(GameObject player, GameControls controls)
         {
+            var state = Global.Variables.MainGame._world.CurrentLevel.GameState;
+
             var MyPhysics = player.GetBehavior<Physics>("Physics");
             if (controls[Control.right])
             {
@@ -151,18 +154,39 @@ namespace VideoGame
 
             if (controls.OnPress(Control.dash) && MyPhysics.Faces[Side.Bottom] && !MyPhysics.Vectors.ContainsKey("Dash"))
             {
-                MyPhysics.AddVector("Dash", new MovementVector(new Vector2(36 * player.MirrorFactor, 0), -120, TimeSpan.Zero, true));
+                MyPhysics.AddVector("Dash", new MovementVector(new Vector2(36 * player.MirrorFactor, 0), -150, TimeSpan.Zero, true));
             }
 
             if (MyPhysics.Faces[Side.Top])
             {
-                MyPhysics.RemoveVector("Jump");
+                MovementVector jump;
+                MovementVector fall;
+                if (MyPhysics.Vectors.TryGetValue("Jump", out jump) && MyPhysics.Vectors.TryGetValue("Gravity", out fall))
+                    jump.Module = fall.Module * 0.9f;
             }
 
 
             if (MyPhysics.Vectors.ContainsKey("Dash"))
             {
-                player.SetAnimation("Dash", 0);
+                if (MyPhysics.Vectors["Dash"].Module > 20)
+                {
+                    player.SetAnimation("Dash", 0);
+                    player.Animator.Stop();
+                    Layer particles;
+                    if (state.Layers.TryGetValue("Particles", out particles))
+                    {
+                        var MyTimerHandler = player.GetBehavior<TimerHandler>("TimerHandler");
+                        if (MyTimerHandler.OnLoop("dash_effect", TimeSpan.FromSeconds(0.03), null))
+                        {
+                            var dashEffect = new GameObject(state, "dash", "Default", new Rectangle(35, 39, 13, 19), player.Position, particles, player.IsMirrored);
+                            dashEffect.AddBehavior(new Fade(TimeSpan.FromSeconds(0.1), TimeSpan.FromSeconds(0.2), TimeSpan.Zero, true, true));
+                        }
+                    }
+                }
+                else
+                {
+                    player.Animator.Resume();
+                }
             }
             else
             {
@@ -223,6 +247,7 @@ namespace VideoGame
         {
             Camera.Update();
 
+            Global.Updates.ExcludeDestroyed();
             Global.Updates.UpdateBehaviors();
             Global.Updates.UpdateAnimations();
 

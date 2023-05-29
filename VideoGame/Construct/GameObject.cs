@@ -14,10 +14,20 @@ namespace VideoGame
         public Rectangle HitBox { get; set; }
         public Vector2 Position { get; set; }
         public Dictionary<string, IBehavior> Behaviors { get; private set; }
+        public Dictionary<string, IBehavior> ActiveBehaviors 
+        { 
+            get { return Behaviors.Where(e => e.Value.Enabled).ToDictionary(e => e.Key, e => e.Value); } 
+        }
         public Rectangle Layout
         {
             get { return new Rectangle((int)Position.X + HitBox.X, (int)Position.Y + HitBox.Y, HitBox.Width, HitBox.Height); }
         }
+
+        public void Destroy()
+        {
+            ToDestroy = true;
+        }
+        public bool ToDestroy { get; private set; }
 
         public Rectangle PredictLayout(Vector2 movementPrediction)
         {
@@ -58,7 +68,7 @@ namespace VideoGame
                     Mirroring = IsMirrored ?
                     Microsoft.Xna.Framework.Graphics.SpriteEffects.FlipHorizontally : Microsoft.Xna.Framework.Graphics.SpriteEffects.None
                 };
-                foreach (var behavior in Behaviors.Values)
+                foreach (var behavior in ActiveBehaviors.Values)
                     rawParameters = behavior.ChangeAppearance(rawParameters);
                 return rawParameters;
             }
@@ -101,6 +111,7 @@ namespace VideoGame
             IsMirrored = isMirrored;
             Animator = new Animator(animatorName, initialAnimation);
             Behaviors = new Dictionary<string, IBehavior>();
+            ToDestroy = false;
             state.AllObjects.Add(this);
         }
     }

@@ -67,6 +67,7 @@ namespace VideoGame
         public double InvincibilityFactor { get; private set; }
 
         public GameObject Parent { get; set; }
+        public bool Enabled { get; set; }
 
         public void Act()
         {
@@ -102,7 +103,7 @@ namespace VideoGame
             return parameters;
         }
 
-        public Dummy(int maxHealth, Dictionary<DamageType, int> resistances, Team team, List<Condition> conditions, List<DamageEvent> events)
+        public Dummy(int maxHealth, Dictionary<DamageType, int> resistances, Team team, List<Condition> conditions, List<DamageEvent> events, bool enabled)
         {
             MaxHealth = maxHealth;
             Health = maxHealth;
@@ -111,6 +112,7 @@ namespace VideoGame
             Team = team;
             Conditions = conditions == null ? new List<Condition>() : conditions;
             InvincibilityFrames = new Dictionary<string, TimeSpan>();
+            Enabled = enabled;
         }
     }
 }

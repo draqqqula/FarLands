@@ -12,6 +12,7 @@ namespace VideoGame.Construct.Behaviors
         public string Name => "Damage";
 
         public GameObject Parent { get; set; }
+        public bool Enabled { get; set; }
 
         public void Act()
         {

@@ -45,9 +45,11 @@ namespace Animations
 
         public void Update(DrawingParameters arguments)
         {
-            if (!OnPause) RunDuration += Global.Variables.DeltaTime;
-
-            if (!Running.Run(RunDuration, arguments, this))
+            if (!OnPause)
+            {
+                RunDuration += Global.Variables.DeltaTime;
+            }
+            if (!Running.Run(RunDuration, arguments, this) && !OnPause)
             {
                 if (Running.NextAnimation != null)
                     ChangeAnimation(arguments, Running.NextAnimation, 0);
@@ -73,6 +75,7 @@ namespace Animations
         {
             Running = Animations[animation];
             RunDuration = Running.Duration * Running.SpeedFactor * (initialFrame / (double)Running.FrameCount) - Global.Variables.DeltaTime;
+            Resume();
             Update(arguments);
         }
 
