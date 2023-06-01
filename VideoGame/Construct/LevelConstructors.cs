@@ -20,8 +20,9 @@ namespace VideoGame
         {
             var player = new GameObject(state, "Player", "Default", new Rectangle(-22, -60, 44, 120), position, layer, false);
             player.AddBehavior(new Physics(tileMap.VerticalSurfaceMap, tileMap.TileFrame.Width * (int)tileMap.Scale.X, true));
-            player.AddBehavior(new Dummy(15, null, Team.player, null, null, true));
+            player.AddBehavior(new Dummy(15, null, Team.player, null, null, 1, true));
             player.AddBehavior(new TimerHandler(true));
+            player.AddBehavior(new Collider(18, true));
             player.GetBehavior<Physics>("Physics").AddVector("Gravity", new MovementVector(new Vector2(0, 10), 0, TimeSpan.Zero, true));
             return player;
         }
@@ -114,9 +115,12 @@ namespace VideoGame
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesLayer);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
-            var b = new GameObject(state, "Hood", "Default", new Rectangle(-30, -30, 60, 60), new Vector2(700, 700), mainLayer, false);
+            var b = new GameObject(state, "Hood", "Default", new Rectangle(-30, -30, 60, 60), new Vector2(700, 850), mainLayer, false);
 
             b.AddBehavior(new Sine(0, 12, new Vector2(0, 1), 2, true));
+            b.AddBehavior(new Collider(18, true));
+            b.AddBehavior(new Dummy(30, new Dictionary<DamageType, int>(), Team.enemy, null, null, 1, true));
+            state.Enemy.Add(b);
 
 
             state.MainTileMap = CreateForestTilemap(Vector2.Zero, surfacesLayer);
@@ -132,6 +136,32 @@ namespace VideoGame
 
     public static class LevelHandlers
     {
+        public static void UpdateEnemy(List<GameObject> enemy, GameObject player)
+        {
+            foreach (var foe in enemy)
+            {
+                Collider badCollider = foe.GetBehavior<Collider>("Collider");
+                Collider goodCollider = player.GetBehavior<Collider>("Collider");
+                if (goodCollider.Collides(badCollider))
+                {
+                    var playerDummy = player.GetBehavior<Dummy>("Dummy");
+                    playerDummy.TakeDamage(new DamageInstance(
+                        new Dictionary<DamageType, int>()
+                        {
+                            { DamageType.Fire, 1 }
+                        },
+                        Team.enemy,
+                        new HashSet<string>(),
+                        "test",
+                        foe.GetBehavior<Dummy>("Dummy"),
+                        null,
+                        null,
+                        TimeSpan.FromSeconds(1)
+                        ));
+                }
+            }
+        }
+
         public static void UpdatePlayer(GameObject player, GameControls controls)
         {
             var state = Global.Variables.MainGame._world.CurrentLevel.GameState;
@@ -147,7 +177,7 @@ namespace VideoGame
                 MyPhysics.AddVector("RightMovement", new MovementVector(new Vector2(-8, 0), -100, TimeSpan.Zero, true));
                 player.IsMirrored = true;
             }
-            if (controls.OnPress(Control.jump) && MyPhysics.Faces[Side.Bottom])
+            if (controls.OnPress(Control.jump) && MyPhysics.Faces[Side.Bottom] && !MyPhysics.Vectors.ContainsKey("Dash"))
             {
                 MyPhysics.AddVector("Jump", new MovementVector(new Vector2(0, -20), -30, TimeSpan.Zero, true));
             }
@@ -172,20 +202,22 @@ namespace VideoGame
                 {
                     player.SetAnimation("Dash", 0);
                     player.Animator.Stop();
-                    Layer particles;
-                    if (state.Layers.TryGetValue("Particles", out particles))
-                    {
-                        var MyTimerHandler = player.GetBehavior<TimerHandler>("TimerHandler");
-                        if (MyTimerHandler.OnLoop("dash_effect", TimeSpan.FromSeconds(0.03), null))
-                        {
-                            var dashEffect = new GameObject(state, "dash", "Default", new Rectangle(35, 39, 13, 19), player.Position, particles, player.IsMirrored);
-                            dashEffect.AddBehavior(new Fade(TimeSpan.FromSeconds(0.1), TimeSpan.FromSeconds(0.2), TimeSpan.Zero, true, true));
-                        }
-                    }
                 }
+
                 else
                 {
                     player.Animator.Resume();
+                }
+
+                Layer particles;
+                if (MyPhysics.Vectors["Dash"].Module > 10 && state.Layers.TryGetValue("Particles", out particles))
+                {
+                    var MyTimerHandler = player.GetBehavior<TimerHandler>("TimerHandler");
+                    if (MyTimerHandler.OnLoop("dash_effect", TimeSpan.FromSeconds(0.03), null))
+                    {
+                        var dashEffect = new GameObject(state, "dash", "Default", new Rectangle(35, 39, 13, 19), player.Position, particles, player.IsMirrored);
+                        dashEffect.AddBehavior(new Fade(TimeSpan.FromSeconds(0.1), TimeSpan.FromSeconds(0.2), TimeSpan.Zero, true, true));
+                    }
                 }
             }
             else
@@ -232,6 +264,7 @@ namespace VideoGame
         public Dictionary<string, Layer> Layers { get; set; }
         public List<GameObject> AllObjects { get; set; }
         public GameObject Player;
+        public List<GameObject> Enemy;
         public GameControls Controls;
         public GameCamera Camera { get; set; }
         public TileMap MainTileMap;
@@ -252,12 +285,14 @@ namespace VideoGame
             Global.Updates.UpdateAnimations();
 
             LevelHandlers.UpdatePlayer(Player, Controls);
+            LevelHandlers.UpdateEnemy(Enemy, Player);
         }
 
         public LocationState()
         {
             Layers = new Dictionary<string, Layer>();
             AllObjects = new List<GameObject>();
+            Enemy = new List<GameObject>();
         }
     }
 }

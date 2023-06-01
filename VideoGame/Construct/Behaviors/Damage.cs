@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VideoGame.Construct.Behaviors
 {
-    public class Damage : Collider
+    public class Damage
     {
         public string Name => "Damage";
 

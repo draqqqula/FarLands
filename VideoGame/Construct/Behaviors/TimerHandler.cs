@@ -41,14 +41,24 @@ namespace VideoGame
 
     public class TimerHandler : IBehavior
     {
-        private Dictionary<string, Timer> Timers;
+        private Dictionary<string, Timer> Timers { get; set; }
 
         public TimeSpan t;
         public string Name => "TimerHandler";
+        private Dictionary<string, Timer> TimerBuffer { get; set; }
+
+        private void AddTimers()
+        {
+            foreach (var timer in TimerBuffer)
+            {
+                Timers[timer.Key] = timer.Value;
+            }
+            TimerBuffer.Clear();
+        }
 
         public void SetTimer(string name, TimeSpan duration, Action<GameObject> alarm, bool deleteOnSurpass)
         {
-            Timers[name] = new Timer(t + duration, alarm, deleteOnSurpass);
+            TimerBuffer[name] = new Timer(t + duration, alarm, deleteOnSurpass);
         }
         public void SetTimer(string name, TimeSpan duration, bool deleteOnSurpass)
         {
@@ -122,6 +132,7 @@ namespace VideoGame
 
         public void Act()
         {
+            AddTimers();
             t += Global.Variables.DeltaTime;
             var surpassed = Timers.Values
                 .Where(timer => !timer.IsOut && timer.Passes(t));
@@ -144,6 +155,7 @@ namespace VideoGame
             Timers = new Dictionary<string, Timer>();
             Enabled = enabled;
             t = TimeSpan.Zero;
+            TimerBuffer = new Dictionary<string, Timer>();
         }
     }
 }

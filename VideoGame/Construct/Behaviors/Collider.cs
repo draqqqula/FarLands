@@ -13,21 +13,36 @@ namespace VideoGame.Construct.Behaviors
         private Vector2 LastKnownPosition;
         public string Name => "Collider";
 
+        public IEnumerable<Rectangle> Path;
+        public int Accuracy;
         public GameObject Parent { get; set; }
         public bool Enabled { get; set; }
 
         public void Act()
         {
+            if (LastKnownPosition == null)
+            {
+                Vector2 movement = Parent.Position - LastKnownPosition;
+                float length = movement.Length();
+                List<Rectangle> path = new List<Rectangle>();
+                movement.Normalize();
+                for (int l = 0; l <= length; l += Accuracy)
+                {
+                    path.Add(Parent.PredictLayout(l * movement));
+                }
+                path.Add(Parent.Layout);
+                Path = path;
+            }
+            else
+            {
+                Path = new Rectangle[] { Parent.Layout };
+            }
             LastKnownPosition = Parent.Position;
         }
 
         public IEnumerable<Collider> GetCollisions(IEnumerable<Collider> colliders)
         {
-            foreach (var collider in colliders)
-            {
-                if (collider.Parent.Layout.Intersects(Parent.Layout))
-                    yield return collider;
-            }
+            return colliders.Where(c => c.Collides(this));
         }
         public IEnumerable<Collider> GetCollisions(params Collider[] colliders)
         {
@@ -36,12 +51,18 @@ namespace VideoGame.Construct.Behaviors
 
         public bool Collides(Collider collider)
         {
-            return collider.Parent.Layout.Intersects(Parent.Layout);
+            return collider.Path.Any(r1 => Path.Any(r2 => r1.Intersects(r2)));
         }
 
         public DrawingParameters ChangeAppearance(DrawingParameters parameters)
         {
             return parameters;
+        }
+
+        public Collider(int accuracy, bool enabled)
+        {
+            Accuracy = accuracy;
+            Enabled = enabled;
         }
     }
 }
