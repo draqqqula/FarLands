@@ -10,6 +10,7 @@ namespace VideoGame
 {
     public class GameObject
     {
+        public IPattern Pattern { get; set; }
         public Animator Animator { get; set; }
         public Rectangle HitBox { get; set; }
         public Vector2 Position { get; set; }

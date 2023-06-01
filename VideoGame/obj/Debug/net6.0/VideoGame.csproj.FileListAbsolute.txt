@@ -81,3 +81,5 @@ C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\dash
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Dash_properties.txt
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\damage_particle.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\damage_particle_properties.txt
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\idol.xnb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\idol_properties.txt

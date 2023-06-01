@@ -46,6 +46,7 @@ namespace VideoGame
         public TimeSpan t;
         public string Name => "TimerHandler";
         private Dictionary<string, Timer> TimerBuffer { get; set; }
+        private List<string> TurnOffBuffer { get; set; }
 
         private void AddTimers()
         {
@@ -54,6 +55,15 @@ namespace VideoGame
                 Timers[timer.Key] = timer.Value;
             }
             TimerBuffer.Clear();
+        }
+
+        private void RemoveTimers()
+        {
+            foreach (string name in TurnOffBuffer)
+            {
+                Timers.Remove(name);
+            }
+            TurnOffBuffer.Clear();
         }
 
         public void SetTimer(string name, TimeSpan duration, Action<GameObject> alarm, bool deleteOnSurpass)
@@ -79,13 +89,20 @@ namespace VideoGame
         }
         public TimerState CheckAndTurnOff(string name)
         {
+            var state = Check(name);
+            if (state == TimerState.IsOut)
+                TurnOff(name);
+            return state;
+        }
+
+        public TimerState Check(string name)
+        {
             if (!Timers.ContainsKey(name))
                 return TimerState.NotExists;
             else
             {
                 if (Timers[name].IsOut)
                 {
-                    TurnOff(name);
                     return TimerState.IsOut;
                 }
                 return TimerState.Running;
@@ -95,23 +112,15 @@ namespace VideoGame
         public void TurnOff(string name)
         {
             if (Timers.ContainsKey(name))
-                Timers.Remove(name);
+                TurnOffBuffer.Add(name);
         }
 
         public TimerState CheckAndDelay(string name, TimeSpan delay)
         {
-            if (!Timers.ContainsKey(name))
-                return TimerState.NotExists;
-            else
-            {
-                var timer = Timers[name];
-                if (timer.IsOut)
-                {
-                    SetTimer(name, delay, timer.Alarm, false);
-                    return TimerState.IsOut;
-                }
-                return TimerState.Running;
-            }
+            var state = Check(name);
+            if (state == TimerState.IsOut)
+                SetTimer(name, delay, Timers[name].Alarm, false);
+            return state;
         }
 
         public TimerState CheckLooping(string name, TimeSpan delay, Action<GameObject> alarm)
@@ -132,6 +141,7 @@ namespace VideoGame
 
         public void Act()
         {
+            RemoveTimers();
             AddTimers();
             t += Global.Variables.DeltaTime;
             var surpassed = Timers.Values
@@ -156,6 +166,7 @@ namespace VideoGame
             Enabled = enabled;
             t = TimeSpan.Zero;
             TimerBuffer = new Dictionary<string, Timer>();
+            TurnOffBuffer = new List<string>();
         }
     }
 }

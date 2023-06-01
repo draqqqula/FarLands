@@ -126,7 +126,7 @@ namespace VideoGame
                 , true);
         }
 
-        public void TakeDamage(DamageInstance damage)
+        public bool TakeDamage(DamageInstance damage)
         {
             if (Team != damage.Team && !InvincibilityFrames.ContainsKey(damage.MainTag))
             {
@@ -143,8 +143,10 @@ namespace VideoGame
                     {
                         damageEvent(this, damage);
                     }
+                    return true;
                 }
             }
+            return false;
         }
 
         public DrawingParameters ChangeAppearance(DrawingParameters parameters)

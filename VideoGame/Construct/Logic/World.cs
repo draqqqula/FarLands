@@ -17,14 +17,8 @@ namespace VideoGame.Construct
             level.GameState = level.Initialize();
         }
 
-        public void Unload()
-        {
-            CurrentLevel.Deconstruct();
-        }
-
         public void GoNext(string levelName)
         {
-            Unload();
             LoadLevel(levelName);
         }
 
@@ -50,7 +44,7 @@ namespace VideoGame.Construct
         public IGameState GameState { get; set; }
         public readonly string Name;
         public readonly Func<IGameState> Initialize;
-        public readonly Action Deconstruct;
+        public readonly UnitAction Deconstruct;
 
         public Level(string name, Func<IGameState> initialize)
         {

@@ -120,12 +120,17 @@ namespace VideoGame
             b.AddBehavior(new Sine(0, 12, new Vector2(0, 1), 2, true));
             b.AddBehavior(new Collider(18, true));
             b.AddBehavior(new Dummy(30, new Dictionary<DamageType, int>(), Team.enemy, null, null, 1, true));
-            state.Enemy.Add(b);
 
 
             state.MainTileMap = CreateForestTilemap(Vector2.Zero, surfacesLayer);
 
             CreateSkyAndClouds(backgroundLayer, cloudsLayer);
+
+
+            IPattern idolPattern = new IdolEnemy(state.MainTileMap, state);
+            idolPattern.CreateCopy(new Vector2(2400, 200), mainLayer, false);
+            idolPattern.CreateCopy(new Vector2(3500, 400), mainLayer, false);
+            state.AddPatterns(idolPattern);
 
             state.Player = CreatePlayer(new Vector2(300, 300), mainLayer, state.MainTileMap, state);
             camera.LinkTo(state.Player);
@@ -136,32 +141,6 @@ namespace VideoGame
 
     public static class LevelHandlers
     {
-        public static void UpdateEnemy(List<GameObject> enemy, GameObject player)
-        {
-            foreach (var foe in enemy)
-            {
-                Collider badCollider = foe.GetBehavior<Collider>("Collider");
-                Collider goodCollider = player.GetBehavior<Collider>("Collider");
-                if (goodCollider.Collides(badCollider))
-                {
-                    var playerDummy = player.GetBehavior<Dummy>("Dummy");
-                    playerDummy.TakeDamage(new DamageInstance(
-                        new Dictionary<DamageType, int>()
-                        {
-                            { DamageType.Fire, 1 }
-                        },
-                        Team.enemy,
-                        new HashSet<string>(),
-                        "test",
-                        foe.GetBehavior<Dummy>("Dummy"),
-                        null,
-                        null,
-                        TimeSpan.FromSeconds(1)
-                        ));
-                }
-            }
-        }
-
         public static void UpdatePlayer(GameObject player, GameControls controls)
         {
             var state = Global.Variables.MainGame._world.CurrentLevel.GameState;
@@ -246,27 +225,17 @@ namespace VideoGame
 
     }
 
-    public class LevelDeconstructors
-    {
-
-    }
-
-    public interface IGameState
-    {
-        public void Update();
-        public Dictionary<string, Layer> Layers { get; set; }
-        public List<GameObject> AllObjects { get; set; }
-        public GameCamera Camera { get; set; }
-    }
-
     public class LocationState : IGameState
     {
         public Dictionary<string, Layer> Layers { get; set; }
         public List<GameObject> AllObjects { get; set; }
+
         public GameObject Player;
-        public List<GameObject> Enemy;
+
         public GameControls Controls;
         public GameCamera Camera { get; set; }
+        public List<IPattern> Patterns { get; set; }
+
         public TileMap MainTileMap;
 
         public void AddLayers(params Layer[] layers)
@@ -276,23 +245,22 @@ namespace VideoGame
             Layers = Layers.OrderBy(e => e.Value.DrawingPriority).ToDictionary(e => e.Key, e => e.Value);
         }
 
-        public void Update()
+        public void AddPatterns(params IPattern[] families)
         {
-            Camera.Update();
+            foreach (var family in families)
+                Patterns.Add(family);
+        }
 
-            Global.Updates.ExcludeDestroyed();
-            Global.Updates.UpdateBehaviors();
-            Global.Updates.UpdateAnimations();
-
+        public void LocalUpdate()
+        {
             LevelHandlers.UpdatePlayer(Player, Controls);
-            LevelHandlers.UpdateEnemy(Enemy, Player);
         }
 
         public LocationState()
         {
             Layers = new Dictionary<string, Layer>();
             AllObjects = new List<GameObject>();
-            Enemy = new List<GameObject>();
+            Patterns = new List<IPattern>();
         }
     }
 }

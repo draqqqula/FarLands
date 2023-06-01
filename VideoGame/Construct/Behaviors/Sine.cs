@@ -20,6 +20,11 @@ namespace VideoGame
         public GameObject Parent { get; set; }
         public bool Enabled { get; set; }
 
+        public void ChangeDirection(Vector2 direction)
+        {
+            Direction = direction;
+        }
+
         public void Act()
         {
             t += Global.Variables.DeltaTime.TotalSeconds;
