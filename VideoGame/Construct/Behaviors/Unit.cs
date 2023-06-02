@@ -126,11 +126,17 @@ namespace VideoGame
         {
             if (target != Target)
             {
-                timerHandler.CheckAndTurnOff("Action");
-                timerHandler.CheckAndTurnOff("Cooldown");
+                LoseTarget();
                 Target = target;
                 TakeAction(SearchForAction(target));
             }
+        }
+
+        public void LoseTarget()
+        {
+            timerHandler.CheckAndTurnOff("Action");
+            timerHandler.CheckAndTurnOff("Cooldown");
+            Target = null;
         }
 
         public GameObject Parent { get; set; }

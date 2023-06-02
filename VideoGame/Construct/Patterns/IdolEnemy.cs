@@ -77,8 +77,8 @@ namespace VideoGame
                     sine.ChangeDirection(new Vector2(1, 0));
                 },
                 null, 2, true,
-                (unit, target) => (target.Parent.Position.Y < unit.Parent.Position.Y) ? 2 : 0,
-                (unit, target) => Math.Abs(target.Parent.Position.X - unit.Parent.Position.X) < 100 ? 2 : 0
+                (unit, target) => (target.Parent.Layout.Bottom < unit.Parent.Layout.Bottom) ? 2 : 0,
+                (unit, target) => Math.Abs(target.Parent.Position.X - unit.Parent.Position.X) < 400 ? 0 : -2
                 );
             unit.AddActions(("DashLeft", dashLeft), ("DashRight", dashRight), ("Jump", jump));
             member.AddBehavior(unit);
@@ -106,13 +106,13 @@ namespace VideoGame
 
         public void UpdateMember(GameObject member)
         {
+            var enities = State.AllObjects
+                    .Where(e => e.Behaviors.ContainsKey("Collider") && e.Behaviors.ContainsKey("Dummy") && e != member);
+
             var touched = member.GetBehavior<Collider>("Collider")
                 .GetCollisions
                 (
-                    State.AllObjects
-                    .Where(e => e.Behaviors.ContainsKey("Collider") && e.Behaviors.ContainsKey("Dummy") && e != member)
-                    .Select(e => e.GetBehavior<Collider>("Collider")
-                )
+                    enities.Select(e => e.GetBehavior<Collider>("Collider"))
                 )
                 .Select(e => e.Parent.GetBehavior<Dummy>("Dummy"))
                 .ToArray();
@@ -120,9 +120,21 @@ namespace VideoGame
             var unit = member.GetBehavior<Unit>("Unit");
             foreach (var dummy in touched)
             {
-                if (dummy.TakeDamage(member.GetBehavior<DamageContainer>("DamageContainer").GetDamage("Contact")))
-                    unit.SetTarget(dummy);
+                dummy.TakeDamage(member.GetBehavior<DamageContainer>("DamageContainer").GetDamage("Contact"));
             }
+
+            var seen = enities.Where(e => e.Position
+            .HasLineOfSight
+            (
+                member.Position, 
+                member.GetBehavior<Physics>("Physics").GetMapSegment((int)Math.Min(member.Position.X, e.Position.X), (int)Math.Max(member.Position.X, e.Position.X)),
+                400, 40
+            )
+            )
+            .Where(e => e.GetBehavior<Dummy>("Dummy").Team != member.GetBehavior<Dummy>("Dummy").Team).FirstOrDefault();
+
+            if (seen != null)
+                unit.SetTarget(seen.GetBehavior<Dummy>("Dummy"));
         }
 
         public IdolEnemy(TileMap surfaces, IGameState state)

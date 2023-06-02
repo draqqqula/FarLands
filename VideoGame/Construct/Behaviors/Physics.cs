@@ -100,7 +100,7 @@ namespace VideoGame
             Vectors.Remove(name);
         }
 
-        private IEnumerable<Rectangle> GetMapSegment(int start, int end)
+        public IEnumerable<Rectangle> GetMapSegment(int start, int end)
         {
             var imaginaryStart = Math.Min(Math.Max(start / SurfaceWidth, 0), SurfaceMap.Length);
             var imaginaryEnd = Math.Max(0, Math.Min(end / SurfaceWidth + 1, SurfaceMap.Length));
