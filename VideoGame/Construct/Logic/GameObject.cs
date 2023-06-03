@@ -81,6 +81,14 @@ namespace VideoGame
             behavior.Parent = this;
         }
 
+        public void AddBehaviors(params IBehavior[] behaviors)
+        {
+            foreach (var behavior in behaviors)
+            {
+                AddBehavior(behavior);
+            }
+        }
+
         public T GetBehavior<T>(string name) where T:IBehavior
         {
             {

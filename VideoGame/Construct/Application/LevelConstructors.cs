@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Reflection.Emit;
 using VideoGame.Construct.Behaviors;
 using System.Security.Cryptography.X509Certificates;
+using System.Diagnostics.Metrics;
 
 namespace VideoGame
 {
@@ -112,15 +113,11 @@ namespace VideoGame
             Layer particlesLayer = new Layer("Particles", a => camera.ApplyParalax(a, 1, 1), 0.1);
             Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
             Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
-            state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesLayer);
+            Layer leftTopBound = new Layer("LeftTopBound", a => a, 1);
+            state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesLayer, leftTopBound);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
-            var b = new GameObject(state, "Hood", "Default", new Rectangle(-30, -30, 60, 60), new Vector2(700, 850), mainLayer, false);
-
-            b.AddBehavior(new Sine(0, 12, new Vector2(0, 1), 2, true));
-            b.AddBehavior(new Collider(18, true));
-            b.AddBehavior(new Dummy(30, new Dictionary<DamageType, int>(), Team.enemy, null, null, 1, true));
-
+            state.HealthBar = new TextObject("a", "heart", 0, 0f, 3f, leftTopBound, new Vector2(30, 30), ('a', new Rectangle(0, 0, 14, 14), new Rectangle(0, 0, 14, 14)));
 
             state.MainTileMap = CreateForestTilemap(Vector2.Zero, surfacesLayer);
 
@@ -128,9 +125,11 @@ namespace VideoGame
 
 
             IPattern idolPattern = new IdolEnemy(state.MainTileMap, state);
+            IPattern hoodPattern = new HoodEnemy(state.MainTileMap, state);
             idolPattern.CreateCopy(new Vector2(2400, 200), mainLayer, false);
             idolPattern.CreateCopy(new Vector2(3500, 400), mainLayer, false);
-            state.AddPatterns(idolPattern);
+            hoodPattern.CreateCopy(new Vector2(4000, 1000), mainLayer, true);
+            state.AddPatterns(idolPattern, hoodPattern);
 
             state.Player = CreatePlayer(new Vector2(300, 300), mainLayer, state.MainTileMap, state);
             camera.LinkTo(state.Player);
@@ -223,44 +222,5 @@ namespace VideoGame
             }
         }
 
-    }
-
-    public class LocationState : IGameState
-    {
-        public Dictionary<string, Layer> Layers { get; set; }
-        public List<GameObject> AllObjects { get; set; }
-
-        public GameObject Player;
-
-        public GameControls Controls;
-        public GameCamera Camera { get; set; }
-        public List<IPattern> Patterns { get; set; }
-
-        public TileMap MainTileMap;
-
-        public void AddLayers(params Layer[] layers)
-        {
-            foreach (var layer in layers)
-                Layers.Add(layer.Name, layer);
-            Layers = Layers.OrderBy(e => e.Value.DrawingPriority).ToDictionary(e => e.Key, e => e.Value);
-        }
-
-        public void AddPatterns(params IPattern[] families)
-        {
-            foreach (var family in families)
-                Patterns.Add(family);
-        }
-
-        public void LocalUpdate()
-        {
-            LevelHandlers.UpdatePlayer(Player, Controls);
-        }
-
-        public LocationState()
-        {
-            Layers = new Dictionary<string, Layer>();
-            AllObjects = new List<GameObject>();
-            Patterns = new List<IPattern>();
-        }
     }
 }

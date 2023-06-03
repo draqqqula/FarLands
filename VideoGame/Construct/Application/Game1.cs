@@ -80,15 +80,9 @@ namespace VideoGame
                         drawable.Draw();
                     foreach (var tileMap in layer.TileMaps)
                         tileMap.Draw();
+                    foreach (var text in layer.TextObjects)
+                        text.Draw();
                     layer.DrawBuffer.Clear();
-                }
-
-                if (Global.Properties.DrawHitBox)
-                {
-                    //foreach (var t in Global.Containers.AllObjects)
-                    //{
-                        //_spriteBatch.Draw(HitBoxTexture, t.TopLeftCorner - _camera.LeftTopCorner, new Rectangle(0, 0, 2, 2), Color.White, 0, new Vector2(0, 0), t.Scale / 2, SpriteEffects.None, 0);
-                    //}
                 }
             }
 

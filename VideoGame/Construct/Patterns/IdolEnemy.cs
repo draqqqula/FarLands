@@ -106,35 +106,8 @@ namespace VideoGame
 
         public void UpdateMember(GameObject member)
         {
-            var enities = State.AllObjects
-                    .Where(e => e.Behaviors.ContainsKey("Collider") && e.Behaviors.ContainsKey("Dummy") && e != member);
-
-            var touched = member.GetBehavior<Collider>("Collider")
-                .GetCollisions
-                (
-                    enities.Select(e => e.GetBehavior<Collider>("Collider"))
-                )
-                .Select(e => e.Parent.GetBehavior<Dummy>("Dummy"))
-                .ToArray();
-
-            var unit = member.GetBehavior<Unit>("Unit");
-            foreach (var dummy in touched)
-            {
-                dummy.TakeDamage(member.GetBehavior<DamageContainer>("DamageContainer").GetDamage("Contact"));
-            }
-
-            var seen = enities.Where(e => e.Position
-            .HasLineOfSight
-            (
-                member.Position, 
-                member.GetBehavior<Physics>("Physics").GetMapSegment((int)Math.Min(member.Position.X, e.Position.X), (int)Math.Max(member.Position.X, e.Position.X)),
-                400, 40
-            )
-            )
-            .Where(e => e.GetBehavior<Dummy>("Dummy").Team != member.GetBehavior<Dummy>("Dummy").Team).FirstOrDefault();
-
-            if (seen != null)
-                unit.SetTarget(seen.GetBehavior<Dummy>("Dummy"));
+            member.ApplyContactDamage();
+            member.SearchTarget(400, 40);
         }
 
         public IdolEnemy(TileMap surfaces, IGameState state)
