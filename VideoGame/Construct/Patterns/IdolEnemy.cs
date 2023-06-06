@@ -16,17 +16,14 @@ namespace VideoGame
 
         public TileMap Surfaces { private get; set; }
 
-        public IGameState State { get; set; }
-
         public string AnimatorName => "Idol";
 
         public string InitialAnimation => "Default";
 
         public Rectangle Hitbox => new Rectangle(-27, -120, 54, 243);
 
-        public GameObject InitializeMember(Vector2 position, Layer layer, bool isMirrored)
+        public GameObject InitializeMember(IGameState state, GameObject member)
         {
-            var member = new GameObject(State, AnimatorName, InitialAnimation, Hitbox, position, layer, isMirrored);
 
             Collider collider = new Collider(18, true);
             Physics physics = new Physics(Surfaces.VerticalSurfaceMap, Surfaces.TileFrame.Width * (int)Surfaces.Scale.X, true);
@@ -101,20 +98,20 @@ namespace VideoGame
                         );
 
             member.AddBehavior(new DamageContainer(true, ("Contact", contact)));
+
             return member;
         }
 
-        public void UpdateMember(GameObject member)
+        public void UpdateMember(GameObject member, IGameState state)
         {
             member.ApplyContactDamage();
             member.SearchTarget(400, 40);
         }
 
-        public IdolEnemy(TileMap surfaces, IGameState state)
+        public IdolEnemy(TileMap surfaces)
         {
             Editions = new List<GameObject>();
             Surfaces = surfaces;
-            State = state;
         }
     }
 }

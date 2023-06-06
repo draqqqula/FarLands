@@ -9,29 +9,30 @@ namespace VideoGame
 {
     public interface IPattern
     {
-        public IGameState State { get; set; }
         public string AnimatorName { get; }
         public string InitialAnimation { get; }
         public Rectangle Hitbox { get; }
 
         public List<GameObject> Editions { get; set; }
 
-        public void UpdateMember(GameObject member);
+        public void UpdateMember(GameObject member, IGameState state);
 
-        public GameObject InitializeMember(Vector2 position, Layer layer, bool isMirrored);
+        public GameObject InitializeMember(IGameState state, GameObject member);
 
-        public GameObject CreateCopy(Vector2 position, Layer layer, bool isMirrored)
+        public GameObject CreateCopy(IGameState state, Vector2 position, Layer layer, bool isMirrored)
         {
-            var edition = InitializeMember(position, layer, isMirrored);
+
+            var edition = new GameObject(state, AnimatorName, InitialAnimation, Hitbox, position, layer, isMirrored);
+            edition = InitializeMember(state, edition);
             edition.Pattern = this;
             Editions.Add(edition);
             return edition;
         }
 
-        public void Update()
+        public void Update(IGameState state)
         {
             foreach (GameObject member in Editions)
-                UpdateMember(member);
+                UpdateMember(member, state);
         }
     }
 }

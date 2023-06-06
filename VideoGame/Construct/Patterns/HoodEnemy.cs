@@ -12,8 +12,6 @@ namespace VideoGame
 {
     public class HoodEnemy : IPattern
     {
-        public IGameState State { get; set; }
-
         public TileMap Surfaces { private get; set; }
 
         public string AnimatorName => "Hood";
@@ -24,10 +22,8 @@ namespace VideoGame
 
         public List<GameObject> Editions { get; set; }
 
-        public GameObject InitializeMember(Vector2 position, Layer layer, bool isMirrored)
+        public GameObject InitializeMember(IGameState state, GameObject member)
         {
-            var member = new GameObject(State, AnimatorName, InitialAnimation, Hitbox, position, layer, isMirrored);
-
             Sine sine = new Sine(0, 12, new Vector2(0, 1), 2, true);
 
             Collider collider = new Collider(18, true);
@@ -93,17 +89,16 @@ namespace VideoGame
             return member;
         }
 
-        public void UpdateMember(GameObject member)
+        public void UpdateMember(GameObject member, IGameState state)
         {
             member.ApplyContactDamage();
             member.SearchTarget(400, 40);
         }
 
-        public HoodEnemy(TileMap surfaces, IGameState state)
+        public HoodEnemy(TileMap surfaces)
         {
             Editions = new List<GameObject>();
             Surfaces = surfaces;
-            State = state;
         }
     }
 }

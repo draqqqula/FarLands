@@ -20,7 +20,7 @@ namespace VideoGame
 
         public Vector2 ApplyParalax(Vector2 position, float dx, float dy)
         {
-            return position - new Vector2(LeftTopCorner.X * dx, LeftTopCorner.Y * dy);
+            return position - new Vector2((int)(LeftTopCorner.X * dx), (int)(LeftTopCorner.Y * dy));
         }
         public GameObject TargetObject { get; private set; }
         public Rectangle InnerBorders { get; private set; }

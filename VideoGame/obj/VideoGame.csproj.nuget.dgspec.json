@@ -47,6 +47,14 @@
             "MonoGame.Framework.DesktopGL": {
               "target": "Package",
               "version": "[3.8.1.303, )"
+            },
+            "NUnit": {
+              "target": "Package",
+              "version": "[3.13.3, )"
+            },
+            "NUnit3TestAdapter": {
+              "target": "Package",
+              "version": "[4.5.0, )"
             }
           },
           "imports": [

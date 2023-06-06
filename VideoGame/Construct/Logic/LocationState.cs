@@ -16,7 +16,7 @@ namespace VideoGame
 
         public TextObject HealthBar;
 
-        public GameControls Controls;
+        public GameControls Controls { get; set; }
         public GameCamera Camera { get; set; }
         public List<IPattern> Patterns { get; set; }
 
@@ -37,13 +37,12 @@ namespace VideoGame
 
         public void LocalUpdate()
         {
-            LevelHandlers.UpdatePlayer(Player, Controls);
             StringBuilder healthText = new StringBuilder();
-            var health = Player.GetBehavior<Dummy>("Dummy").Health;
-            for (int i = 0; i < health; i++)
-                healthText.Append('a');
+            var dummy = Player.GetBehavior<Dummy>("Dummy");
+            for (int i = 0; i < dummy.MaxHealth; i++)
+                healthText.Append(i < dummy.Health ?'a' : 'b');
             HealthBar.Text = healthText.ToString();
-            if (health == 0)
+            if (dummy.Health == 0)
                 Global.Variables.MainGame._world.GoNext(Global.Variables.MainGame._world.CurrentLevel.Name);
         }
 

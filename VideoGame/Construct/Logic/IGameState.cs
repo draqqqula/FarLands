@@ -23,6 +23,7 @@ namespace VideoGame
         public Dictionary<string, Layer> Layers { get; set; }
         public List<GameObject> AllObjects { get; set; }
         public List<IPattern> Patterns { get; set; }
+        public GameControls Controls { get; set; }
         public GameCamera Camera { get; set; }
 
         public void UpdateAnimations()
@@ -48,7 +49,7 @@ namespace VideoGame
         {
             foreach (var pattern in Patterns)
             {
-                pattern.Update();
+                pattern.Update(this);
             }
         }
 

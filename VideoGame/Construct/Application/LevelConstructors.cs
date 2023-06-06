@@ -12,22 +12,12 @@ using System.Reflection.Emit;
 using VideoGame.Construct.Behaviors;
 using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics.Metrics;
+using VideoGame.Construct;
 
 namespace VideoGame
 {
     public static class LevelConstructors
     {
-        public static GameObject CreatePlayer(Vector2 position, Layer layer, TileMap tileMap, IGameState state)
-        {
-            var player = new GameObject(state, "Player", "Default", new Rectangle(-22, -60, 44, 120), position, layer, false);
-            player.AddBehavior(new Physics(tileMap.VerticalSurfaceMap, tileMap.TileFrame.Width * (int)tileMap.Scale.X, true));
-            player.AddBehavior(new Dummy(15, null, Team.player, null, null, 1, true));
-            player.AddBehavior(new TimerHandler(true));
-            player.AddBehavior(new Collider(18, true));
-            player.GetBehavior<Physics>("Physics").AddVector("Gravity", new MovementVector(new Vector2(0, 10), 0, TimeSpan.Zero, true));
-            return player;
-        }
-
         public static GameControls CreateKeyBoardControls()
         {
             var keyboard_controls = new GameControls();
@@ -93,7 +83,6 @@ namespace VideoGame
             state.MainTileMap = CreateForestTilemap(Vector2.Zero, surfacesLayer);
             CreateSkyAndClouds(backgroundLayer, cloudsLayer);
 
-            state.Player = CreatePlayer(new Vector2(100, 100), mainLayer, state.MainTileMap, state);
             camera.LinkTo(state.Player);
             camera.SetOuterBorders(state.MainTileMap.Frame);
             return state;
@@ -117,21 +106,22 @@ namespace VideoGame
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesLayer, leftTopBound);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
-            state.HealthBar = new TextObject("a", "heart", 0, 0f, 3f, leftTopBound, new Vector2(30, 30), ('a', new Rectangle(0, 0, 14, 14), new Rectangle(0, 0, 14, 14)));
+            state.HealthBar = new TextObject("a", "heart", 0, 6f, 3f, leftTopBound, new Vector2(30, 30), ('a', new Rectangle(0, 0, 7, 7), new Rectangle(0, 0, 7, 7)), ('b', new Rectangle(7, 0, 7, 7), new Rectangle(0, 0, 7, 7)), ('c', new Rectangle(14, 0, 7, 7), new Rectangle(0, 0, 7, 7)));
 
             state.MainTileMap = CreateForestTilemap(Vector2.Zero, surfacesLayer);
 
             CreateSkyAndClouds(backgroundLayer, cloudsLayer);
 
 
-            IPattern idolPattern = new IdolEnemy(state.MainTileMap, state);
-            IPattern hoodPattern = new HoodEnemy(state.MainTileMap, state);
-            idolPattern.CreateCopy(new Vector2(2400, 200), mainLayer, false);
-            idolPattern.CreateCopy(new Vector2(3500, 400), mainLayer, false);
-            hoodPattern.CreateCopy(new Vector2(4000, 1000), mainLayer, true);
-            state.AddPatterns(idolPattern, hoodPattern);
+            IPattern idolPattern = new IdolEnemy(state.MainTileMap);
+            IPattern hoodPattern = new HoodEnemy(state.MainTileMap);
+            IPattern playerPattern = new Player(state.MainTileMap);
+            idolPattern.CreateCopy(state, new Vector2(2400, 200), mainLayer, false);
+            idolPattern.CreateCopy(state, new Vector2(3500, 400), mainLayer, false);
+            hoodPattern.CreateCopy(state, new Vector2(4000, 1000), mainLayer, true);
+            state.AddPatterns(idolPattern, hoodPattern, playerPattern);
 
-            state.Player = CreatePlayer(new Vector2(300, 300), mainLayer, state.MainTileMap, state);
+            state.Player = playerPattern.CreateCopy(state, new Vector2(300, 300), mainLayer, true);
             camera.LinkTo(state.Player);
             camera.SetOuterBorders(state.MainTileMap.Frame);
             return state;
@@ -140,87 +130,5 @@ namespace VideoGame
 
     public static class LevelHandlers
     {
-        public static void UpdatePlayer(GameObject player, GameControls controls)
-        {
-            var state = Global.Variables.MainGame._world.CurrentLevel.GameState;
-
-            var MyPhysics = player.GetBehavior<Physics>("Physics");
-            if (controls[Control.right])
-            {
-                MyPhysics.AddVector("LeftMovement", new MovementVector(new Vector2(8, 0), -100, TimeSpan.Zero, true));
-                player.IsMirrored = false;
-            }
-            if (controls[Control.left])
-            {
-                MyPhysics.AddVector("RightMovement", new MovementVector(new Vector2(-8, 0), -100, TimeSpan.Zero, true));
-                player.IsMirrored = true;
-            }
-            if (controls.OnPress(Control.jump) && MyPhysics.Faces[Side.Bottom] && !MyPhysics.Vectors.ContainsKey("Dash"))
-            {
-                MyPhysics.AddVector("Jump", new MovementVector(new Vector2(0, -20), -30, TimeSpan.Zero, true));
-            }
-
-            if (controls.OnPress(Control.dash) && MyPhysics.Faces[Side.Bottom] && !MyPhysics.Vectors.ContainsKey("Dash"))
-            {
-                MyPhysics.AddVector("Dash", new MovementVector(new Vector2(36 * player.MirrorFactor, 0), -150, TimeSpan.Zero, true));
-            }
-
-            if (MyPhysics.Faces[Side.Top])
-            {
-                MovementVector jump;
-                MovementVector fall;
-                if (MyPhysics.Vectors.TryGetValue("Jump", out jump) && MyPhysics.Vectors.TryGetValue("Gravity", out fall))
-                    jump.Module = fall.Module * 0.9f;
-            }
-
-
-            if (MyPhysics.Vectors.ContainsKey("Dash"))
-            {
-                if (MyPhysics.Vectors["Dash"].Module > 20)
-                {
-                    player.SetAnimation("Dash", 0);
-                    player.Animator.Stop();
-                }
-
-                else
-                {
-                    player.Animator.Resume();
-                }
-
-                Layer particles;
-                if (MyPhysics.Vectors["Dash"].Module > 10 && state.Layers.TryGetValue("Particles", out particles))
-                {
-                    var MyTimerHandler = player.GetBehavior<TimerHandler>("TimerHandler");
-                    if (MyTimerHandler.OnLoop("dash_effect", TimeSpan.FromSeconds(0.03), null))
-                    {
-                        var dashEffect = new GameObject(state, "dash", "Default", new Rectangle(35, 39, 13, 19), player.Position, particles, player.IsMirrored);
-                        dashEffect.AddBehavior(new Fade(TimeSpan.FromSeconds(0.1), TimeSpan.FromSeconds(0.2), TimeSpan.Zero, true, true));
-                    }
-                }
-            }
-            else
-            {
-                if (MyPhysics.Faces[Side.Bottom])
-                {
-                    if (MyPhysics.Vectors.ContainsKey("LeftMovement") || MyPhysics.Vectors.ContainsKey("RightMovement"))
-                        player.SetAnimation("Running", 0);
-                    else
-                        player.SetAnimation("Default", 0);
-                }
-                else
-                {
-                    MovementVector jump;
-                    MovementVector fall;
-                    if (
-                        MyPhysics.Vectors.TryGetValue("Jump", out jump) &&
-                        MyPhysics.Vectors.TryGetValue("Gravity", out fall) &&
-                        jump.Module > fall.Module)
-                        player.SetAnimation("Jump", 0);
-                    else
-                        player.SetAnimation("Fall", 0);
-                }
-            }
-        }
-
     }
 }
