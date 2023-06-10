@@ -10,9 +10,9 @@ namespace VideoGame
 {
     public static class PatternUpdaters
     {
-        public static void ApplyContactDamage(this GameObject entity)
+        public static void ApplyContactDamage(this GameObject entity, Family entities)
         {
-            var enities = Global.Variables.MainGame._world.CurrentLevel.GameState.AllObjects
+            var enities = entities.Members
                     .Where(e => e.Behaviors.ContainsKey("Collider") && e.Behaviors.ContainsKey("Dummy") && e != entity);
 
             var touched = entity.GetBehavior<Collider>("Collider")
@@ -29,12 +29,10 @@ namespace VideoGame
             }
         }
 
-        public static void SearchTarget(this GameObject entity, float sightRange, int stepCount)
+        public static void SearchTarget(this GameObject entity, float sightRange, int stepCount, Family entities)
         {
-            var enities = Global.Variables.MainGame._world.CurrentLevel.GameState.AllObjects
-                    .Where(e => e.Behaviors.ContainsKey("Collider") && e.Behaviors.ContainsKey("Dummy") && e != entity);
             var unit = entity.GetBehavior<Unit>("Unit");
-            var seen = enities.Where(e => e.Position
+            var seen = entities.Members.Where(e => e.Position
             .HasLineOfSight
             (
             entity.Position,

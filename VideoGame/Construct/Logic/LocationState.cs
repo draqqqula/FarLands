@@ -16,6 +16,8 @@ namespace VideoGame
 
         public TextObject HealthBar;
 
+        public TextObject FPSCounter;
+
         public GameControls Controls { get; set; }
         public GameCamera Camera { get; set; }
         public List<IPattern> Patterns { get; set; }
@@ -44,6 +46,7 @@ namespace VideoGame
             HealthBar.Text = healthText.ToString();
             if (dummy.Health == 0)
                 Global.Variables.MainGame._world.GoNext(Global.Variables.MainGame._world.CurrentLevel.Name);
+            FPSCounter.Text = Convert.ToString(Math.Round(1/Global.Variables.DeltaTime.TotalSeconds));
         }
 
         public LocationState()

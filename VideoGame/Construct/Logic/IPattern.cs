@@ -34,5 +34,11 @@ namespace VideoGame
             foreach (GameObject member in Editions)
                 UpdateMember(member, state);
         }
+
+        public void LinkFamilies(Family[] families)
+        {
+            foreach (var family in families)
+                family.Patterns.Add(this);
+        }
     }
 }

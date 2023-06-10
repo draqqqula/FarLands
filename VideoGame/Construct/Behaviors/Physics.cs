@@ -160,7 +160,7 @@ namespace VideoGame
             Vector2 resultingVector = Vector2.Zero;
             foreach (var vector in Vectors)
             {
-                resultingVector += vector.Value.Vector;
+                resultingVector += vector.Value.Vector * (float)(Global.Variables.DeltaTime.TotalSeconds * 60);
                 if (!vector.Value.Update())
                     Vectors.Remove(vector.Key);
             }

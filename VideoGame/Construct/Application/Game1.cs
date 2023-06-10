@@ -31,6 +31,7 @@ namespace VideoGame
             _graphics.PreferredBackBufferWidth = 1903;
             _graphics.PreferredBackBufferHeight = 969;
             _graphics.SynchronizeWithVerticalRetrace = true;
+            this.TargetElapsedTime = TimeSpan.FromSeconds(1 / 120f);
             _graphics.ApplyChanges();
             Window.AllowUserResizing = true;
             Window.Title = "Farland";

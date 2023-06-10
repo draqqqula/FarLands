@@ -106,16 +106,18 @@ namespace VideoGame
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesLayer, leftTopBound);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
-            state.HealthBar = new TextObject("a", "heart", 0, 6f, 3f, leftTopBound, new Vector2(30, 30), ('a', new Rectangle(0, 0, 7, 7), new Rectangle(0, 0, 7, 7)), ('b', new Rectangle(7, 0, 7, 7), new Rectangle(0, 0, 7, 7)), ('c', new Rectangle(14, 0, 7, 7), new Rectangle(0, 0, 7, 7)));
+            state.HealthBar = new TextObject("a", "heart", 0, 6f, 3f, leftTopBound, new Vector2(30, 30));
+            state.FPSCounter = new TextObject("a", "pixel", 0, 6f, 3f, leftTopBound, new Vector2(30, 75));
 
             state.MainTileMap = CreateForestTilemap(Vector2.Zero, surfacesLayer);
 
             CreateSkyAndClouds(backgroundLayer, cloudsLayer);
 
-
-            IPattern idolPattern = new IdolEnemy(state.MainTileMap);
-            IPattern hoodPattern = new HoodEnemy(state.MainTileMap);
+            Family entities = new Family("Entities");
+            IPattern idolPattern = new IdolEnemy(state.MainTileMap, entities);
+            IPattern hoodPattern = new HoodEnemy(state.MainTileMap, entities);
             IPattern playerPattern = new Player(state.MainTileMap);
+            entities.AddPatterns(idolPattern, hoodPattern, playerPattern);
             idolPattern.CreateCopy(state, new Vector2(2400, 200), mainLayer, false);
             idolPattern.CreateCopy(state, new Vector2(3500, 400), mainLayer, false);
             hoodPattern.CreateCopy(state, new Vector2(4000, 1000), mainLayer, true);

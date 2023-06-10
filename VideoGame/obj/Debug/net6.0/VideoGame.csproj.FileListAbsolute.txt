@@ -91,3 +91,6 @@ C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\nunit.engine
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\nunit.engine.core.dll
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\testcentric.engine.metadata.dll
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\nunit.framework.dll
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\heart_font.txt
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\pixel.xnb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\pixel_font.txt

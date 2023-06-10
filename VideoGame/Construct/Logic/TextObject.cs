@@ -71,5 +71,11 @@ namespace VideoGame
                 )
         {
         }
+
+        public TextObject(string text, string fontName, int lineSpacing, float charSpacing, float scale, Layer layer, Vector2 position) :
+            this(text, fontName, lineSpacing, charSpacing, scale, layer, position, FontBuilder.BuildFromFiles(fontName))
+        {
+        }
+
     }
 }

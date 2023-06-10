@@ -22,6 +22,9 @@ namespace VideoGame
 
         public List<GameObject> Editions { get; set; }
 
+
+        private Family Entities;
+
         public GameObject InitializeMember(IGameState state, GameObject member)
         {
             Sine sine = new Sine(0, 12, new Vector2(0, 1), 2, true);
@@ -91,14 +94,15 @@ namespace VideoGame
 
         public void UpdateMember(GameObject member, IGameState state)
         {
-            member.ApplyContactDamage();
-            member.SearchTarget(400, 40);
+            member.ApplyContactDamage(Entities);
+            member.SearchTarget(400, 40, Entities);
         }
 
-        public HoodEnemy(TileMap surfaces)
+        public HoodEnemy(TileMap surfaces, Family entities)
         {
             Editions = new List<GameObject>();
             Surfaces = surfaces;
+            Entities = entities;
         }
     }
 }

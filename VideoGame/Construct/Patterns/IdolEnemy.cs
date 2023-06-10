@@ -14,6 +14,9 @@ namespace VideoGame
     {
         public List<GameObject> Editions { get; set; }
 
+
+        private Family Entities;
+
         public TileMap Surfaces { private get; set; }
 
         public string AnimatorName => "Idol";
@@ -104,14 +107,15 @@ namespace VideoGame
 
         public void UpdateMember(GameObject member, IGameState state)
         {
-            member.ApplyContactDamage();
-            member.SearchTarget(400, 40);
+            member.ApplyContactDamage(Entities);
+            member.SearchTarget(400, 40, Entities);
         }
 
-        public IdolEnemy(TileMap surfaces)
+        public IdolEnemy(TileMap surfaces, Family entities)
         {
             Editions = new List<GameObject>();
             Surfaces = surfaces;
+            Entities = entities;
         }
     }
 }
