@@ -52,17 +52,18 @@ namespace VideoGame
                         member.IsMirrored = false;
                     physics.AddVector("Forward", new MovementVector(Vector2.Normalize(-member.Position + target.Position) * 5, 0, TimeSpan.FromSeconds(0.4), false));
                 },
+                (unit, target) => true,
                 (unit) => { },
                 null, null, true,
                 (unit, target) => ((target.Parent.Position - unit.Parent.Position).Length() > 300) ? 2 : 0
                 );
             UnitAction shoot = new UnitAction(
                 TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(1),
+
                 (unit) => { },
-                (unit) =>
-                {
-                    
-                },
+                (unit, target) => true,
+                (unit) => { },
+
                 null, null, true,
                 (unit, target) => 1
                 );

@@ -14,7 +14,9 @@ namespace VideoGame
         public readonly TimeSpan Duration;
         public readonly TimeSpan Cooldown;
         private IEnumerable<Func<Unit,Dummy,int>> AttractionFactors { get; set; }
+
         public readonly Action<GameObject> StartTrigger;
+        public readonly Func<Unit, Dummy, bool> RunCondition;
         public readonly Action<GameObject> EndTrigger;
 
 
@@ -30,7 +32,7 @@ namespace VideoGame
         public readonly int StepsUntilTurn;
 
         public UnitAction(TimeSpan duration, TimeSpan cooldown, IEnumerable<Func<Unit, Dummy, int>> attractionFactors,
-            Action<GameObject> startTrigger, Action<GameObject> endTrigger,
+            Action<GameObject> startTrigger, Func<Unit, Dummy, bool> runCondition, Action<GameObject> endTrigger,
             TimeSpan? timeUntilTurn, int? stepsUntilTurn, bool enabled)
         {
             Duration = duration;
@@ -38,6 +40,7 @@ namespace VideoGame
             Enabled = enabled;
             AttractionFactors = attractionFactors;
             StartTrigger = startTrigger;
+            RunCondition = runCondition;
             EndTrigger = endTrigger;
 
             TimeRelated = timeUntilTurn != null;
@@ -49,11 +52,12 @@ namespace VideoGame
 
         public UnitAction(TimeSpan duration, TimeSpan cooldown, 
             Action<GameObject> startTrigger, 
+            Func<Unit, Dummy, bool> runCondition,
             Action<GameObject> endTrigger,
             TimeSpan? timeUntilTurn, int? stepsUntilTurn, bool enabled,
             params Func<Unit, Dummy, int>[] attractionFactors)
             :
-            this(duration, cooldown, attractionFactors, startTrigger, endTrigger, timeUntilTurn, stepsUntilTurn, enabled)
+            this(duration, cooldown, attractionFactors, startTrigger, runCondition, endTrigger, timeUntilTurn, stepsUntilTurn, enabled)
         {
         }
     }
@@ -157,6 +161,15 @@ namespace VideoGame
 
         public void Act()
         {
+            if (CurrentAction.Value != null && !CurrentAction.Value.RunCondition(this, Target))
+            {
+                var action = CurrentAction.Value;
+                timerHandler.TurnOff("Action");
+                timerHandler.ResetIfRunning("Cooldown", action.Cooldown - action.Duration);
+
+                action.EndTrigger(Parent);
+                CurrentAction = default;
+            }
         }
 
         public DrawingParameters ChangeAppearance(DrawingParameters parameters)

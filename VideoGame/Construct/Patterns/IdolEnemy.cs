@@ -43,6 +43,7 @@ namespace VideoGame
             Unit unit = new Unit(timerHandler, true);
             UnitAction dashLeft = new UnitAction(TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(1.5),
                 (unit) => unit.GetBehavior<Sine>("Sine").Enabled = true,
+                (unit, target) => true,
                 (unit) => 
                 {
                     unit.GetBehavior<Physics>("Physics").AddVector("DashLeft", new MovementVector(new Vector2(-15, 0), -30, TimeSpan.Zero, true));
@@ -53,6 +54,7 @@ namespace VideoGame
                 );
             UnitAction dashRight = new UnitAction(TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(1.5),
                 (unit) => unit.GetBehavior<Sine>("Sine").Enabled = true,
+                (unit, target) => true,
                 (unit) =>
                 { 
                     unit.GetBehavior<Physics>("Physics").AddVector("DashRight", new MovementVector(new Vector2(15, 0), -30, TimeSpan.Zero, true));
@@ -68,6 +70,7 @@ namespace VideoGame
                     sine.Enabled = true;
                     sine.ChangeDirection(new Vector2(0, 1));
                 },
+                (unit, target) => target.Parent.Layout.Bottom < unit.Parent.Layout.Bottom,
                 (unit) =>
                 {
                     unit.GetBehavior<Physics>("Physics").AddVector("Jump", new MovementVector(new Vector2(0, -30), -60, TimeSpan.Zero, true));

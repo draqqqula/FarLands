@@ -109,10 +109,11 @@ namespace VideoGame
             }
         }
 
-        public void TurnOff(string name)
+        public Action<GameObject> TurnOff(string name)
         {
             if (Timers.ContainsKey(name))
                 TurnOffBuffer.Add(name);
+            return Timers[name].Alarm;
         }
 
         public TimerState CheckAndDelay(string name, TimeSpan delay)
@@ -121,6 +122,12 @@ namespace VideoGame
             if (state == TimerState.IsOut)
                 SetTimer(name, delay, Timers[name].Alarm, false);
             return state;
+        }
+
+        public void ResetIfRunning(string name, TimeSpan duration)
+        {
+            if (Check(name) == TimerState.Running)
+                Timers[name].AlarmTime = t + duration;
         }
 
         public TimerState CheckLooping(string name, TimeSpan delay, Action<GameObject> alarm)

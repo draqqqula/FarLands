@@ -107,7 +107,7 @@ namespace VideoGame
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
             state.HealthBar = new TextObject("a", "heart", 0, 6f, 3f, leftTopBound, new Vector2(30, 30));
-            state.FPSCounter = new TextObject("a", "pixel", 0, 6f, 3f, leftTopBound, new Vector2(30, 75));
+            state.FPSCounter = new TextObject("a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
 
             state.MainTileMap = CreateForestTilemap(Vector2.Zero, surfacesLayer);
 
