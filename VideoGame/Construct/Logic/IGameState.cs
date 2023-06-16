@@ -36,9 +36,9 @@ namespace VideoGame
 
         public void UpdateBehaviors()
         {
-            foreach (var sprite in AllObjects)
+            foreach (var sprite in AllObjects.ToArray())
             {
-                foreach (var behavior in sprite.ActiveBehaviors.Values)
+                foreach (var behavior in sprite.ActiveBehaviors.Values.ToArray())
                 {
                     behavior.Act();
                 }

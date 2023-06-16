@@ -27,6 +27,9 @@ namespace VideoGame
 
         public bool IsHitBoxOnly => false;
 
+        private readonly IPattern LeftStreamZoneMaker;
+        private readonly IPattern RightStreamZoneMaker;
+
         public GameObject InitializeMember(IGameState state, GameObject member)
         {
 
@@ -50,6 +53,13 @@ namespace VideoGame
                 {
                     unit.GetBehavior<Physics>("Physics").AddVector("DashLeft", new MovementVector(new Vector2(-15, 0), -30, TimeSpan.Zero, true));
                     unit.GetBehavior<Sine>("Sine").Enabled = false;
+                    var zone = RightStreamZoneMaker.CreateCopy(state, member.Position);
+                    zone.HitBox = member.HitBox;
+                    TimerHandler timer = new TimerHandler(true);
+                    Pin pin = new Pin(member, new Vector2(-65, 0), true);
+                    timer.SetTimer("Destroy", TimeSpan.FromSeconds(0.3), (obj) => obj.Destroy(), true);
+                    zone.AddBehaviors(timer, pin);
+
                 },
                 null, null, true,
                 (unit, target) => (target.Parent.Position.X <= unit.Parent.Position.X) ? 1 : 0
@@ -61,6 +71,12 @@ namespace VideoGame
                 { 
                     unit.GetBehavior<Physics>("Physics").AddVector("DashRight", new MovementVector(new Vector2(15, 0), -30, TimeSpan.Zero, true));
                     unit.GetBehavior<Sine>("Sine").Enabled = false;
+                    var zone = LeftStreamZoneMaker.CreateCopy(state, member.Position);
+                    zone.HitBox = member.HitBox;
+                    TimerHandler timer = new TimerHandler(true);
+                    Pin pin = new Pin(member, new Vector2(65, 0), true);
+                    timer.SetTimer("Destroy", TimeSpan.FromSeconds(0.3), (obj) => obj.Destroy(), true);
+                    zone.AddBehaviors(timer, pin);
                 },
                 null, null, true,
                 (unit, target) => (target.Parent.Position.X > unit.Parent.Position.X) ? 1 : 0
@@ -113,11 +129,15 @@ namespace VideoGame
             member.SearchTarget(400, 40, Entities);
         }
 
-        public IdolEnemy(TileMap surfaces, Family entities)
+        public IdolEnemy(LocationState location, Family entities)
         {
             Editions = new List<GameObject>();
-            Surfaces = surfaces;
+            Surfaces = location.MainTileMap;
             Entities = entities;
+            LeftStreamZoneMaker = new StreamZone(location.BackParticlesLayer, location.FrontParticlesLayer, entities, Side.Left, 0.0009, 2);
+            RightStreamZoneMaker = new StreamZone(location.BackParticlesLayer, location.FrontParticlesLayer, entities, Side.Right, 0.0009, 2);
+            location.AddPatterns(LeftStreamZoneMaker, RightStreamZoneMaker);
+            
         }
     }
 }

@@ -10,6 +10,11 @@ namespace VideoGame
     public class LocationState : IGameState
     {
         public Dictionary<string, Layer> Layers { get; set; }
+
+        public Layer MainLayer;
+        public Layer FrontParticlesLayer;
+        public Layer BackParticlesLayer;
+
         public List<GameObject> AllObjects { get; set; }
 
         public GameObject Player;

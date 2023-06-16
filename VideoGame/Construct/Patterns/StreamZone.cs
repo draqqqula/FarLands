@@ -64,7 +64,7 @@ namespace VideoGame
                 .Select(e => e.GetBehavior<TimerHandler>("TimerHandler"))
                 )
             {
-                entityTimer.Hold(string.Concat("OnStream_", Enum.GetName(Direction)), TimeSpan.FromSeconds(0.1), null, true);
+                entityTimer.Hold(string.Concat("OnStream_", Enum.GetName(Direction)), TimeSpan.FromSeconds(0.5), null, true);
             }
         }
 
@@ -87,10 +87,10 @@ namespace VideoGame
             switch (direction)
             {
                 case Side.Left:
-                    Xfactor = 1;
+                    Xfactor = -1;
                     break;
                 case Side.Right:
-                    Xfactor = -1;
+                    Xfactor = 1;
                     break;
                 case Side.Top:
                     Yfactor = 1;

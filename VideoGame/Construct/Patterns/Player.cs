@@ -90,8 +90,8 @@ namespace VideoGame
                     member.Animator.Resume();
                 }
 
-                Layer particles;
-                if (MyPhysics.Vectors["Dash"].Module > 10 && state.Layers.TryGetValue("ParticlesFront", out particles))
+                Layer particles = ((LocationState)state).FrontParticlesLayer;
+                if (MyPhysics.Vectors["Dash"].Module > 10)
                 {
                     var MyTimerHandler = member.GetBehavior<TimerHandler>("TimerHandler");
                     if (MyTimerHandler.OnLoop("dash_effect", TimeSpan.FromSeconds(0.03), null))

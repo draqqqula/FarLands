@@ -104,6 +104,9 @@ namespace VideoGame
             Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
             Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
             Layer leftTopBound = new Layer("LeftTopBound", a => a, 1);
+            state.MainLayer = particlesFrontLayer;
+            state.FrontParticlesLayer = particlesFrontLayer;
+            state.BackParticlesLayer = particlesBackLayer;
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesFrontLayer, particlesBackLayer, leftTopBound);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
@@ -114,7 +117,7 @@ namespace VideoGame
             CreateSkyAndClouds(backgroundLayer, cloudsLayer);
 
             Family entities = new Family("Entities");
-            IPattern idolPattern = new IdolEnemy(state.MainTileMap, entities);
+            IPattern idolPattern = new IdolEnemy(state, entities);
             IPattern hoodPattern = new HoodEnemy(state.MainTileMap, entities);
             IPattern streamZonePattern = new StreamZone(particlesFrontLayer, particlesBackLayer, entities, Side.Left, 0.00009, 3);
             IPattern playerPattern = new Player(state.MainTileMap);
@@ -122,8 +125,8 @@ namespace VideoGame
             idolPattern.CreateCopy(state, new Vector2(2400, 200), mainLayer, false);
             idolPattern.CreateCopy(state, new Vector2(3500, 400), mainLayer, false);
             hoodPattern.CreateCopy(state, new Vector2(4000, 1000), mainLayer, true);
-            var stream = streamZonePattern.CreateCopy(state, new Vector2(2400, 1000));
-            stream.HitBox = new Rectangle(-60, -60, 120, 500);
+            //var stream = streamZonePattern.CreateCopy(state, new Vector2(2400, 1000));
+            //stream.HitBox = new Rectangle(-60, -60, 120, 500);
             state.AddPatterns(idolPattern, hoodPattern, playerPattern, streamZonePattern);
 
             state.Player = playerPattern.CreateCopy(state, new Vector2(300, 300), mainLayer, true);
