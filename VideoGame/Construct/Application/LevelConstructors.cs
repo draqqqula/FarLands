@@ -106,7 +106,6 @@ namespace VideoGame
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesLayer, leftTopBound);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
-            state.HealthBar = new TextObject("a", "heart", 0, 6f, 3f, leftTopBound, new Vector2(30, 30));
             state.FPSCounter = new TextObject("a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
 
             state.MainTileMap = CreateForestTilemap(Vector2.Zero, surfacesLayer);
@@ -116,12 +115,15 @@ namespace VideoGame
             Family entities = new Family("Entities");
             IPattern idolPattern = new IdolEnemy(state.MainTileMap, entities);
             IPattern hoodPattern = new HoodEnemy(state.MainTileMap, entities);
+            IPattern streamZonePattern = new StreamZone(particlesLayer, entities, Side.Left);
             IPattern playerPattern = new Player(state.MainTileMap);
             entities.AddPatterns(idolPattern, hoodPattern, playerPattern);
             idolPattern.CreateCopy(state, new Vector2(2400, 200), mainLayer, false);
             idolPattern.CreateCopy(state, new Vector2(3500, 400), mainLayer, false);
             hoodPattern.CreateCopy(state, new Vector2(4000, 1000), mainLayer, true);
-            state.AddPatterns(idolPattern, hoodPattern, playerPattern);
+            var stream = streamZonePattern.CreateCopy(state, new Vector2(2400, 1000));
+            stream.HitBox = new Rectangle(-60, -60, 120, 500);
+            state.AddPatterns(idolPattern, hoodPattern, playerPattern, streamZonePattern);
 
             state.Player = playerPattern.CreateCopy(state, new Vector2(300, 300), mainLayer, true);
             camera.LinkTo(state.Player);

@@ -22,6 +22,7 @@ namespace VideoGame
 
         public List<GameObject> Editions { get; set; }
 
+        public bool IsHitBoxOnly => false;
 
         private Family Entities;
 

@@ -28,7 +28,7 @@ namespace VideoGame
 
         public void UpdateAnimations()
         {
-            foreach (var sprite in AllObjects)
+            foreach (var sprite in AllObjects.Where(e => !e.IsHitBoxOnly))
             {
                 sprite.UpdateAnimation();
             }

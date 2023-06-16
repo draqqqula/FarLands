@@ -25,6 +25,8 @@ namespace VideoGame
 
         public Rectangle Hitbox => new Rectangle(-27, -120, 54, 243);
 
+        public bool IsHitBoxOnly => false;
+
         public GameObject InitializeMember(IGameState state, GameObject member)
         {
 
@@ -95,10 +97,7 @@ namespace VideoGame
                         new HashSet<string>(),
                         "Contact",
                         member.GetBehavior<Dummy>("Dummy"),
-                        new List<Func<Dummy, DamageInstance, bool>>() { (dummy, damage) => {
-                            if (dummy.Parent.Behaviors.ContainsKey("Physics")) 
-                                return !dummy.Parent.GetBehavior<Physics>("Physics").Vectors.ContainsKey("Dash"); 
-                            else return false; } },
+                        new List<Func<Dummy, DamageInstance, bool>>() { PatternUpdaters.CheckDashInvulnerability },
                         null,
                         TimeSpan.FromSeconds(1)
                         );

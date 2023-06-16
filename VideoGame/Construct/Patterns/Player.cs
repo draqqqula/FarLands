@@ -23,13 +23,24 @@ namespace VideoGame
 
         public List<GameObject> Editions { get; set; }
 
+        public bool IsHitBoxOnly => false;
+
         public GameObject InitializeMember(IGameState state, GameObject member)
         {
             member.AddBehavior(new Physics(Surfaces.VerticalSurfaceMap, Surfaces.TileFrame.Width * (int)Surfaces.Scale.X, true));
-            member.AddBehavior(new Dummy(15, null, Team.player, null, null, 1, true));
+            var dummy = new Dummy(15, null, Team.player, null, null, 1, true);
+            member.AddBehavior(dummy);
             member.AddBehavior(new TimerHandler(true));
             member.AddBehavior(new Collider(18, true));
+
+            member.AddBehavior(new Playable(dummy,
+                new TextObject("a", "heart", 0, 6f, 3f, state.Layers["LeftTopBound"], new Vector2(30, 30))
+                ,
+                new GameObject(state, "dash_bar", "Default", new Rectangle(0, 0, 28, 30), new Vector2(136, 85), state.Layers["RightBottomBound"], false),
+                true)
+                );
             member.GetBehavior<Physics>("Physics").AddVector("Gravity", new MovementVector(new Vector2(0, 10), 0, TimeSpan.Zero, true));
+            
             return member;
         }
 
@@ -49,7 +60,7 @@ namespace VideoGame
             }
             if (controls.OnPress(Control.jump) && MyPhysics.Faces[Side.Bottom] && !MyPhysics.Vectors.ContainsKey("Dash"))
             {
-                MyPhysics.AddVector("Jump", new MovementVector(new Vector2(0, -20), -30, TimeSpan.Zero, true));
+                MyPhysics.AddVector("Jump", new MovementVector(new Vector2(0, -21), -30, TimeSpan.Zero, true));
             }
 
             if (controls.OnPress(Control.dash) && MyPhysics.Faces[Side.Bottom] && !MyPhysics.Vectors.ContainsKey("Dash"))

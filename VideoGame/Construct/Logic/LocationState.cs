@@ -14,8 +14,6 @@ namespace VideoGame
 
         public GameObject Player;
 
-        public TextObject HealthBar;
-
         public TextObject FPSCounter;
 
         public GameControls Controls { get; set; }
@@ -39,11 +37,7 @@ namespace VideoGame
 
         public void LocalUpdate()
         {
-            StringBuilder healthText = new StringBuilder();
             var dummy = Player.GetBehavior<Dummy>("Dummy");
-            for (int i = 0; i < dummy.MaxHealth; i++)
-                healthText.Append(i < dummy.Health ?'a' : 'b');
-            HealthBar.Text = healthText.ToString();
             if (dummy.Health == 0)
                 Global.Variables.MainGame._world.GoNext(Global.Variables.MainGame._world.CurrentLevel.Name);
             FPSCounter.Text = Convert.ToString(Math.Round(1/Global.Variables.DeltaTime.TotalSeconds));

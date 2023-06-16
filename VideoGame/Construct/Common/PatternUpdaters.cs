@@ -12,8 +12,7 @@ namespace VideoGame
     {
         public static void ApplyContactDamage(this GameObject entity, Family entities)
         {
-            var enities = entities.Members
-                    .Where(e => e.Behaviors.ContainsKey("Collider") && e.Behaviors.ContainsKey("Dummy") && e != entity);
+            var enities = entities.Members;
 
             var touched = entity.GetBehavior<Collider>("Collider")
                 .GetCollisions
@@ -44,5 +43,11 @@ namespace VideoGame
             if (seen != null)
                 unit.SetTarget(seen.GetBehavior<Dummy>("Dummy"));
         }
+
+        public static bool CheckDashInvulnerability(Dummy dummy, DamageInstance damage) => 
+            !(dummy.Parent.GetBehavior<Physics>("Physics").Vectors.ContainsKey("Dash") &&
+            dummy.Parent.GetBehavior<TimerHandler>("TimerHandler")
+                .Check(string.Concat("OnStream_", dummy.Parent.IsMirrored ? "Left" : "Right")) == TimerState.Running
+            );
     }
 }

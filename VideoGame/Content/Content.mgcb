@@ -49,6 +49,18 @@
 /processorParam:TextureFormat=Color
 /build:../../../../../Downloads/damage_particle.png;damage_particle.png
 
+#begin ../../../../../Downloads/dash_bar.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../../../../Downloads/dash_bar.png;dash_bar.png
+
 #begin ../../../../../Downloads/dash.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -192,6 +204,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:../../../../../Downloads/SkyGround.png;SkyGround.png
+
+#begin ../../../../../Downloads/wind_particles.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:../../../../../Downloads/wind_particles.png;wind_particles.png
 
 #begin hitbox.png
 /importer:TextureImporter

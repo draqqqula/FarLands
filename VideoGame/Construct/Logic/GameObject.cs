@@ -12,6 +12,7 @@ namespace VideoGame
     {
         public IPattern Pattern { get; set; }
         public Animator Animator { get; set; }
+        public readonly bool IsHitBoxOnly;
         public Rectangle HitBox { get; set; }
         public Vector2 Position { get; set; }
         public Dictionary<string, IBehavior> Behaviors { get; private set; }
@@ -114,11 +115,22 @@ namespace VideoGame
 
         public GameObject(IGameState state, string animatorName, string initialAnimation, Rectangle hitBox, Vector2 position, Layer layer, bool isMirrored)
         {
+            IsHitBoxOnly = false;
             HitBox = hitBox;
             Position = position;
             Layer = layer;
             IsMirrored = isMirrored;
             Animator = new Animator(animatorName, initialAnimation);
+            Behaviors = new Dictionary<string, IBehavior>();
+            ToDestroy = false;
+            state.AllObjects.Add(this);
+        }
+
+        public GameObject(IGameState state, Rectangle hitBox, Vector2 position)
+        {
+            IsHitBoxOnly = true;
+            HitBox = hitBox;
+            Position = position;
             Behaviors = new Dictionary<string, IBehavior>();
             ToDestroy = false;
             state.AllObjects.Add(this);
