@@ -21,9 +21,12 @@ namespace VideoGame
 
         public bool IsHitBoxOnly => true;
 
-        private readonly Layer ParticleLayer;
+        private readonly Layer ParticleFrontLayer;
+        private readonly Layer ParticleBackLayer;
         private readonly Family Entities;
         private readonly Side Direction;
+        private readonly double ParticleDenisty;
+        private readonly double SpawnProbabilitySpread;
 
         public GameObject InitializeMember(IGameState state, GameObject member)
         {
@@ -34,15 +37,25 @@ namespace VideoGame
         public void UpdateMember(GameObject member, IGameState state)
         {
             var timerHandler = member.GetBehavior<TimerHandler>("TimerHandler");
+            double commonParticleCount = ParticleDenisty * (member.HitBox.Width * member.HitBox.Height);
             if (timerHandler.OnLoop("MakeParticle", TimeSpan.FromSeconds(0.05), null))
             {
                 Random random = new Random();
-                for (int i = 0; i < random.Next(1, 4); i++)
+                for (int i = 0; i < commonParticleCount + random.NextDouble() * SpawnProbabilitySpread; i++)
                 {
                     float randomX = (float)(member.Layout.Left + random.NextDouble() * member.HitBox.Width);
                     float randomY = (float)(member.Layout.Top + random.NextDouble() * member.HitBox.Height);
                     string animation = string.Concat("Option", random.Next(1, 16));
-                    MakeParticle(member, state, new Vector2(randomX, randomY), 5f + (float)random.NextDouble() * 3.0f, Direction, TimeSpan.FromSeconds(0.2 + random.NextDouble() * 0.1), animation);
+                    MakeParticle(
+                        member,
+                        state,
+                        new Vector2(randomX, randomY),
+                        5f + (float)random.NextDouble() * 3.0f,
+                        Direction,
+                        TimeSpan.FromSeconds(0.2 + random.NextDouble() * 0.1), 
+                        animation,
+                        random.NextDouble() > 0.5? ParticleFrontLayer : ParticleBackLayer
+                        );
                 }
             }
 
@@ -55,7 +68,7 @@ namespace VideoGame
             }
         }
 
-        public void MakeParticle(GameObject member, IGameState state, Vector2 position, float speed, Side direction, TimeSpan duration, string option)
+        public void MakeParticle(GameObject member, IGameState state, Vector2 position, float speed, Side direction, TimeSpan duration, string option, Layer layer)
         {   
             var damageParticle =
                     new GameObject(
@@ -64,7 +77,7 @@ namespace VideoGame
                         option,
                         new Rectangle(0, 0, 0, 0),
                         position,
-                        ParticleLayer,
+                        layer,
                         false
                     );
             var particlePhysics = new Physics(new Rectangle[0][], 15, true);
@@ -92,12 +105,15 @@ namespace VideoGame
             damageParticle.AddBehavior(fade);
         }
 
-        public StreamZone(Layer layer, Family entities, Side direction)
+        public StreamZone(Layer frontLayer, Layer backLayer, Family entities, Side direction, double particleDenisty, double spawnProbabilitySpread)
         {
             Direction = direction;
             Editions = new List<GameObject>();
             Entities = entities;
-            ParticleLayer = layer;
+            ParticleFrontLayer = frontLayer;
+            ParticleBackLayer = backLayer;
+            ParticleDenisty = particleDenisty;
+            SpawnProbabilitySpread = spawnProbabilitySpread;
         }
     }
 }

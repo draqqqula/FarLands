@@ -99,11 +99,12 @@ namespace VideoGame
             Layer backgroundLayer = new Layer("BackGround", a => a, 0);
             Layer surfacesLayer = new Layer("Surfaces", a => camera.ApplyParalax(a, 1, 1), 0.2);
             Layer cloudsLayer = new Layer("Clouds", a => camera.ApplyParalax(a, 0.07f, 0.03f), 0.1);
-            Layer particlesLayer = new Layer("Particles", a => camera.ApplyParalax(a, 1, 1), 0.1);
+            Layer particlesFrontLayer = new Layer("ParticlesFront", a => camera.ApplyParalax(a, 1, 1), 0.1);
+            Layer particlesBackLayer = new Layer("ParticlesBack", a => camera.ApplyParalax(a, 1, 1), 0.6);
             Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
             Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
             Layer leftTopBound = new Layer("LeftTopBound", a => a, 1);
-            state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesLayer, leftTopBound);
+            state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesFrontLayer, particlesBackLayer, leftTopBound);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
             state.FPSCounter = new TextObject("a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
@@ -115,7 +116,7 @@ namespace VideoGame
             Family entities = new Family("Entities");
             IPattern idolPattern = new IdolEnemy(state.MainTileMap, entities);
             IPattern hoodPattern = new HoodEnemy(state.MainTileMap, entities);
-            IPattern streamZonePattern = new StreamZone(particlesLayer, entities, Side.Left);
+            IPattern streamZonePattern = new StreamZone(particlesFrontLayer, particlesBackLayer, entities, Side.Left, 0.00009, 3);
             IPattern playerPattern = new Player(state.MainTileMap);
             entities.AddPatterns(idolPattern, hoodPattern, playerPattern);
             idolPattern.CreateCopy(state, new Vector2(2400, 200), mainLayer, false);
