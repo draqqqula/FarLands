@@ -7,6 +7,9 @@ using VideoGame.Construct;
 
 namespace VideoGame
 {
+    /// <summary>
+    /// описывает текущее состояние локации
+    /// </summary>
     public class LocationState : IGameState
     {
         public Dictionary<string, Layer> Layers { get; set; }
@@ -44,7 +47,7 @@ namespace VideoGame
         {
             var dummy = Player.GetBehavior<Dummy>("Dummy");
             if (dummy.Health == 0)
-                Global.Variables.MainGame._world.GoNext(Global.Variables.MainGame._world.CurrentLevel.Name);
+                Global.Variables.MainGame._world.LoadLevel(Global.Variables.MainGame._world.CurrentLevel.Name);
             FPSCounter.Text = Convert.ToString(Math.Round(1/Global.Variables.DeltaTime.TotalSeconds));
         }
 

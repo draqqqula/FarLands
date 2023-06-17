@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace VideoGame
 {
+    /// <summary>
+    /// по файлу с описанием каждого символа воссоздаёт шрифт
+    /// </summary>
     public static class FontBuilder
     {
         public static (char, Rectangle, Rectangle) BuildCharacter(string line)

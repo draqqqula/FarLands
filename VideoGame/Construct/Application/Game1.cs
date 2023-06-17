@@ -31,7 +31,7 @@ namespace VideoGame
             _graphics.PreferredBackBufferWidth = 1903;
             _graphics.PreferredBackBufferHeight = 969;
             _graphics.SynchronizeWithVerticalRetrace = false;
-            this.IsFixedTimeStep = false;
+            this.IsFixedTimeStep = true;
             this.TargetElapsedTime = TimeSpan.FromSeconds(1 / 120f);
             _graphics.ApplyChanges();
             Window.AllowUserResizing = true;
@@ -54,7 +54,8 @@ namespace VideoGame
             _world = new World();
             _world.AddLevel(new Level("Level1", LevelConstructors.LoadLevel1));
             _world.AddLevel(new Level("Level2", LevelConstructors.LoadLevel2));
-            _world.LoadLevel("Level2");
+            _world.AddLevel(new Level("Level3", LevelConstructors.LoadLevel3));
+            _world.LoadLevel("Level1");
 
 
             _spriteBatch.End();

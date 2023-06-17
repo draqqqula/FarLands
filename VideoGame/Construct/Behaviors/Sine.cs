@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace VideoGame
 {
+    /// <summary>
+    /// Описывает поведение объекта, который может колебаться в определённом направлении
+    /// </summary>
     public class Sine : IBehavior
     {
         public double t { get; private set; }

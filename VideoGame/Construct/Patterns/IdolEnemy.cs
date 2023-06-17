@@ -97,9 +97,9 @@ namespace VideoGame
                     unit.GetBehavior<Sine>("Sine").Enabled = false;
                     sine.ChangeDirection(new Vector2(1, 0));
                 },
-                null, 2, true,
+                null, 1, true,
                 (unit, target) => (target.Parent.Layout.Bottom < unit.Parent.Layout.Bottom) ? 2 : 0,
-                (unit, target) => Math.Abs(target.Parent.Position.X - unit.Parent.Position.X) < 400 ? 0 : -2
+                (unit, target) => Math.Abs(target.Parent.Position.X - unit.Parent.Position.X) < 2000 ? 0 : -2
                 );
             unit.AddActions(("DashLeft", dashLeft), ("DashRight", dashRight), ("Jump", jump));
             member.AddBehavior(unit);
@@ -107,7 +107,7 @@ namespace VideoGame
             var contact = new DamageInstance(
                         new Dictionary<DamageType, int>()
                         {
-                            { DamageType.Physical, 4 }
+                            { DamageType.Physical, 7 }
                         },
                         Team.enemy,
                         new HashSet<string>(),
@@ -134,8 +134,8 @@ namespace VideoGame
             Editions = new List<GameObject>();
             Surfaces = location.MainTileMap;
             Entities = entities;
-            LeftStreamZoneMaker = new StreamZone(location.BackParticlesLayer, location.FrontParticlesLayer, entities, Side.Left, 0.0009, 2);
-            RightStreamZoneMaker = new StreamZone(location.BackParticlesLayer, location.FrontParticlesLayer, entities, Side.Right, 0.0009, 2);
+            LeftStreamZoneMaker = new StreamZone(location.BackParticlesLayer, location.FrontParticlesLayer, entities, Side.Left, 0.0003, 2);
+            RightStreamZoneMaker = new StreamZone(location.BackParticlesLayer, location.FrontParticlesLayer, entities, Side.Right, 0.0003, 2);
             location.AddPatterns(LeftStreamZoneMaker, RightStreamZoneMaker);
             
         }

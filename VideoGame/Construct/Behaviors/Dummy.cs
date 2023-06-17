@@ -24,6 +24,12 @@ namespace VideoGame
         Lightning,
         Holy
     }
+    /// <summary>
+    /// Содержит информацию об экземпляре урона.
+    /// Если объект проходит проверки Checks, то ему наносится урон Damage,
+    /// вызываются события Events,
+    /// и даётся временная неуязвимость на срок InvincibilityGift от объектов с тегом урона MainTag.
+    /// </summary>
     public class DamageInstance
     {
         public Dictionary<DamageType, int> Damage;
@@ -54,6 +60,9 @@ namespace VideoGame
             InvincibilityGift = invincibilityGift;
         }
     }
+    /// <summary>
+    /// поведение объекта, которму может быть нанесён урон
+    /// </summary>
     public class Dummy : IBehavior
     {
         public string Name => "Dummy";

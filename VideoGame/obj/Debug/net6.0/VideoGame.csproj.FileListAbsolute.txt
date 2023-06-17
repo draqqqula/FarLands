@@ -98,3 +98,11 @@ C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\dash
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\dash_bar_properties.txt
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\wind_particles.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\wind_particles_properties.txt
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\level3.xnb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\arrow.xnb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\arrow_properties.txt
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\forest_background.xnb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\level3background.xnb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\biomass.xnb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\biomass_properties.txt
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\level2background.xnb

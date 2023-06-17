@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace VideoGame
 {
+    /// <summary>
+    /// Действие, которое может совершить Unit
+    /// </summary>
     public class UnitAction
     {
         public bool Enabled { get; set; }
@@ -62,6 +65,9 @@ namespace VideoGame
         }
     }
 
+    /// <summary>
+    /// Описывает поведение объекта, который может предпринимать действия в зависимости от обстоятельств
+    /// </summary>
     public class Unit : IBehavior
     {
         private TimerHandler timerHandler;
@@ -76,6 +82,10 @@ namespace VideoGame
 
         public Dummy Target { get; set; }
 
+        /// <summary>
+        /// Предпринимает действие.
+        /// </summary>
+        /// <param name="action"></param>
         public void TakeAction(KeyValuePair<string, UnitAction> action)
         {
             Step();
@@ -89,6 +99,11 @@ namespace VideoGame
             action.Value.StartTrigger(Parent);
         }
 
+        /// <summary>
+        /// Ищет, какое действие будет лучше всего предпринять в данный момент.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
         public KeyValuePair<string, UnitAction> SearchForAction(Dummy target)
         {
             return Actions
@@ -126,6 +141,10 @@ namespace VideoGame
             }
         }
 
+        /// <summary>
+        /// назначает цель
+        /// </summary>
+        /// <param name="target"></param>
         public void SetTarget(Dummy target)
         {
             if (target != Target)
@@ -136,6 +155,9 @@ namespace VideoGame
             }
         }
 
+        /// <summary>
+        /// открепляет цель
+        /// </summary>
         public void LoseTarget()
         {
             timerHandler.CheckAndTurnOff("Action");

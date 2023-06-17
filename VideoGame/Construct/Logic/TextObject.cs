@@ -12,6 +12,9 @@ using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace VideoGame
 {
+    /// <summary>
+    /// текстовый объект
+    /// </summary>
     public class TextObject
     {
         public string Text { get; set; }

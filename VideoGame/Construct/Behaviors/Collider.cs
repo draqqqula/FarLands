@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace VideoGame.Construct.Behaviors
 {
+    /// <summary>
+    /// позволяет обрабатывать коллизии между объектами
+    /// </summary>
     public class Collider : IBehavior
     {
         private Vector2 LastKnownPosition;

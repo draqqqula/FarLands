@@ -11,6 +11,9 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace VideoGame
 {
+    /// <summary>
+    /// Шаблон игрока.
+    /// </summary>
     public class Player : IPattern
     {
         public string AnimatorName => "Player";
@@ -30,10 +33,11 @@ namespace VideoGame
             member.AddBehavior(new Physics(Surfaces.VerticalSurfaceMap, Surfaces.TileFrame.Width * (int)Surfaces.Scale.X, true));
             var dummy = new Dummy(15, null, Team.player, null, null, 1, true);
             member.AddBehavior(dummy);
-            member.AddBehavior(new TimerHandler(true));
+            var timerHandler = new TimerHandler(true);
+            member.AddBehavior(timerHandler);
             member.AddBehavior(new Collider(18, true));
 
-            member.AddBehavior(new Playable(dummy,
+            member.AddBehavior(new Playable(dummy, timerHandler,
                 new TextObject("a", "heart", 0, 6f, 3f, state.Layers["LeftTopBound"], new Vector2(30, 30))
                 ,
                 new GameObject(state, "dash_bar", "Default", new Rectangle(0, 0, 28, 30), new Vector2(136, 85), state.Layers["RightBottomBound"], false),
@@ -47,6 +51,9 @@ namespace VideoGame
         public void UpdateMember(GameObject member, IGameState state)
         {
             var MyPhysics = member.GetBehavior<Physics>("Physics");
+            var MyPlayable = member.GetBehavior<Playable>("Playable");
+            var MyTimerHandler = member.GetBehavior<TimerHandler>("TimerHandler");
+
             GameControls controls = state.Controls;
             if (controls[Control.right])
             {
@@ -63,9 +70,11 @@ namespace VideoGame
                 MyPhysics.AddVector("Jump", new MovementVector(new Vector2(0, -21), -30, TimeSpan.Zero, true));
             }
 
-            if (controls.OnPress(Control.dash) && MyPhysics.Faces[Side.Bottom] && !MyPhysics.Vectors.ContainsKey("Dash"))
+            if (MyPlayable.CanDash && controls.OnPress(Control.dash) && MyPhysics.Faces[Side.Bottom] && !MyPhysics.Vectors.ContainsKey("Dash"))
             {
                 MyPhysics.AddVector("Dash", new MovementVector(new Vector2(36 * member.MirrorFactor, 0), -150, TimeSpan.Zero, true));
+                MyPlayable.UseDash();
+                MyTimerHandler.SetTimer("RecoverDash", TimeSpan.FromSeconds(1), (obj) => MyPlayable.RecoverDash(), true);
             }
 
             if (MyPhysics.Faces[Side.Top])
@@ -93,7 +102,6 @@ namespace VideoGame
                 Layer particles = ((LocationState)state).FrontParticlesLayer;
                 if (MyPhysics.Vectors["Dash"].Module > 10)
                 {
-                    var MyTimerHandler = member.GetBehavior<TimerHandler>("TimerHandler");
                     if (MyTimerHandler.OnLoop("dash_effect", TimeSpan.FromSeconds(0.03), null))
                     {
                         var dashEffect = new GameObject(state, "dash", "Default", new Rectangle(35, 39, 13, 19), member.Position, particles, member.IsMirrored);

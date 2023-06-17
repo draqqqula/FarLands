@@ -6,8 +6,15 @@ using System.Threading.Tasks;
 
 namespace VideoGame
 {
+    /// <summary>
+    /// состояние уровня
+    /// </summary>
     public interface IGameState
     {
+        /// <summary>
+        /// поочерёдно вычёркивает удалённые объекты, обновляет поведения, обновляет анимации, обновляет паттерны,
+        /// производит действия предусмотренные наследным классом
+        /// </summary>
         public void Update()
         {
             Camera.Update();
@@ -18,12 +25,30 @@ namespace VideoGame
             LocalUpdate();
         }
 
+        /// <summary>
+        /// действия, предусмотренные данным классом
+        /// </summary>
         public void LocalUpdate();
 
+        /// <summary>
+        /// все слои на уровне, каждый отрисовываются в порядке, в котором представлены идут
+        /// </summary>
         public Dictionary<string, Layer> Layers { get; set; }
+        /// <summary>
+        /// все объекты на уровне
+        /// </summary>
         public List<GameObject> AllObjects { get; set; }
+        /// <summary>
+        /// все паттерны на уровне
+        /// </summary>
         public List<IPattern> Patterns { get; set; }
+        /// <summary>
+        /// управление, действующее на уровне
+        /// </summary>
         public GameControls Controls { get; set; }
+        /// <summary>
+        /// камера уровня
+        /// </summary>
         public GameCamera Camera { get; set; }
 
         public void UpdateAnimations()

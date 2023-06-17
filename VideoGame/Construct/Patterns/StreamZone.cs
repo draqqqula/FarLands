@@ -38,7 +38,7 @@ namespace VideoGame
         {
             var timerHandler = member.GetBehavior<TimerHandler>("TimerHandler");
             double commonParticleCount = ParticleDenisty * (member.HitBox.Width * member.HitBox.Height);
-            if (timerHandler.OnLoop("MakeParticle", TimeSpan.FromSeconds(0.05), null))
+            if (state.Camera.Sees(member) && timerHandler.OnLoop("MakeParticle", TimeSpan.FromSeconds(0.05), null))
             {
                 Random random = new Random();
                 for (int i = 0; i < commonParticleCount + random.NextDouble() * SpawnProbabilitySpread; i++)

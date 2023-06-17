@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace VideoGame
 {
+    /// <summary>
+    /// содержит информацию об уроне объекта
+    /// </summary>
     public class DamageContainer : IBehavior
     {
         public string Name => "DamageContainer";

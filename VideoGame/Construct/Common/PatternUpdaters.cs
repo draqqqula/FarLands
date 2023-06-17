@@ -10,6 +10,11 @@ namespace VideoGame
 {
     public static class PatternUpdaters
     {
+        /// <summary>
+        /// Наносит контактный урон при несоблюдении определённых условий.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="entities"></param>
         public static void ApplyContactDamage(this GameObject entity, Family entities)
         {
             var enities = entities.Members;
@@ -28,6 +33,13 @@ namespace VideoGame
             }
         }
 
+        /// <summary>
+        /// Ищет в поле зрения подходящего противника, чтобы сделать его своей целью.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="sightRange"></param>
+        /// <param name="stepCount"></param>
+        /// <param name="entities"></param>
         public static void SearchTarget(this GameObject entity, float sightRange, int stepCount, Family entities)
         {
             var unit = entity.GetBehavior<Unit>("Unit");

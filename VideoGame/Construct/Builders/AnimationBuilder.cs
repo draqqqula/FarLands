@@ -11,6 +11,9 @@ using Microsoft.Xna.Framework;
 
 namespace Animations
 {
+    /// <summary>
+    /// Воссоздаёт пакет анимаций из png-файла и текстового файла с описанием каждого кадра
+    /// </summary>
     public static class AnimationBuilder
     {
         private static AnimationFrame BuildFrame(string line)
@@ -39,6 +42,11 @@ namespace Animations
                 animationProperties);
         }
 
+        /// <summary>
+        /// Строит анимации, используя "*name*.png" как общий спрайт и "*name*_properites.txt" как описание анимаций
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static Dictionary<string, Animation> BuildFromFiles(string name)
         {
             var animations = new Dictionary<string, Animation>();

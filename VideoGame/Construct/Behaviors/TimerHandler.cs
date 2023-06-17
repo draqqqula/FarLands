@@ -39,6 +39,9 @@ namespace VideoGame
         NotExists
     }
 
+    /// <summary>
+    /// Предоставляет функционал для работы с таймерами
+    /// </summary>
     public class TimerHandler : IBehavior
     {
         private Dictionary<string, Timer> Timers { get; set; }

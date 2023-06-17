@@ -16,6 +16,9 @@ namespace VideoGame
         Bottom
     }
 
+    /// <summary>
+    /// описывает физическое воздействие на объект в определённом направлении
+    /// </summary>
     public class MovementVector
     {
         public Vector2 Vector
@@ -83,6 +86,9 @@ namespace VideoGame
         }
     }
 
+    /// <summary>
+    /// Описывает поведение объекта, подверженного физике
+    /// </summary>
     public class Physics : IBehavior
     {
         public readonly Rectangle[][] SurfaceMap;

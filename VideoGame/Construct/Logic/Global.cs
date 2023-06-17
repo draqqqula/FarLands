@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using VideoGame;
 using Animations;
 
+
+//подлежит удалению
 namespace Global
 {
     public static class Properties

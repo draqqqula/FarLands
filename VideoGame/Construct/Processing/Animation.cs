@@ -12,6 +12,9 @@ using VideoGame;
 
 namespace Animations
 {
+    /// <summary>
+    /// параметры, применяемые при отрисовке кадра
+    /// </summary>
     public struct DrawingParameters
     {
         public SpriteBatch SpriteBatch;
@@ -36,13 +39,26 @@ namespace Animations
         }
     }
 
+    /// <summary>
+    /// Предоставляет функционал для управления анимациями
+    /// </summary>
     public class Animator
     {
         private readonly Dictionary<string, Animation> Animations;
         public TimeSpan RunDuration { get; private set; }
+        /// <summary>
+        /// текущая анимация
+        /// </summary>
         public Animation Running { get; private set; }
         public bool OnPause { get; private set; }
 
+        /// <summary>
+        /// проигрывает анимацию далее
+        /// по завершении анимации переключает на следующую если та задана
+        /// если же следующая анимация не задана а у текущей Looping == true проигрывает текущую анимацию с начала
+        /// в остальных случаях при завершении начинает проигрывание анимации Default
+        /// </summary>
+        /// <param name="arguments"></param>
         public void Update(DrawingParameters arguments)
         {
             if (!OnPause)
@@ -62,6 +78,11 @@ namespace Animations
             }
         }
 
+        /// <summary>
+        /// продолжает проигрывание текущей анимации с этого кадра
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="frame"></param>
         public void SetFrame(DrawingParameters arguments, int frame)
         {
             ChangeAnimation(arguments, Running.Name, frame);
@@ -71,6 +92,12 @@ namespace Animations
         public void Resume() => OnPause = false;
         public void TogglePause() => OnPause = !OnPause;
 
+        /// <summary>
+        /// переключает анимацию и начинает проигрывание с этого кадра
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="animation"></param>
+        /// <param name="initialFrame"></param>
         public void ChangeAnimation(DrawingParameters arguments, string animation, int initialFrame)
         {
             Running = Animations[animation];
@@ -100,15 +127,30 @@ namespace Animations
         }
     }
 
+    /// <summary>
+    /// содержит информацию о кадрах
+    /// </summary>
     public class Animation
     {
         private readonly AnimationFrame[] Frames;
         private readonly Texture2D Sheet;
 
         public readonly string Name;
+        /// <summary>
+        /// если true и не задан NextAnimation то по окончании текущей анимации начинает её проигрывание с начала
+        /// </summary>
         public readonly bool Looping;
+        /// <summary>
+        /// общая длительность анимации
+        /// </summary>
         public readonly TimeSpan Duration;
+        /// <summary>
+        /// если задано то по окончании текущей анимации начнёт проигрывать эту с первого кадра
+        /// </summary>
         public string NextAnimation;
+        /// <summary>
+        /// коефициент скорости проигрывания
+        /// </summary>
         public double SpeedFactor;
 
         public readonly int FrameCount;
@@ -132,6 +174,15 @@ namespace Animations
 
             CurrentFrame = 0;
         }
+
+        /// <summary>
+        /// если возможно, выбирает кадр отталкиваясь от прогресса анимации, отправляет в буфер на отрисовку и возвращает true
+        /// если невозможно выбрать кадр, возвращает false
+        /// </summary>
+        /// <param name="progress"></param>
+        /// <param name="arguments"></param>
+        /// <param name="animator"></param>
+        /// <returns></returns>
         public bool Run(double progress, DrawingParameters arguments, Animator animator)
         {
             if (progress > 1 || progress < 0)
@@ -144,12 +195,23 @@ namespace Animations
             return true;
         }
 
+        /// <summary>
+        /// если возможно, выбирает кадр отталкиваясь от длительности анимации, отправляет в буфер на отрисовку и возвращает true
+        /// если невозможно выбрать кадр, возвращает false
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="arguments"></param>
+        /// <param name="animator"></param>
+        /// <returns></returns>
         public bool Run(TimeSpan t, DrawingParameters arguments, Animator animator)
         {
             return Run(t / SpeedFactor / Duration, arguments, animator);
         }
     }
 
+    /// <summary>
+    /// служит для сохранения кадра в буфере отрисовки
+    /// </summary>
     public class DrawableElement
     {
         public AnimationFrame frame;
@@ -169,10 +231,23 @@ namespace Animations
         }
     }
 
+    /// <summary>
+    /// кадр анимации
+    /// задаётся областью на общем изображении, якорем и длительностью
+    /// </summary>
     public class AnimationFrame
     {
+        /// <summary>
+        /// область на общем изображении
+        /// </summary>
         private Rectangle Borders;
+        /// <summary>
+        /// точка которая будет совпадать с позицией объекта
+        /// </summary>
         private Vector2 Anchor;
+        /// <summary>
+        /// длительность кадра
+        /// </summary>
         public TimeSpan Duration;
 
         public AnimationFrame(Rectangle borders, Vector2 anchor, TimeSpan duration)
@@ -187,11 +262,22 @@ namespace Animations
         {
         }
 
+        /// <summary>
+        /// отправляет кадр в буфер отрисовки
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="sheet"></param>
+        /// <param name="animator"></param>
         public void CreateDrawable(DrawingParameters arguments, Texture2D sheet, Animator animator)
         {
             arguments.Layer.DrawBuffer[animator] = new DrawableElement(this, arguments, sheet);
         }
 
+        /// <summary>
+        /// выводит кадр на экран
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="sheet"></param>
         public void Display(DrawingParameters arguments, Texture2D sheet)
         {
             Vector2 offset = Vector2.Zero;

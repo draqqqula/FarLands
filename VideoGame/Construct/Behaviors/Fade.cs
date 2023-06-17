@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace VideoGame
 {
+    /// <summary>
+    /// поведение объекта, который будет плавно исчезать
+    /// </summary>
     public class Fade : IBehavior
     {
         public string Name => "Fade";

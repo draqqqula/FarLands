@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace VideoGame
 {
+    /// <summary>
+    /// Описывает поведение объекта, "приклеенного" к другому объекту
+    /// </summary>
     public class Pin : IBehavior
     {
         public string Name => "Pin";
