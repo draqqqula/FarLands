@@ -20,6 +20,8 @@ namespace VideoGame
         public Vector2 LeftBottomCorner { get { return new Vector2(Position.X - Window.Width / 2, Position.Y + Window.Height / 2); } }
         public Vector2 RightBottomCorner { get { return new Vector2(Position.X + Window.Width / 2, Position.Y + Window.Height / 2); } }
 
+        private const float CatchDistance = 0.4f;
+
 
         /// <summary>
         /// применяет паралакс к абсолютной позиции объекта
@@ -58,11 +60,11 @@ namespace VideoGame
                 };
             }
         }
-        private double InterpolationFactor
+        private float InterpolationFactor
         {
             get
             {
-                return 1 - Math.Pow(1-0.95, Global.Variables.DeltaTime.TotalSeconds/0.4);
+                return 1f - MathF.Pow(1-0.95f, (float)Global.Variables.DeltaTime.TotalSeconds/0.4f);
             }
         }
 
@@ -117,8 +119,14 @@ namespace VideoGame
         /// </summary>
         public void Update()
         {
+            if ((TargetObject.Position - Position).Length() < CatchDistance)
+            {
+                Position = TargetObject.Position;
+                return;
+            }
             if (TargetObject != null)
             {
+
                 var rawPos = FitInBorders(
                     Lerp(TargetObject.Position, Position, (float)InterpolationFactor)
                     , TargetObject.Position, InnerBorders);

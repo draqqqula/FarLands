@@ -33,7 +33,7 @@ namespace VideoGame
             _graphics.PreferredBackBufferHeight = 969;
             _graphics.PreferMultiSampling = true;
             _graphics.SynchronizeWithVerticalRetrace = false;
-            this.IsFixedTimeStep = true;
+            this.IsFixedTimeStep = false;
             this.TargetElapsedTime = TimeSpan.FromSeconds(1 / 120f);
             _graphics.ApplyChanges();
             Window.AllowUserResizing = true;

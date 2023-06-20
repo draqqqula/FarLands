@@ -141,6 +141,14 @@ namespace VideoGame
                 SetTimer(name, duration, alarm, deleteOnSurpass);
         }
 
+        public void Hold(string name, TimeSpan duration, bool deleteOnSurpass)
+        {
+            if (Check(name) == TimerState.Running)
+                Timers[name].AlarmTime = t + duration;
+            else
+                SetTimer(name, duration, deleteOnSurpass);
+        }
+
         public TimerState CheckLooping(string name, TimeSpan delay, Action<GameObject> alarm)
         {
             var timerState = CheckAndDelay(name, delay);

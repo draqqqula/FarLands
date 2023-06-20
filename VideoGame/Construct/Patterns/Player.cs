@@ -43,52 +43,70 @@ namespace VideoGame
                 new GameObject(state, "dash_bar", "Default", new Rectangle(0, 0, 28, 30), new Vector2(136, 85), state.Layers["RightBottomBound"], false),
                 true)
                 );
-            member.GetBehavior<Physics>("Physics").AddVector("Gravity", new MovementVector(new Vector2(0, 10), 0, TimeSpan.Zero, true));
+            member.GetBehavior<Physics>("Physics").AddVector("Gravity", new MovementVector(new Vector2(0, 9), 8, 100, TimeSpan.Zero, true));
             
             return member;
         }
 
         public void UpdateMember(GameObject member, IGameState state)
         {
-            var MyPhysics = member.GetBehavior<Physics>("Physics");
-            var MyPlayable = member.GetBehavior<Playable>("Playable");
-            var MyTimerHandler = member.GetBehavior<TimerHandler>("TimerHandler");
+            var myPhysics = member.GetBehavior<Physics>("Physics");
+            var myPlayable = member.GetBehavior<Playable>("Playable");
+            var myTimerHandler = member.GetBehavior<TimerHandler>("TimerHandler");
+
+            Rectangle offset = member.PredictLayout(new Vector2(0, 1));
+            var segment = myPhysics.GetMapSegment(offset.Left, offset.Right).ToArray();
+            bool onGround = segment.Any(t => offset.Intersects(t));
 
             GameControls controls = state.Controls;
             if (controls[Control.right])
             {
-                MyPhysics.AddVector("LeftMovement", new MovementVector(new Vector2(8, 0), -100, TimeSpan.Zero, true));
+                myPhysics.AddVector("LeftMovement", new MovementVector(new Vector2(8, 0), -100, TimeSpan.Zero, true));
                 member.IsMirrored = false;
             }
             if (controls[Control.left])
             {
-                MyPhysics.AddVector("RightMovement", new MovementVector(new Vector2(-8, 0), -100, TimeSpan.Zero, true));
+                myPhysics.AddVector("RightMovement", new MovementVector(new Vector2(-8, 0), -100, TimeSpan.Zero, true));
                 member.IsMirrored = true;
             }
-            if (controls.OnPress(Control.jump) && MyPhysics.Faces[Side.Bottom] && !MyPhysics.Vectors.ContainsKey("Dash"))
+            if (controls.OnPress(Control.jump) && myTimerHandler.Check("OnGround") == TimerState.Running && !myPhysics.Vectors.ContainsKey("Dash"))
             {
-                MyPhysics.AddVector("Jump", new MovementVector(new Vector2(0, -21), -30, TimeSpan.Zero, true));
+                myPhysics.AddVector("Jump", new MovementVector(new Vector2(0, -21), -30, TimeSpan.Zero, true));
             }
 
-            if (MyPlayable.CanDash && controls.OnPress(Control.dash) && MyPhysics.Faces[Side.Bottom] && !MyPhysics.Vectors.ContainsKey("Dash"))
+            if (myPlayable.CanDash && controls.OnPress(Control.dash) && onGround && !myPhysics.Vectors.ContainsKey("Dash"))
             {
-                MyPhysics.AddVector("Dash", new MovementVector(new Vector2(36 * member.MirrorFactor, 0), -150, TimeSpan.Zero, true));
-                MyPlayable.UseDash();
-                MyTimerHandler.SetTimer("RecoverDash", TimeSpan.FromSeconds(1), (obj) => MyPlayable.RecoverDash(), true);
+                myPhysics.AddVector("Dash", new MovementVector(new Vector2(36 * member.MirrorFactor, 0), -150, TimeSpan.Zero, true));
+                myPlayable.UseDash();
+                myTimerHandler.SetTimer("RecoverDash", TimeSpan.FromSeconds(1), (obj) => myPlayable.RecoverDash(), true);
             }
 
-            if (MyPhysics.Faces[Side.Top])
+            MovementVector fall;
+            if (myPhysics.Vectors.TryGetValue("Gravity", out fall))
+            {
+                if (onGround)
+                {
+                    fall.Originalize();
+                    fall.Enabled = false;
+                    myTimerHandler.Hold("OnGround", TimeSpan.FromSeconds(0.08), false);
+                }
+                else
+                {
+                    fall.Enabled = true;
+                }
+            }
+
+            if (myPhysics.Faces[Side.Top])
             {
                 MovementVector jump;
-                MovementVector fall;
-                if (MyPhysics.Vectors.TryGetValue("Jump", out jump) && MyPhysics.Vectors.TryGetValue("Gravity", out fall))
+                if (myPhysics.Vectors.TryGetValue("Jump", out jump))
                     jump.Module = fall.Module * 0.9f;
             }
 
 
-            if (MyPhysics.Vectors.ContainsKey("Dash"))
+            if (myPhysics.Vectors.ContainsKey("Dash"))
             {
-                if (MyPhysics.Vectors["Dash"].Module > 20)
+                if (myPhysics.Vectors["Dash"].Module > 20)
                 {
                     member.SetAnimation("Dash", 0);
                     member.Animator.Stop();
@@ -100,9 +118,9 @@ namespace VideoGame
                 }
 
                 Layer particles = ((LocationState)state).FrontParticlesLayer;
-                if (MyPhysics.Vectors["Dash"].Module > 10)
+                if (myPhysics.Vectors["Dash"].Module > 10)
                 {
-                    if (MyTimerHandler.OnLoop("dash_effect", TimeSpan.FromSeconds(0.03), null))
+                    if (myTimerHandler.OnLoop("dash_effect", TimeSpan.FromSeconds(0.03), null))
                     {
                         var dashEffect = new GameObject(state, "dash", "Default", new Rectangle(35, 39, 13, 19), member.Position, particles, member.IsMirrored);
                         dashEffect.AddBehavior(new Fade(TimeSpan.FromSeconds(0.1), TimeSpan.FromSeconds(0.2), TimeSpan.Zero, true, true));
@@ -111,9 +129,9 @@ namespace VideoGame
             }
             else
             {
-                if (MyPhysics.Faces[Side.Bottom])
+                if (onGround)
                 {
-                    if (MyPhysics.Vectors.ContainsKey("LeftMovement") || MyPhysics.Vectors.ContainsKey("RightMovement"))
+                    if (myPhysics.Vectors.ContainsKey("LeftMovement") || myPhysics.Vectors.ContainsKey("RightMovement"))
                         member.SetAnimation("Running", 0);
                     else
                         member.SetAnimation("Default", 0);
@@ -121,10 +139,8 @@ namespace VideoGame
                 else
                 {
                     MovementVector jump;
-                    MovementVector fall;
                     if (
-                        MyPhysics.Vectors.TryGetValue("Jump", out jump) &&
-                        MyPhysics.Vectors.TryGetValue("Gravity", out fall) &&
+                        myPhysics.Vectors.TryGetValue("Jump", out jump) &&
                         jump.Module > fall.Module)
                         member.SetAnimation("Jump", 0);
                     else

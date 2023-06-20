@@ -25,6 +25,8 @@ namespace VideoGame
 
         public Vector2 Position { get; set; }
 
+        public Rectangle Borders { get; set; }
+
         public float Scale { get; set; }
 
 
@@ -35,6 +37,7 @@ namespace VideoGame
                 return new DrawingParameters
                 {
                     Position = Layer.DrawingFunction(this.Position),
+                    Color = Color.White,
                     Layer = Layer,
                 };
             }

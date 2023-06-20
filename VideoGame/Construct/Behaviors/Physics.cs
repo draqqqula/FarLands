@@ -31,11 +31,19 @@ namespace VideoGame
         public float Module;
         public Vector2 Direction;
         public float Acceleration;
+        public float MaxModule;
+        public float MinModule;
+        private float OriginalModule;
         public bool Enabled;
 
         public TimeSpan LifeTime;
         public TimeSpan LivingTime;
         public bool Immortal;
+
+        public void Originalize()
+        {
+            Module = OriginalModule;
+        }
 
         public bool Update()
         {
@@ -43,7 +51,7 @@ namespace VideoGame
             {
                 if (Acceleration != 0)
                 {
-                    Module += Acceleration * (float)Global.Variables.DeltaTime.TotalSeconds;
+                    Module = Math.Clamp(Module + Acceleration * (float)Global.Variables.DeltaTime.TotalSeconds, MinModule, MaxModule);
                     if (Module <= 0)
                     {
                         return false;
@@ -68,14 +76,16 @@ namespace VideoGame
                 MathF.Sqrt(vector.X * vector.X + vector.Y * vector.Y),
                 vector / MathF.Sqrt(vector.X * vector.X + vector.Y * vector.Y),
                 acceleration,
-                true,
                 livingTime,
-                immortal
+                immortal,
+                float.MaxValue,
+                0,
+                true
                 )
         {
         }
 
-        public MovementVector(float module, Vector2 direction, float acceleration, bool enabled, TimeSpan livingTime, bool immortal)
+        public MovementVector(float module, Vector2 direction, float acceleration, TimeSpan livingTime, bool immortal, float maxModule, float minModule, bool enabled)
         {
             Module = module;
             Direction = direction;
@@ -83,6 +93,23 @@ namespace VideoGame
             Enabled = enabled;
             LivingTime = livingTime;
             Immortal = immortal;
+            MaxModule = maxModule;
+            MinModule = minModule;
+            OriginalModule = module;
+        }
+
+        public MovementVector(Vector2 vector, float acceleration, float maxModule, TimeSpan livingTime, bool immortal) :
+            this(
+                MathF.Sqrt(vector.X * vector.X + vector.Y * vector.Y),
+                vector / MathF.Sqrt(vector.X * vector.X + vector.Y * vector.Y),
+                acceleration,
+                livingTime,
+                immortal,
+                float.MaxValue,
+                float.MinValue,
+                true
+                )
+        {
         }
     }
 
@@ -95,6 +122,11 @@ namespace VideoGame
         public readonly int SurfaceWidth;
         public Dictionary<Side, bool> Faces;
         public Dictionary<string, MovementVector> Vectors { get; private set; }
+
+        public void OriginalizeVector(string name)
+        {
+            Vectors[name].Originalize();
+        }
 
         public void AddVector(string name, MovementVector vector)
         {
