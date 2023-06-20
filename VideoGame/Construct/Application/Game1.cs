@@ -21,6 +21,7 @@ namespace VideoGame
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
+            _graphics.PreferHalfPixelOffset = true;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -30,6 +31,7 @@ namespace VideoGame
             GraphicsDevice.SetRenderTarget(new RenderTarget2D(GraphicsDevice, 1920, 1080));
             _graphics.PreferredBackBufferWidth = 1903;
             _graphics.PreferredBackBufferHeight = 969;
+            _graphics.PreferMultiSampling = true;
             _graphics.SynchronizeWithVerticalRetrace = false;
             this.IsFixedTimeStep = true;
             this.TargetElapsedTime = TimeSpan.FromSeconds(1 / 120f);
@@ -47,7 +49,6 @@ namespace VideoGame
             Global.Variables.MainGame = this;
             Global.Variables.MainSpriteBatch = _spriteBatch;
 
-            HitBoxTexture = Content.Load<Texture2D>("HitBox");
 
             _spriteBatch.Begin();
 
@@ -55,6 +56,8 @@ namespace VideoGame
             _world.AddLevel(new Level("Level1", LevelConstructors.LoadLevel1));
             _world.AddLevel(new Level("Level2", LevelConstructors.LoadLevel2));
             _world.AddLevel(new Level("Level3", LevelConstructors.LoadLevel3));
+            _world.AddLevel(new Level("Level4", LevelConstructors.LoadLevel4));
+            _world.AddLevel(new Level("Level5", LevelConstructors.LoadLevel5));
             _world.LoadLevel("Level1");
 
 

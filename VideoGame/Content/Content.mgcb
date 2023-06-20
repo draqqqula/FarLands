@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin ../../../../../Downloads/arrow.png
+#begin ../../Textures/arrow.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -23,9 +23,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/arrow.png;arrow.png
+/build:../../Textures/arrow.png;arrow.png
 
-#begin ../../../../../Downloads/biomass.png
+#begin ../../Textures/biomass.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -35,9 +35,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/biomass.png;biomass.png
+/build:../../Textures/biomass.png;biomass.png
 
-#begin ../../../../../Downloads/CloudMap.png
+#begin ../../Textures/boss.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -47,9 +47,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/CloudMap.png;CloudMap.png
+/build:../../Textures/boss.png;boss.png
 
-#begin ../../../../../Downloads/Clouds.png
+#begin ../../Textures/CloudMap.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -59,9 +59,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/Clouds.png;Clouds.png
+/build:../../Textures/CloudMap.png;CloudMap.png
 
-#begin ../../../../../Downloads/damage_particle.png
+#begin ../../Textures/Clouds.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -71,9 +71,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/damage_particle.png;damage_particle.png
+/build:../../Textures/Clouds.png;Clouds.png
 
-#begin ../../../../../Downloads/dash_bar.png
+#begin ../../Textures/damage_particle.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -83,9 +83,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/dash_bar.png;dash_bar.png
+/build:../../Textures/damage_particle.png;damage_particle.png
 
-#begin ../../../../../Downloads/dash.png
+#begin ../../Textures/dash_bar.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -95,9 +95,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/dash.png;dash.png
+/build:../../Textures/dash_bar.png;dash_bar.png
 
-#begin ../../../../../Downloads/Element_Selector.png
+#begin ../../Textures/dash.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -107,9 +107,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/Element_Selector.png;Element_Selector.png
+/build:../../Textures/dash.png;dash.png
 
-#begin ../../../../../Downloads/forest_background.png
+#begin ../../Textures/Element_Selector.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -119,9 +119,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/forest_background.png;forest_background.png
+/build:../../Textures/Element_Selector.png;Element_Selector.png
 
-#begin ../../../../../Downloads/heart.png
+#begin ../../Textures/forest_background.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -131,9 +131,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/heart.png;heart.png
+/build:../../Textures/forest_background.png;forest_background.png
 
-#begin ../../../../../Downloads/Hood.png
+#begin ../../Textures/Hood.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -143,9 +143,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/Hood.png;Hood.png
+/build:../../Textures/Hood.png;Hood.png
 
-#begin ../../../../../Downloads/idol.png
+#begin ../../Textures/idol.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -155,9 +155,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/idol.png;idol.png
+/build:../../Textures/idol.png;idol.png
 
-#begin ../../../../../Downloads/level1.png
+#begin ../../Textures/level1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -167,9 +167,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/level1.png;level1.png
+/build:../../Textures/level1.png;level1.png
 
-#begin ../../../../../Downloads/level2.png
+#begin ../../Textures/level2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -179,9 +179,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/level2.png;level2.png
+/build:../../Textures/level2.png;level2.png
 
-#begin ../../../../../Downloads/level3.png
+#begin ../../Textures/level2background.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -191,9 +191,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/level3.png;level3.png
+/build:../../Textures/level2background.png;level2background.png
 
-#begin ../../../../../Downloads/level3background.png
+#begin ../../Textures/level3.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -203,9 +203,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/level3background.png;level2background.png
+/build:../../Textures/level3.png;level3.png
 
-#begin ../../../../../Downloads/pixel.png
+#begin ../../Textures/level4.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -215,9 +215,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/pixel.png;pixel.png
+/build:../../Textures/level4.png;level4.png
 
-#begin ../../../../../Downloads/Player.png
+#begin ../../Textures/pixel.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -227,9 +227,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/Player.png;Player.png
+/build:../../Textures/pixel.png;pixel.png
 
-#begin ../../../../../Downloads/rocks.png
+#begin ../../Textures/Player.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -239,9 +239,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/rocks.png;rocks.png
+/build:../../Textures/Player.png;Player.png
 
-#begin ../../../../../Downloads/Sky.png
+#begin ../../Textures/rocks.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -251,9 +251,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/Sky.png;Sky.png
+/build:../../Textures/rocks.png;rocks.png
 
-#begin ../../../../../Downloads/SkyGround.png
+#begin ../../Textures/Sky.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -263,9 +263,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/SkyGround.png;SkyGround.png
+/build:../../Textures/Sky.png;Sky.png
 
-#begin ../../../../../Downloads/wind_particles.png
+#begin ../../Textures/wind_particles.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -275,41 +275,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../../../../../Downloads/wind_particles.png;wind_particles.png
-
-#begin hitbox.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:hitbox.png
-
-#begin Textures/cube.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/cube.png
-
-#begin Textures/runnin.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/runnin.png
+/build:../../Textures/wind_particles.png;wind_particles.png
 

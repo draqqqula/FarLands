@@ -75,7 +75,7 @@ namespace VideoGame
         }
         public void SetTimer(string name, TimeSpan duration, bool deleteOnSurpass)
         {
-            SetTimer(name, t + duration, null, deleteOnSurpass);
+            SetTimer(name, duration, null, deleteOnSurpass);
         }
         public bool TryGetProgress(string name, out double value)
         {

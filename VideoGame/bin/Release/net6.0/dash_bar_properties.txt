@@ -1,0 +1,12 @@
+﻿#Default
+Looping=true
+0,0,28,30,1,23,1
+#Bar1
+Looping=true
+0,30,28,30,1,23,1
+#Bar2
+Looping=true
+0,60,28,30,1,23,1
+#Bar3
+Looping=true
+0,90,28,30,1,23,1

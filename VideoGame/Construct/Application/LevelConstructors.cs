@@ -78,7 +78,7 @@ namespace VideoGame
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
             state.Camera = camera;
-            Layer mainLayer = new Layer("Main", a => a - camera.LeftTopCorner, 0.5);
+            Layer mainLayer = new Layer("Main", a => camera.ApplyParalax(a, 1, 1), 0.5);
             Layer backgroundLayer = new Layer("BackGround", a => a, 0);
             Layer surfacesLayer = new Layer("Surfaces", a => camera.ApplyParalax(a, 1, 1), 0.2);
             Layer cloudsLayer = new Layer("Clouds", a => camera.ApplyParalax(a, 0.07f, 0.03f), 0.1);
@@ -87,7 +87,7 @@ namespace VideoGame
             Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
             Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
             Layer leftTopBound = new Layer("LeftTopBound", a => a, 1);
-            state.MainLayer = particlesFrontLayer;
+            state.MainLayer = mainLayer;
             state.FrontParticlesLayer = particlesFrontLayer;
             state.BackParticlesLayer = particlesBackLayer;
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesFrontLayer, particlesBackLayer, leftTopBound);
@@ -140,7 +140,7 @@ namespace VideoGame
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
             state.Camera = camera;
-            Layer mainLayer = new Layer("Main", a => a - camera.LeftTopCorner, 0.5);
+            Layer mainLayer = new Layer("Main", a => camera.ApplyParalax(a, 1, 1), 0.5);
             Layer backgroundLayer = new Layer("BackGround", a => a, 0);
             Layer bottomSurfaceLayer = new Layer("BottomSurface", a => camera.ApplyParalax(a, 1, 1), 0.15);
             Layer surfacesLayer = new Layer("Surfaces", a => camera.ApplyParalax(a, 1, 1), 0.2);
@@ -150,7 +150,7 @@ namespace VideoGame
             Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
             Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
             Layer leftTopBound = new Layer("LeftTopBound", a => a, 1);
-            state.MainLayer = particlesFrontLayer;
+            state.MainLayer = mainLayer;
             state.FrontParticlesLayer = particlesFrontLayer;
             state.BackParticlesLayer = particlesBackLayer;
             state.AddLayers(mainLayer, backgroundLayer, bottomSurfaceLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesFrontLayer, particlesBackLayer, leftTopBound);
@@ -227,7 +227,7 @@ namespace VideoGame
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
             state.Camera = camera;
-            Layer mainLayer = new Layer("Main", a => a - camera.LeftTopCorner, 0.5);
+            Layer mainLayer = new Layer("Main", a => camera.ApplyParalax(a, 1, 1), 0.5);
             Layer backgroundLayer = new Layer("BackGround", a => a, 0);
             Layer surfacesLayer = new Layer("Surfaces", a => camera.ApplyParalax(a, 1, 1), 0.2);
             Layer cloudsLayer = new Layer("Clouds", a => camera.ApplyParalax(a, 0.07f, 0.03f), 0.1);
@@ -236,7 +236,7 @@ namespace VideoGame
             Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
             Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
             Layer leftTopBound = new Layer("LeftTopBound", a => a, 1);
-            state.MainLayer = particlesFrontLayer;
+            state.MainLayer = mainLayer;
             state.FrontParticlesLayer = particlesFrontLayer;
             state.BackParticlesLayer = particlesBackLayer;
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesFrontLayer, particlesBackLayer, leftTopBound);
@@ -280,7 +280,6 @@ namespace VideoGame
 
         public static IGameState LoadLevel4()
         {
-            Vector2 exitPosition = new Vector2(5800, 1200);
             Vector2 startPosition = new Vector2(300, 300);
 
             var state = new LocationState();
@@ -288,7 +287,7 @@ namespace VideoGame
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
             state.Camera = camera;
-            Layer mainLayer = new Layer("Main", a => a - camera.LeftTopCorner, 0.5);
+            Layer mainLayer = new Layer("Main", a => camera.ApplyParalax(a, 1, 1), 0.5);
             Layer backgroundLayer = new Layer("BackGround", a => a, 0);
             Layer surfacesLayer = new Layer("Surfaces", a => camera.ApplyParalax(a, 1, 1), 0.2);
             Layer cloudsLayer = new Layer("Clouds", a => camera.ApplyParalax(a, 0.07f, 0.03f), 0.1);
@@ -305,36 +304,78 @@ namespace VideoGame
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
             state.FPSCounter = new TextObject("a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
 
-            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level3", surfacesLayer);
+            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level4", surfacesLayer);
 
             CreateSkyAndClouds(backgroundLayer, cloudsLayer);
 
             Family entities = new Family("Entities");
-            IPattern idolPattern = new IdolEnemy(state, entities);
-            IPattern hoodPattern = new HoodEnemy(state.MainTileMap, entities);
             IPattern streamZonePattern = new StreamZone(particlesFrontLayer, particlesBackLayer, entities, Side.Left, 0.00009, 3);
             IPattern playerPattern = new Player(state.MainTileMap);
-            entities.AddPatterns(idolPattern, hoodPattern, playerPattern);
-            idolPattern.CreateCopy(state, new Vector2(2400, 200), mainLayer, false);
-            idolPattern.CreateCopy(state, new Vector2(3500, 400), mainLayer, false);
-            hoodPattern.CreateCopy(state, new Vector2(4000, 1000), mainLayer, true);
+            IPattern bossPattern = new Boss(state, entities);
+            entities.AddPatterns(playerPattern, bossPattern);
+            bossPattern.CreateCopy(state, new Vector2(900, 200), mainLayer, true);
 
             state.Player = playerPattern.CreateCopy(state, new Vector2(300, 300), mainLayer, true);
-            IPattern gatesPattern = new Gates("Level2", state.Player);
-            gatesPattern.CreateCopy(state, exitPosition);
+            IPattern gatesPattern = new Gates("Level5", state.Player);
 
-            var arrow = new GameObject(state, "arrow", "Default", new Rectangle(0, 0, 0, 0), new Vector2(-100, 0) + exitPosition, mainLayer, false);
-            arrow.HitBox = new Rectangle(-10, -250, 20, 500);
-            arrow.AddBehavior(new Sine(0, 10, new Vector2(1, 0), 10, true));
+            state.Player.GetBehavior<TimerHandler>("TimerHandler").SetTimer("BossBattle", TimeSpan.FromSeconds(25),
+                (obj) =>
+                {
+                    gatesPattern.CreateCopy(state, state.Player.Position);
+                },
+                false);
+
+            new TextObject("Survive for 25 seconds", "pixel", 0, 3f, 3f, mainLayer, new Vector2(800, 200));
 
             camera.LinkTo(state.Player);
             camera.SetOuterBorders(state.MainTileMap.Frame);
-            state.AddPatterns(idolPattern, hoodPattern, playerPattern, streamZonePattern, gatesPattern);
+            state.AddPatterns(playerPattern, streamZonePattern, bossPattern, gatesPattern);
             return state;
         }
-    }
+        public static IGameState LoadLevel5()
+        {
+            Vector2 startPosition = new Vector2(300, 300);
 
-    public static class LevelHandlers
-    {
+            var state = new LocationState();
+            state.Controls = CreateKeyBoardControls();
+
+            var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
+            state.Camera = camera;
+            Layer mainLayer = new Layer("Main", a => camera.ApplyParalax(a, 1, 1), 0.5);
+            Layer backgroundLayer = new Layer("BackGround", a => a, 0);
+            Layer surfacesLayer = new Layer("Surfaces", a => camera.ApplyParalax(a, 1, 1), 0.2);
+            Layer cloudsLayer = new Layer("Clouds", a => camera.ApplyParalax(a, 0.07f, 0.03f), 0.1);
+            Layer particlesFrontLayer = new Layer("ParticlesFront", a => camera.ApplyParalax(a, 1, 1), 0.1);
+            Layer particlesBackLayer = new Layer("ParticlesBack", a => camera.ApplyParalax(a, 1, 1), 0.6);
+            Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
+            Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
+            Layer leftTopBound = new Layer("LeftTopBound", a => a, 1);
+            state.MainLayer = particlesFrontLayer;
+            state.FrontParticlesLayer = particlesFrontLayer;
+            state.BackParticlesLayer = particlesBackLayer;
+            state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesFrontLayer, particlesBackLayer, leftTopBound);
+
+            var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
+            state.FPSCounter = new TextObject("a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
+
+            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level4", surfacesLayer);
+
+            CreateSkyAndClouds(backgroundLayer, cloudsLayer);
+
+            Family entities = new Family("Entities");
+            IPattern playerPattern = new Player(state.MainTileMap);
+            entities.AddPatterns(playerPattern);
+
+            state.Player = playerPattern.CreateCopy(state, new Vector2(300, 300), mainLayer, true);
+
+            new TextObject("Congratulations", "pixel", 0, 3f, 3f, mainLayer, new Vector2(800, 400));
+            new TextObject("You Won", "pixel", 0, 3f, 3f, mainLayer, new Vector2(900, 450));
+            new TextObject("Thanks for playing", "pixel", 0, 3f, 3f, mainLayer, new Vector2(760, 500));
+
+            camera.LinkTo(state.Player);
+            camera.SetOuterBorders(state.MainTileMap.Frame);
+            state.AddPatterns(playerPattern);
+            return state;
+        }
     }
 }

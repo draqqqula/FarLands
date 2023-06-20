@@ -106,3 +106,7 @@ C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\leve
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\biomass.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\biomass_properties.txt
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\level2background.xnb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\Textures\level4.xnb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\level4.xnb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\Content\boss.xnb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0\boss_properties.txt

@@ -1,0 +1,3 @@
+﻿#Default
+Looping=true
+0,0,18,81,9,40,1

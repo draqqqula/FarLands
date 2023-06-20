@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "YVtBM0iz7woslbdQcMkxhclTvVhACLUKW9cwrqz0sJli+Q9Q3INnGnvzm4G3zzuSw2IXL7uZDazOVXqDEtEmPQ==",
+  "dgSpecHash": "EBZIXOU7QgDAid79zDV/Zpyl+Tkp7LnTLHs+3/Knoel9O1H0xet7yZy9Oq6Cx5GL3L0Gx6KPxmo1sAEpJrIqQA==",
   "success": true,
   "projectFilePath": "C:\\Users\\BogdanPC\\Desktop\\Game\\VideoGame\\VideoGame\\VideoGame.csproj",
   "expectedPackageFiles": [
@@ -9,7 +9,8 @@
     "C:\\Users\\BogdanPC\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.1.303\\monogame.framework.desktopgl.3.8.1.303.nupkg.sha512",
     "C:\\Users\\BogdanPC\\.nuget\\packages\\netstandard.library\\2.0.0\\netstandard.library.2.0.0.nupkg.sha512",
     "C:\\Users\\BogdanPC\\.nuget\\packages\\nunit\\3.13.3\\nunit.3.13.3.nupkg.sha512",
-    "C:\\Users\\BogdanPC\\.nuget\\packages\\nunit3testadapter\\4.5.0\\nunit3testadapter.4.5.0.nupkg.sha512"
+    "C:\\Users\\BogdanPC\\.nuget\\packages\\nunit3testadapter\\4.5.0\\nunit3testadapter.4.5.0.nupkg.sha512",
+    "C:\\Users\\BogdanPC\\.nuget\\packages\\microsoft.windows.sdk.net.ref\\10.0.22621.26\\microsoft.windows.sdk.net.ref.10.0.22621.26.nupkg.sha512"
   ],
   "logs": []
 }
