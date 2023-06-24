@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VideoGame.Construct;
 
 namespace VideoGame
 {
@@ -11,24 +13,25 @@ namespace VideoGame
     /// </summary>
     public interface IGameState
     {
+        public World World { get; set; }
         /// <summary>
         /// поочерёдно вычёркивает удалённые объекты, обновляет поведения, обновляет анимации, обновляет паттерны,
         /// производит действия предусмотренные наследным классом
         /// </summary>
-        public void Update()
+        public void Update(TimeSpan deltaTime, Rectangle clientBounds)
         {
-            Camera.Update();
+            Camera.Update(deltaTime, clientBounds);
             ExcludeDestroyed();
-            UpdateBehaviors();
-            UpdateAnimations();
-            UpdatePatterns();
-            LocalUpdate();
+            UpdateBehaviors(deltaTime);
+            UpdateAnimations(deltaTime);
+            UpdatePatterns(deltaTime);
+            LocalUpdate(deltaTime);
         }
 
         /// <summary>
         /// действия, предусмотренные данным классом
         /// </summary>
-        public void LocalUpdate();
+        public void LocalUpdate(TimeSpan deltaTime);
 
         /// <summary>
         /// все слои на уровне, каждый отрисовываются в порядке, в котором представлены идут
@@ -51,26 +54,26 @@ namespace VideoGame
         /// </summary>
         public GameCamera Camera { get; set; }
 
-        public void UpdateAnimations()
+        private void UpdateAnimations(TimeSpan deltaTime)
         {
             foreach (var sprite in AllObjects.Where(e => !e.IsHitBoxOnly))
             {
-                sprite.UpdateAnimation();
+                sprite.UpdateAnimation(deltaTime);
             }
         }
 
-        public void UpdateBehaviors()
+        private void UpdateBehaviors(TimeSpan deltaTime)
         {
             foreach (var sprite in AllObjects.ToArray())
             {
                 foreach (var behavior in sprite.ActiveBehaviors.Values.ToArray())
                 {
-                    behavior.Act();
+                    behavior.Act(deltaTime);
                 }
             }
         }
 
-        public void UpdatePatterns()
+        private void UpdatePatterns(TimeSpan deltaTime)
         {
             foreach (var pattern in Patterns)
             {
@@ -78,7 +81,7 @@ namespace VideoGame
             }
         }
 
-        public void ExcludeDestroyed()
+        private void ExcludeDestroyed()
         {
             AllObjects.RemoveAll(e => e.ToDestroy);
             Patterns.ForEach(pattern => pattern.Editions.RemoveAll(edition => edition.ToDestroy));

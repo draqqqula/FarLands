@@ -22,7 +22,7 @@ namespace VideoGame
         private Vector2 Offset;
         private Vector2 PinPosition { get => Board is null? Vector2.Zero: Board.Position + Offset; }
 
-        public void Act()
+        public void Act(TimeSpan deltaTime)
         {
             if (Board.ToDestroy) Board = null;
             if (!(Board is null))

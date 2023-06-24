@@ -27,6 +27,7 @@ namespace VideoGame
         public GameControls Controls { get; set; }
         public GameCamera Camera { get; set; }
         public List<IPattern> Patterns { get; set; }
+        public World World { get; set; }
 
         public TileMap MainTileMap;
 
@@ -43,12 +44,12 @@ namespace VideoGame
                 Patterns.Add(family);
         }
 
-        public void LocalUpdate()
+        public void LocalUpdate(TimeSpan deltaTime)
         {
             var dummy = Player.GetBehavior<Dummy>("Dummy");
             if (dummy.Health == 0)
-                Global.Variables.MainGame._world.LoadLevel(Global.Variables.MainGame._world.CurrentLevel.Name);
-            FPSCounter.Text = Convert.ToString(Math.Round(1/Global.Variables.DeltaTime.TotalSeconds));
+                World.LoadLevel(World.CurrentLevel.Name);
+            FPSCounter.Text = Convert.ToString(Math.Round(1/deltaTime.TotalSeconds));
         }
 
         public LocationState()

@@ -17,7 +17,6 @@ namespace Animations
     /// </summary>
     public struct DrawingParameters
     {
-        public SpriteBatch SpriteBatch;
         public Vector2 Position;
         public Color Color;
         public float Rotation;
@@ -28,7 +27,6 @@ namespace Animations
 
         public DrawingParameters()
         {
-            SpriteBatch = Global.Variables.MainSpriteBatch;
             Position = new Vector2(0, 0);
             Color = Color.White;
             Rotation = 0f;
@@ -59,11 +57,11 @@ namespace Animations
         /// в остальных случаях при завершении начинает проигрывание анимации Default
         /// </summary>
         /// <param name="arguments"></param>
-        public void Update(DrawingParameters arguments)
+        public void Update(DrawingParameters arguments, TimeSpan deltaTime)
         {
             if (!OnPause)
             {
-                RunDuration += Global.Variables.DeltaTime;
+                RunDuration += deltaTime;
             }
             if (!Running.Run(RunDuration, arguments, this) && !OnPause)
             {
@@ -101,9 +99,9 @@ namespace Animations
         public void ChangeAnimation(DrawingParameters arguments, string animation, int initialFrame)
         {
             Running = Animations[animation];
-            RunDuration = Running.Duration * Running.SpeedFactor * (initialFrame / (double)Running.FrameCount) - Global.Variables.DeltaTime;
+            RunDuration = Running.Duration * Running.SpeedFactor * (initialFrame / (double)Running.FrameCount);
             Resume();
-            Update(arguments);
+            Update(arguments, TimeSpan.Zero);
         }
 
         public Animator(Dictionary<string, Animation> animations, string initial)
@@ -225,9 +223,9 @@ namespace Animations
             this.sheet = sheet;
         }
 
-        public void Draw()
+        public void Draw(SpriteBatch spriteBatch)
         {
-            frame.Display(arguments, sheet);
+            frame.Display(spriteBatch, arguments, sheet);
         }
     }
 
@@ -278,12 +276,12 @@ namespace Animations
         /// </summary>
         /// <param name="arguments"></param>
         /// <param name="sheet"></param>
-        public void Display(DrawingParameters arguments, Texture2D sheet)
+        public void Display(SpriteBatch spriteBatch,DrawingParameters arguments, Texture2D sheet)
         {
             Vector2 offset = Vector2.Zero;
             if (arguments.Mirroring == SpriteEffects.FlipHorizontally)
                 offset = new Vector2(Anchor.X * 2 - Borders.Width, 0) * arguments.Scale;
-            arguments.SpriteBatch.Draw(
+            spriteBatch.Draw(
                 sheet,
                 arguments.Position + offset,
                 Borders,

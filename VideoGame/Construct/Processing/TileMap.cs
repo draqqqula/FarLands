@@ -104,7 +104,7 @@ namespace VideoGame
         /// <summary>
         /// отображает карту тайлов на слое
         /// </summary>
-        public void Draw()
+        public void Draw(SpriteBatch spriteBatch, GameCamera camera)
         {
             for (int i = 0; i < Map.GetLength(0); i++)
             {
@@ -112,7 +112,6 @@ namespace VideoGame
                 {
                     if (Map[i, j] != 0)
                     {
-                        var camera = Global.Variables.MainGame._world.CurrentLevel.GameState.Camera;
                         var tileSize = Tiles[Map[i, j] - 1].Item1;
                         var tileOffset = Tiles[Map[i, j] - 1].Item2;
                         var tilePos = Layer.DrawingFunction(Position + new Vector2((i * TileFrame.Width - tileOffset.X) * Scale.Y, (j * TileFrame.Height - tileOffset.Y) * Scale.Y));
@@ -120,7 +119,7 @@ namespace VideoGame
                             new Point(tileSize.Width * (int)Scale.Y, tileSize.Height * (int)Scale.X));
                         if (camera.Window.Intersects(tileLayout))
                         {
-                            Global.Variables.MainSpriteBatch.Draw(
+                            spriteBatch.Draw(
                                 Sheet,
                                 tilePos,
                                 tileSize,

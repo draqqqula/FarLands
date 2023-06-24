@@ -45,7 +45,7 @@ namespace VideoGame
             TimerHandler.SetTimer("RecoverDash", TimeSpan.FromSeconds(DashRecoverTime), (obj) => RecoverDash(), true);
         }
 
-        public void Act()
+        public void Act(TimeSpan deltaTime)
         {
             StringBuilder healthText = new StringBuilder();
             for (int i = 0; i < Dummy.MaxHealth; i++)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using Animations;
@@ -13,6 +14,9 @@ namespace VideoGame
     /// </summary>
     public class GameObject
     {
+        public double TimeScale { get; set; }
+        public IGameState GameState { get; set; }
+
         /// <summary>
         /// шаблон, который реализует этот объект
         /// </summary>
@@ -179,13 +183,14 @@ namespace VideoGame
         /// <summary>
         /// проигрывает анимацию
         /// </summary>
-        public void UpdateAnimation()
+        public void UpdateAnimation(TimeSpan deltaTime)
         {
-            Animator.Update(DrawingParameters);
+            Animator.Update(DrawingParameters, deltaTime);
         }
 
         public GameObject(IGameState state, string animatorName, string initialAnimation, Rectangle hitBox, Vector2 position, Layer layer, bool isMirrored)
         {
+            GameState = state;
             IsHitBoxOnly = false;
             HitBox = hitBox;
             Position = position;
@@ -199,18 +204,13 @@ namespace VideoGame
 
         public GameObject(IGameState state, Rectangle hitBox, Vector2 position)
         {
+            GameState = state;
             IsHitBoxOnly = true;
             HitBox = hitBox;
             Position = position;
             Behaviors = new Dictionary<string, IBehavior>();
             ToDestroy = false;
             state.AllObjects.Add(this);
-        }
-
-        ~GameObject()
-        {
-            //используется при отладке
-            return;
         }
     }
 }

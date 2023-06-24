@@ -11,13 +11,8 @@ using Animations;
 //подлежит удалению
 namespace Global
 {
-    public static class Properties
-    {
-        public static bool DrawHitBox = false;
-    }
     public static class Variables
     {
-        public static SpriteBatch MainSpriteBatch;
         public static Microsoft.Xna.Framework.Content.ContentManager MainContent
         {
             get
@@ -25,7 +20,6 @@ namespace Global
                 return MainGame.Content;
             }
         }
-        public static TimeSpan DeltaTime;
-        public static Game1 MainGame;
+        public static Game1 MainGame { get; set; }
     }
 }

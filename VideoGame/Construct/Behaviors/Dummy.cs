@@ -80,16 +80,16 @@ namespace VideoGame
         public GameObject Parent { get; set; }
         public bool Enabled { get; set; }
 
-        public void Act()
+        public void Act(TimeSpan deltaTime)
         {
             foreach (var invinibilityInstance in InvincibilityFrames)
             {
-                InvincibilityFrames[invinibilityInstance.Key] = invinibilityInstance.Value - Global.Variables.DeltaTime;
+                InvincibilityFrames[invinibilityInstance.Key] = invinibilityInstance.Value - deltaTime;
             }
             InvincibilityFrames = InvincibilityFrames.Where(t => t.Value > TimeSpan.Zero).ToDictionary(t => t.Key, t => t.Value);
         }
 
-        private void SpawnParticles(int count, Layer layer)
+        private void SpawnParticles(IGameState state, int count, Layer layer)
         {
             var random = new Random();
             for (int i = 0; i < count; i++)
@@ -98,14 +98,14 @@ namespace VideoGame
                 float power = (1 + (float)random.NextDouble()) * 8;
                 float decceleration = -(1 + (float)random.NextDouble()) * 24;
                 TimeSpan delay = TimeSpan.FromSeconds(0.2 + random.NextDouble() * 0.1);
-                SpawnParticle(layer, angle, power, decceleration, delay);
+                SpawnParticle(state, layer, angle, power, decceleration, delay);
             }
         }
 
-        private void SpawnParticle(Layer layer, float angle, float power, float decceleration, TimeSpan delay)
+        private void SpawnParticle(IGameState state, Layer layer, float angle, float power, float decceleration, TimeSpan delay)
         {
            var damageParticle = 
-                new GameObject(Global.Variables.MainGame._world.CurrentLevel.GameState,
+                new GameObject(state,
                 "damage_particle",
                 "Default",
                 new Rectangle(9, 9, 3, 3),
@@ -143,7 +143,7 @@ namespace VideoGame
                 if (allConditions.Count() == 0 || allConditions.All(condition => condition(this, damage)))
                 {
                     var fullDamage = damage.ApplyResistance(Resistances).Sum(t => t.Value);
-                    SpawnParticles(fullDamage, Parent.Layer);
+                    SpawnParticles(Parent.GameState, fullDamage, Parent.Layer);
                     Health = Math.Max(Health - fullDamage, 0);
                     InvincibilityFrames[damage.MainTag] = damage.InvincibilityGift * InvincibilityFactor;
 

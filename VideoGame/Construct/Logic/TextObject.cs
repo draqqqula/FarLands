@@ -43,9 +43,9 @@ namespace VideoGame
             }
         }
 
-        public void Draw()
+        public void Draw(SpriteBatch spriteBatch)
         {
-            DrawingParameters.SpriteBatch.DrawString(Font, Text, DrawingParameters.Position, DrawingParameters.Color, 0, new Vector2(0, 0), Scale, SpriteEffects.None, 0);
+            spriteBatch.DrawString(Font, Text, DrawingParameters.Position, DrawingParameters.Color, 0, new Vector2(0, 0), Scale, SpriteEffects.None, 0);
         }
 
         public TextObject(string text, SpriteFont font, Layer layer, Vector2 position, float scale)

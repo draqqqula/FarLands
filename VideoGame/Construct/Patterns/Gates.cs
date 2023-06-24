@@ -33,7 +33,7 @@ namespace VideoGame
         public void UpdateMember(GameObject member, IGameState state)
         {
             if (Player.Layout.Intersects(member.Layout))
-                Global.Variables.MainGame._world.LoadLevel(DestinationLevelName);
+                state.World.LoadLevel(DestinationLevelName);
         }
 
         public Gates(string destinationLevelName, GameObject player)

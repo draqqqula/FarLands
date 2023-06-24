@@ -45,13 +45,13 @@ namespace VideoGame
             Module = OriginalModule;
         }
 
-        public bool Update()
+        public bool Update(TimeSpan deltaTime)
         {
             if (Enabled)
             {
                 if (Acceleration != 0)
                 {
-                    Module = Math.Clamp(Module + Acceleration * (float)Global.Variables.DeltaTime.TotalSeconds, MinModule, MaxModule);
+                    Module = Math.Clamp(Module + Acceleration * (float)deltaTime.TotalSeconds, MinModule, MaxModule);
                     if (Module <= 0)
                     {
                         return false;
@@ -60,7 +60,7 @@ namespace VideoGame
 
                 if (!Immortal)
                 {
-                    LifeTime += Global.Variables.DeltaTime;
+                    LifeTime += deltaTime;
                     if (LifeTime >= LivingTime)
                     {
                         return false;
@@ -122,6 +122,11 @@ namespace VideoGame
         public readonly int SurfaceWidth;
         public Dictionary<Side, bool> Faces;
         public Dictionary<string, MovementVector> Vectors { get; private set; }
+
+        public Dictionary<string, MovementVector> ActiveVectors
+        {
+            get => Vectors.Where(v => v.Value.Enabled).ToDictionary(e => e.Key, e => e.Value);
+        }
 
         public void OriginalizeVector(string name)
         {
@@ -193,13 +198,13 @@ namespace VideoGame
         public GameObject Parent { get; set; }
         public bool Enabled { get; set; }
 
-        public void Act()
+        public void Act(TimeSpan deltaTime)
         {
             Vector2 resultingVector = Vector2.Zero;
-            foreach (var vector in Vectors)
+            foreach (var vector in ActiveVectors)
             {
-                resultingVector += vector.Value.Vector * (float)(Global.Variables.DeltaTime.TotalSeconds * 60);
-                if (!vector.Value.Update())
+                resultingVector += vector.Value.Vector * (float)(deltaTime.TotalSeconds * 60);
+                if (!vector.Value.Update(deltaTime))
                     Vectors.Remove(vector.Key);
             }
             var resultingLength = resultingVector.Length();

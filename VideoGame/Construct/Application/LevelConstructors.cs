@@ -68,12 +68,13 @@ namespace VideoGame
         /// Инициализирует третий уровень. На нём игрок встречается с первыми врагами.
         /// </summary>
         /// <returns></returns>
-        public static IGameState LoadLevel3()
+        public static IGameState LoadLevel3(World world)
         {
             Vector2 exitPosition = new Vector2(5950, 700);
             Vector2 startPosition = new Vector2(450, 200);
 
             var state = new LocationState();
+            state.World = world;
             state.Controls = CreateKeyBoardControls();
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
@@ -133,9 +134,10 @@ namespace VideoGame
         /// Инициализирует второй уровень. На нём игрок учится пользоваться ветряным потоком.
         /// </summary>
         /// <returns></returns>
-        public static IGameState LoadLevel2()
+        public static IGameState LoadLevel2(World world)
         {
             var state = new LocationState();
+            state.World = world;
             state.Controls = CreateKeyBoardControls();
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
@@ -217,12 +219,13 @@ namespace VideoGame
         /// Инициализирует первый уровень. На нём игрок обучается базовым механикам передвижения
         /// </summary>
         /// <returns></returns>
-        public static IGameState LoadLevel1()
+        public static IGameState LoadLevel1(World world)
         {
             Vector2 exitPosition = new Vector2(5800, 1200);
             Vector2 startPosition = new Vector2(300, 300);
 
             var state = new LocationState();
+            state.World = world;
             state.Controls = CreateKeyBoardControls();
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
@@ -278,11 +281,12 @@ namespace VideoGame
             return state;
         }
 
-        public static IGameState LoadLevel4()
+        public static IGameState LoadLevel4(World world)
         {
             Vector2 startPosition = new Vector2(300, 300);
 
             var state = new LocationState();
+            state.World = world;
             state.Controls = CreateKeyBoardControls();
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
@@ -332,11 +336,12 @@ namespace VideoGame
             state.AddPatterns(playerPattern, streamZonePattern, bossPattern, gatesPattern);
             return state;
         }
-        public static IGameState LoadLevel5()
+        public static IGameState LoadLevel5(World world)
         {
             Vector2 startPosition = new Vector2(300, 300);
 
             var state = new LocationState();
+            state.World = world;
             state.Controls = CreateKeyBoardControls();
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));

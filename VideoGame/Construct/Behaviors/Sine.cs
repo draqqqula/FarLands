@@ -28,9 +28,9 @@ namespace VideoGame
             Direction = direction;
         }
 
-        public void Act()
+        public void Act(TimeSpan deltaTime)
         {
-            t += Global.Variables.DeltaTime.TotalSeconds;
+            t += deltaTime.TotalSeconds;
         }
 
         public DrawingParameters ChangeAppearance(DrawingParameters parameters)

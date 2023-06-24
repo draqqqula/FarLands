@@ -29,6 +29,6 @@ namespace VideoGame
         /// <summary>
         /// вносит изменения в физическое представление объекта
         /// </summary>
-        public void Act();
+        public void Act(TimeSpan deltaTime);
     }
 }

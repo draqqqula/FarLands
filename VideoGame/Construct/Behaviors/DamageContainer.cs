@@ -17,7 +17,7 @@ namespace VideoGame
         public GameObject Parent { get; set; }
         public bool Enabled { get; set; }
 
-        public void Act()
+        public void Act(TimeSpan deltaTime)
         {
         }
 

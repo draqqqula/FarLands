@@ -181,7 +181,7 @@ namespace VideoGame
             }
         }
 
-        public void Act()
+        public void Act(TimeSpan deltaTime)
         {
             if (CurrentAction.Value != null && !CurrentAction.Value.RunCondition(this, Target))
             {

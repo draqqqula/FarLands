@@ -47,7 +47,6 @@ namespace VideoGame
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             Global.Variables.MainGame = this;
-            Global.Variables.MainSpriteBatch = _spriteBatch;
 
 
             _spriteBatch.Begin();
@@ -66,9 +65,7 @@ namespace VideoGame
 
         protected override void Update(GameTime gameTime)
         {
-            Global.Variables.DeltaTime = gameTime.ElapsedGameTime;
-
-            _world.Update();
+            _world.Update(gameTime.ElapsedGameTime, Window.ClientBounds);
 
             base.Update(gameTime);
         }
@@ -83,11 +80,11 @@ namespace VideoGame
                 foreach (var layer in _world.CurrentLevel.GameState.Layers.Values)
                 {
                     foreach (var drawable in layer.DrawBuffer.Values)
-                        drawable.Draw();
+                        drawable.Draw(_spriteBatch);
                     foreach (var tileMap in layer.TileMaps)
-                        tileMap.Draw();
+                        tileMap.Draw(_spriteBatch, _world.CurrentLevel.GameState.Camera);
                     foreach (var text in layer.TextObjects)
-                        text.Draw();
+                        text.Draw(_spriteBatch);
                     layer.DrawBuffer.Clear();
                 }
             }

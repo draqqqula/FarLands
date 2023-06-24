@@ -54,9 +54,12 @@ namespace VideoGame
             var myPlayable = member.GetBehavior<Playable>("Playable");
             var myTimerHandler = member.GetBehavior<TimerHandler>("TimerHandler");
 
-            Rectangle offset = member.PredictLayout(new Vector2(0, 1));
-            var segment = myPhysics.GetMapSegment(offset.Left, offset.Right).ToArray();
-            bool onGround = segment.Any(t => offset.Intersects(t));
+            Rectangle smallOffset = member.PredictLayout(new Vector2(0, 1));
+            Rectangle bigOffset = member.PredictLayout(new Vector2(0, 15));
+            var segment = myPhysics.GetMapSegment(smallOffset.Left, smallOffset.Right).ToArray();
+            bool onGround = segment.Any(t => smallOffset.Intersects(t));
+            bool nearGround = segment.Any(t => bigOffset.Intersects(t));
+
 
             GameControls controls = state.Controls;
             if (controls[Control.right])
@@ -81,26 +84,30 @@ namespace VideoGame
                 myTimerHandler.SetTimer("RecoverDash", TimeSpan.FromSeconds(1), (obj) => myPlayable.RecoverDash(), true);
             }
 
+            MovementVector jump;
             MovementVector fall;
-            if (myPhysics.Vectors.TryGetValue("Gravity", out fall))
+            bool onJump = myPhysics.Vectors.TryGetValue("Jump", out jump);
+            bool onFall = myPhysics.Vectors.TryGetValue("Gravity", out fall);
+            if (onFall)
             {
                 if (onGround)
                 {
                     fall.Originalize();
                     fall.Enabled = false;
                     myTimerHandler.Hold("OnGround", TimeSpan.FromSeconds(0.08), false);
+                    if (onJump && jump.Module <= fall.Module)
+                    {
+                        myPhysics.Vectors.Remove("Jump");
+                    }
                 }
                 else
                 {
                     fall.Enabled = true;
                 }
-            }
-
-            if (myPhysics.Faces[Side.Top])
-            {
-                MovementVector jump;
-                if (myPhysics.Vectors.TryGetValue("Jump", out jump))
+                if (onJump && myPhysics.Faces[Side.Top])
+                {
                     jump.Module = fall.Module * 0.9f;
+                }
             }
 
 
@@ -138,9 +145,7 @@ namespace VideoGame
                 }
                 else
                 {
-                    MovementVector jump;
-                    if (
-                        myPhysics.Vectors.TryGetValue("Jump", out jump) &&
+                    if (onJump && onFall &&
                         jump.Module > fall.Module)
                         member.SetAnimation("Jump", 0);
                     else

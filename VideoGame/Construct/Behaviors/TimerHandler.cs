@@ -165,11 +165,11 @@ namespace VideoGame
         public GameObject Parent { get; set; }
         public bool Enabled { get; set; }
 
-        public void Act()
+        public void Act(TimeSpan deltaTime)
         {
             RemoveTimers();
             AddTimers();
-            t += Global.Variables.DeltaTime;
+            t += deltaTime;
             var surpassed = Timers.Values
                 .Where(timer => !timer.IsOut && timer.Passes(t));
             foreach (var timer in surpassed)

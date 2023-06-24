@@ -40,11 +40,11 @@ namespace VideoGame
         /// внутренние границы, закреплены на цели
         /// положение камеры не может выйти за их пределы
         /// </summary>
-        public Rectangle InnerBorders { get; private set; }
+        private Rectangle InnerBorders { get; set; }
         /// <summary>
         /// внешние границы за которыми камера не может видеть
         /// </summary>
-        public Rectangle? OuterBorders { get; private set; }
+        private Rectangle? OuterBorders { get; set; }
         /// <summary>
         /// область пространства, попадающая в поле зрения камеры
         /// </summary>
@@ -52,20 +52,21 @@ namespace VideoGame
         {
             get
             {
-                var gameWindow = Global.Variables.MainGame.Window.ClientBounds;
                 return new Rectangle { 
-                    Location = new Point((int)Position.X - gameWindow.Width/2, (int)Position.Y - gameWindow.Height/2), 
-                    Height = gameWindow.Height, 
-                    Width = gameWindow.Width 
+                    Location = new Point((int)Position.X - ClientBounds.Width/2, (int)Position.Y - ClientBounds.Height/2), 
+                    Height = ClientBounds.Height, 
+                    Width = ClientBounds.Width 
                 };
             }
         }
-        private float InterpolationFactor
+        /// <summary>
+        /// границы экрана игрока
+        /// </summary>
+        private Rectangle ClientBounds { get; set; }
+
+        private float InterpolationFactor(float dt)
         {
-            get
-            {
-                return 1f - MathF.Pow(1-0.95f, (float)Global.Variables.DeltaTime.TotalSeconds/0.4f);
-            }
+            return 1f - MathF.Pow(1-0.95f, dt/0.4f);
         }
 
         public GameCamera(Vector2 position, Rectangle borders)
@@ -117,8 +118,9 @@ namespace VideoGame
         /// <summary>
         /// обновляет позицию камеры, учитывая интерполяцию, внешние и внутренние границы
         /// </summary>
-        public void Update()
+        public void Update(TimeSpan deltaTime, Rectangle clientBounds)
         {
+            ClientBounds = clientBounds;
             if ((TargetObject.Position - Position).Length() < CatchDistance)
             {
                 Position = TargetObject.Position;
@@ -128,7 +130,7 @@ namespace VideoGame
             {
 
                 var rawPos = FitInBorders(
-                    Lerp(TargetObject.Position, Position, (float)InterpolationFactor)
+                    Lerp(TargetObject.Position, Position, InterpolationFactor((float)deltaTime.TotalSeconds))
                     , TargetObject.Position, InnerBorders);
                 if (OuterBorders.HasValue)
                 {
