@@ -16,6 +16,8 @@ namespace VideoGame
     /// </summary>
     public class Player : IPattern
     {
+        private TextObject HealthBar { get; set; }
+
         public string AnimatorName => "Player";
 
         public string InitialAnimation => "Default";
@@ -38,7 +40,7 @@ namespace VideoGame
             member.AddBehavior(new Collider(18, true));
 
             member.AddBehavior(new Playable(dummy, timerHandler,
-                new TextObject("a", "heart", 0, 6f, 3f, state.Layers["LeftTopBound"], new Vector2(30, 30))
+                HealthBar
                 ,
                 new GameObject(state, "dash_bar", "Default", new Rectangle(0, 0, 28, 30), new Vector2(136, 85), state.Layers["RightBottomBound"], false),
                 true)
@@ -154,8 +156,9 @@ namespace VideoGame
             }
         }
 
-        public Player(TileMap surfaces)
+        public Player(TileMap surfaces, TextObject healthBar)
         {
+            HealthBar = healthBar;
             Editions = new List<GameObject>();
             Surfaces = surfaces;
         }

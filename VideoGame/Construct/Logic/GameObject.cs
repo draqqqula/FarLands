@@ -196,7 +196,7 @@ namespace VideoGame
             Position = position;
             Layer = layer;
             IsMirrored = isMirrored;
-            Animator = new Animator(animatorName, initialAnimation);
+            Animator = new Animator(animatorName, initialAnimation, state.MainAnimationBuilder);
             Behaviors = new Dictionary<string, IBehavior>();
             ToDestroy = false;
             state.AllObjects.Add(this);

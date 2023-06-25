@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -19,9 +20,9 @@ namespace VideoGame
         /// </summary>
         /// <param name="level"></param>
         /// <returns></returns>
-        public byte[,] BuildFromFiles(string level)
+        public byte[,] BuildFromFiles(string level, ContentManager content)
         {
-            var mapImage = Global.Variables.MainContent.Load<Texture2D>(level);
+            var mapImage = content.Load<Texture2D>(level);
             Color[] colorMap = new Color[mapImage.Width * mapImage.Height];
             mapImage.GetData(colorMap);
             var rawResult = colorMap.Select(color => ColorByteExchanger[color]).ToArray();

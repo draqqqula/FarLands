@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,21 +23,21 @@ namespace VideoGame.Construct
         /// загружает уровень, инициализируя новое состояние
         /// </summary>
         /// <param name="levelName"></param>
-        public void LoadLevel(string levelName)
+        public void LoadLevel(string levelName, ContentManager content)
         {
             var level = Levels[levelName];
             CurrentLevel = level;
-            level.GameState = level.Initialize(this);
+            level.GameState = level.Initialize(this, content);
         }
         /// <summary>
         /// загружает уровень, используя существующее состояние
         /// </summary>
         /// <param name="levelName"></param>
-        public void GoNext(string levelName)
+        public void GoNext(string levelName, ContentManager content)
         {
             var level = Levels[levelName];
             CurrentLevel = level;
-            if (level.GameState == null) level.Initialize(this);
+            if (level.GameState == null) level.Initialize(this, content);
         }
 
         /// <summary>
@@ -73,9 +74,9 @@ namespace VideoGame.Construct
         /// <summary>
         /// функция, возвращающая новое состояние уровня
         /// </summary>
-        public readonly Func<World,IGameState> Initialize;
+        public readonly Func<World,ContentManager,IGameState> Initialize;
 
-        public Level(string name, Func<World,IGameState> initialize)
+        public Level(string name, Func<World,ContentManager,IGameState> initialize)
         {
             Name = name;
             Initialize = initialize;

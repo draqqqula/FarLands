@@ -8,20 +8,24 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using System.Globalization;
+using Microsoft.Xna.Framework.Content;
 
 namespace Animations
 {
     /// <summary>
     /// Воссоздаёт пакет анимаций из png-файла и текстового файла с описанием каждого кадра
     /// </summary>
-    public static class AnimationBuilder
+    public class AnimationBuilder
     {
+        private ContentManager Content;
+
         private static AnimationFrame BuildFrame(string line)
         {
             var numbers = Regex.Split(line, ",");
             var positions = numbers.Take(6).Select(int.Parse).ToArray();
 
-            TimeSpan duration = TimeSpan.FromSeconds(double.Parse(numbers[6]));
+            TimeSpan duration = TimeSpan.FromSeconds(double.Parse(numbers[6], CultureInfo.InvariantCulture));
             Rectangle borders = new Rectangle(positions[0], positions[1], positions[2], positions[3]);
             Vector2 anchor = new Vector2(positions[4], positions[5]);
 
@@ -47,10 +51,10 @@ namespace Animations
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static Dictionary<string, Animation> BuildFromFiles(string name)
+        public Dictionary<string, Animation> BuildFromFiles(string name)
         {
             var animations = new Dictionary<string, Animation>();
-            var sheet = Global.Variables.MainContent.Load<Texture2D>(name);
+            var sheet = Content.Load<Texture2D>(name);
 
             var path = Path.Combine(Environment.CurrentDirectory, string.Concat(name, "_properties.txt"));
             var rawProperties = string.Join(' ', File.ReadAllLines(path));
@@ -62,6 +66,11 @@ namespace Animations
             }
 
             return animations;
+        }
+
+        public AnimationBuilder(ContentManager content)
+        {
+            Content = content;
         }
     }
 }

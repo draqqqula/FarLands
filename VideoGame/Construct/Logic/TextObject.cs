@@ -1,5 +1,6 @@
 ﻿using Animations;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -58,11 +59,11 @@ namespace VideoGame
             Scale = scale;
         }
 
-        public TextObject(string text, string fontName, int lineSpacing, float charSpacing, float scale, Layer layer, Vector2 position, params (char letter, Rectangle border, Rectangle cropping)[] characters) :
+        public TextObject(ContentManager content, string text, string fontName, int lineSpacing, float charSpacing, float scale, Layer layer, Vector2 position, params (char letter, Rectangle border, Rectangle cropping)[] characters) :
             this(
                 text,
                 new SpriteFont(
-                    Global.Variables.MainContent.Load<Texture2D>(fontName),
+                    content.Load<Texture2D>(fontName),
                     characters.Select(c => c.border).ToList(),
                     characters.Select(c => c.cropping).ToList(),
                     characters.Select(c => c.letter).ToList(),
@@ -78,8 +79,8 @@ namespace VideoGame
         {
         }
 
-        public TextObject(string text, string fontName, int lineSpacing, float charSpacing, float scale, Layer layer, Vector2 position) :
-            this(text, fontName, lineSpacing, charSpacing, scale, layer, position, FontBuilder.BuildFromFiles(fontName))
+        public TextObject(ContentManager content, string text, string fontName, int lineSpacing, float charSpacing, float scale, Layer layer, Vector2 position) :
+            this(content, text, fontName, lineSpacing, charSpacing, scale, layer, position, FontBuilder.BuildFromFiles(fontName))
         {
         }
 

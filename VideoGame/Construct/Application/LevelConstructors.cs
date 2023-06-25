@@ -13,6 +13,8 @@ using VideoGame.Construct.Behaviors;
 using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics.Metrics;
 using VideoGame.Construct;
+using Microsoft.Xna.Framework.Content;
+using Animations;
 
 namespace VideoGame
 {
@@ -28,14 +30,14 @@ namespace VideoGame
             return keyboard_controls;
         }
 
-        public static void CreateSkyAndClouds(Layer skyLayer, Layer cloudsLayer)
+        public static void CreateSkyAndClouds(Layer skyLayer, Layer cloudsLayer, ContentManager content)
         {
             new TileMap(Vector2.Zero, new byte[4, 4] {
                 { 2, 1, 3, 3 },
                 { 2, 1, 3, 3 },
                 { 2, 1, 3, 3 },
                 { 2, 1, 3, 3 } },
-                Global.Variables.MainContent.Load<Texture2D>("Sky"),
+                content.Load<Texture2D>("Sky"),
             new Rectangle(0, 0, 396, 100), skyLayer, new Vector2(3, 3), 3);
 
             new TileMap(new Vector2(0, 400), new byte[4, 1] {
@@ -43,13 +45,13 @@ namespace VideoGame
                 { 1 },
                 { 1 },
                 { 1 } },
-                Global.Variables.MainContent.Load<Texture2D>("Clouds"),
+                content.Load<Texture2D>("Clouds"),
                 new Rectangle(0, 0, 439, 115), cloudsLayer, new Vector2(3, 3), 3);
         }
 
-        public static TileMap CreateForestTilemap(Vector2 position, string levelName, Layer layer)
+        public static TileMap CreateForestTilemap(Vector2 position, string levelName, Layer layer, ContentManager content)
         {
-            return new TileMap(position, levelName, "rocks", new Rectangle(0, 0, 12, 12), layer, new Vector2(3, 3),
+            return new TileMap(content, position, levelName, "rocks", new Rectangle(0, 0, 12, 12), layer, new Vector2(3, 3),
                 new (Rectangle, Point, bool, Color)[]
                 {
                     (new Rectangle(0, 0, 12, 12), new Point(0, 0), true, Color.Black),
@@ -68,13 +70,14 @@ namespace VideoGame
         /// Инициализирует третий уровень. На нём игрок встречается с первыми врагами.
         /// </summary>
         /// <returns></returns>
-        public static IGameState LoadLevel3(World world)
+        public static IGameState LoadLevel3(World world, ContentManager content)
         {
             Vector2 exitPosition = new Vector2(5950, 700);
             Vector2 startPosition = new Vector2(450, 200);
 
             var state = new LocationState();
-            state.World = world;
+            state.LevelLoader = new LevelLoader(world, content);
+            state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
@@ -94,17 +97,17 @@ namespace VideoGame
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesFrontLayer, particlesBackLayer, leftTopBound);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
-            state.FPSCounter = new TextObject("a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
+            state.FPSCounter = new TextObject(content, "a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
 
-            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level3", surfacesLayer);
+            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level3", surfacesLayer, content);
 
-            CreateSkyAndClouds(backgroundLayer, cloudsLayer);
+            CreateSkyAndClouds(backgroundLayer, cloudsLayer, content);
 
             Family entities = new Family("Entities");
             IPattern idolPattern = new IdolEnemy(state, entities);
             IPattern hoodPattern = new HoodEnemy(state.MainTileMap, entities);
             IPattern streamZonePattern = new StreamZone(particlesFrontLayer, particlesBackLayer, entities, Side.Left, 0.00009, 3);
-            IPattern playerPattern = new Player(state.MainTileMap);
+            IPattern playerPattern = new Player(state.MainTileMap, new TextObject(content, "a", "heart", 0, 6f, 3f, state.Layers["LeftTopBound"], new Vector2(30, 30)));
             entities.AddPatterns(idolPattern, hoodPattern, playerPattern);
             idolPattern.CreateCopy(state, new Vector2(1700, 700), mainLayer, false);
             idolPattern.CreateCopy(state, new Vector2(3500, 200), mainLayer, false);
@@ -115,10 +118,10 @@ namespace VideoGame
             IPattern gatesPattern = new Gates("Level4", state.Player);
             gatesPattern.CreateCopy(state, exitPosition);
 
-            new TextObject("Enemies can also create streams", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 450));
-            new TextObject("when they attack", "pixel", 0, 3f, 3f, mainLayer, new Vector2(760, 500));
-            new TextObject("You need to catch the moment", "pixel", 0, 3f, 3f, mainLayer, new Vector2(670, 550));
-            new TextObject("And dash through", "pixel", 0, 3f, 3f, mainLayer, new Vector2(760, 600));
+            new TextObject(content, "Enemies can also create streams", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 450));
+            new TextObject(content, "when they attack", "pixel", 0, 3f, 3f, mainLayer, new Vector2(760, 500));
+            new TextObject(content, "You need to catch the moment", "pixel", 0, 3f, 3f, mainLayer, new Vector2(670, 550));
+            new TextObject(content, "And dash through", "pixel", 0, 3f, 3f, mainLayer, new Vector2(760, 600));
 
             var arrow = new GameObject(state, "arrow", "Default", new Rectangle(0, 0, 0, 0), new Vector2(-200, 0) + exitPosition, mainLayer, false);
             arrow.HitBox = new Rectangle(-10, -250, 20, 500);
@@ -134,10 +137,11 @@ namespace VideoGame
         /// Инициализирует второй уровень. На нём игрок учится пользоваться ветряным потоком.
         /// </summary>
         /// <returns></returns>
-        public static IGameState LoadLevel2(World world)
+        public static IGameState LoadLevel2(World world, ContentManager content)
         {
             var state = new LocationState();
-            state.World = world;
+            state.LevelLoader = new LevelLoader(world, content);
+            state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
@@ -158,11 +162,11 @@ namespace VideoGame
             state.AddLayers(mainLayer, backgroundLayer, bottomSurfaceLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesFrontLayer, particlesBackLayer, leftTopBound);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
-            state.FPSCounter = new TextObject("a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
+            state.FPSCounter = new TextObject(content, "a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
 
-            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level2", surfacesLayer);
+            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level2", surfacesLayer, content);
 
-            CreateSkyAndClouds(backgroundLayer, cloudsLayer);
+            CreateSkyAndClouds(backgroundLayer, cloudsLayer, content);
 
             Family entities = new Family("Entities");
             IPattern idolPattern = new IdolEnemy(state, entities);
@@ -170,11 +174,11 @@ namespace VideoGame
             IPattern leftStreamZonePattern = new StreamZone(particlesFrontLayer, particlesBackLayer, entities, Side.Left, 0.00001, 3);
             IPattern rightStreamZonePattern = new StreamZone(particlesFrontLayer, particlesBackLayer, entities, Side.Right, 0.00001, 3);
             IPattern biomassPattern = new Biomass(state, entities);
-            IPattern playerPattern = new Player(state.MainTileMap);
+            IPattern playerPattern = new Player(state.MainTileMap, new TextObject(content, "a", "heart", 0, 6f, 3f, state.Layers["LeftTopBound"], new Vector2(30, 30)));
             entities.AddPatterns(idolPattern, hoodPattern, playerPattern);
 
-            new TextObject("Dash through wind stream", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 300));
-            new TextObject("to avoid being hit by enemy", "pixel", 0, 3f, 3f, mainLayer, new Vector2(700, 350));
+            new TextObject(content, "Dash through wind stream", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 300));
+            new TextObject(content, "to avoid being hit by enemy", "pixel", 0, 3f, 3f, mainLayer, new Vector2(700, 350));
 
             biomassPattern.CreateCopy(state, new Vector2(750, 1000), mainLayer, false);
             var stream1 = leftStreamZonePattern.CreateCopy(state, new Vector2(1500, 1000));
@@ -184,13 +188,13 @@ namespace VideoGame
             stream2.HitBox = new Rectangle(-500, -100, 500, 200);
             biomassPattern.CreateCopy(state, new Vector2(700, 1400), mainLayer, false);
 
-            new TextObject("Direction matters too", "pixel", 0, 3f, 3f, mainLayer, new Vector2(800, 1700));
+            new TextObject(content, "Direction matters too", "pixel", 0, 3f, 3f, mainLayer, new Vector2(800, 1700));
             var stream3 = rightStreamZonePattern.CreateCopy(state, new Vector2(2000, 1750));
             stream3.HitBox = new Rectangle(-2000, -100, 2000, 200);
             biomassPattern.CreateCopy(state, new Vector2(700, 1750), mainLayer, false);
             biomassPattern.CreateCopy(state, new Vector2(1400, 1750), mainLayer, false);
 
-            new TileMap(Vector2.Zero, "level2background", "forest_background", new Rectangle(0, 0, 12, 12), bottomSurfaceLayer, new Vector2(3, 3), 1, Color.Black);
+            new TileMap(content, Vector2.Zero, "level2background", "forest_background", new Rectangle(0, 0, 12, 12), bottomSurfaceLayer, new Vector2(3, 3), 1, Color.Black);
 
             state.AddPatterns(idolPattern, hoodPattern, playerPattern, leftStreamZonePattern, rightStreamZonePattern, biomassPattern);
 
@@ -219,13 +223,14 @@ namespace VideoGame
         /// Инициализирует первый уровень. На нём игрок обучается базовым механикам передвижения
         /// </summary>
         /// <returns></returns>
-        public static IGameState LoadLevel1(World world)
+        public static IGameState LoadLevel1(World world, ContentManager content)
         {
             Vector2 exitPosition = new Vector2(5800, 1200);
             Vector2 startPosition = new Vector2(300, 300);
 
             var state = new LocationState();
-            state.World = world;
+            state.LevelLoader = new LevelLoader(world, content);
+            state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
@@ -245,17 +250,17 @@ namespace VideoGame
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesFrontLayer, particlesBackLayer, leftTopBound);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
-            state.FPSCounter = new TextObject("a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
+            state.FPSCounter = new TextObject(content, "a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
 
-            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level1", surfacesLayer);
+            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level1", surfacesLayer, content);
 
-            CreateSkyAndClouds(backgroundLayer, cloudsLayer);
+            CreateSkyAndClouds(backgroundLayer, cloudsLayer, content);
 
             Family entities = new Family("Entities");
             IPattern idolPattern = new IdolEnemy(state, entities);
             IPattern hoodPattern = new HoodEnemy(state.MainTileMap, entities);
             IPattern streamZonePattern = new StreamZone(particlesFrontLayer, particlesBackLayer, entities, Side.Left, 0.00009, 3);
-            IPattern playerPattern = new Player(state.MainTileMap);
+            IPattern playerPattern = new Player(state.MainTileMap, new TextObject(content, "a", "heart", 0, 6f, 3f, state.Layers["LeftTopBound"], new Vector2(30, 30)));
             entities.AddPatterns(idolPattern, hoodPattern, playerPattern);
             hoodPattern.CreateCopy(state, new Vector2(4000, 1000), mainLayer, true);
             //var stream = streamZonePattern.CreateCopy(state, new Vector2(2400, 1000));
@@ -265,11 +270,11 @@ namespace VideoGame
             IPattern gatesPattern = new Gates("Level2", state.Player);
             gatesPattern.CreateCopy(state, exitPosition);
 
-            new TextObject("Controls", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 500));
-            new TextObject("A Left", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 550));
-            new TextObject("D Right", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 600));
-            new TextObject("Space Jump", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 650));
-            new TextObject("Shift Dash", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 700));
+            new TextObject(content, "Controls", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 500));
+            new TextObject(content, "A Left", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 550));
+            new TextObject(content, "D Right", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 600));
+            new TextObject(content, "Space Jump", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 650));
+            new TextObject(content, "Shift Dash", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 700));
 
             var arrow = new GameObject(state, "arrow", "Default", new Rectangle(0, 0, 0, 0), new Vector2(-100, 0) + exitPosition, mainLayer, false);
             arrow.HitBox = new Rectangle(-10, -250, 20, 500);
@@ -281,12 +286,13 @@ namespace VideoGame
             return state;
         }
 
-        public static IGameState LoadLevel4(World world)
+        public static IGameState LoadLevel4(World world, ContentManager content)
         {
             Vector2 startPosition = new Vector2(300, 300);
 
             var state = new LocationState();
-            state.World = world;
+            state.LevelLoader = new LevelLoader(world, content);
+            state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
@@ -306,15 +312,15 @@ namespace VideoGame
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesFrontLayer, particlesBackLayer, leftTopBound);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
-            state.FPSCounter = new TextObject("a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
+            state.FPSCounter = new TextObject(content, "a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
 
-            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level4", surfacesLayer);
+            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level4", surfacesLayer, content);
 
-            CreateSkyAndClouds(backgroundLayer, cloudsLayer);
+            CreateSkyAndClouds(backgroundLayer, cloudsLayer, content);
 
             Family entities = new Family("Entities");
             IPattern streamZonePattern = new StreamZone(particlesFrontLayer, particlesBackLayer, entities, Side.Left, 0.00009, 3);
-            IPattern playerPattern = new Player(state.MainTileMap);
+            IPattern playerPattern = new Player(state.MainTileMap, new TextObject(content, "a", "heart", 0, 6f, 3f, state.Layers["LeftTopBound"], new Vector2(30, 30)));
             IPattern bossPattern = new Boss(state, entities);
             entities.AddPatterns(playerPattern, bossPattern);
             bossPattern.CreateCopy(state, new Vector2(900, 200), mainLayer, true);
@@ -329,19 +335,20 @@ namespace VideoGame
                 },
                 false);
 
-            new TextObject("Survive for 25 seconds", "pixel", 0, 3f, 3f, mainLayer, new Vector2(800, 200));
+            new TextObject(content, "Survive for 25 seconds", "pixel", 0, 3f, 3f, mainLayer, new Vector2(800, 200));
 
             camera.LinkTo(state.Player);
             camera.SetOuterBorders(state.MainTileMap.Frame);
             state.AddPatterns(playerPattern, streamZonePattern, bossPattern, gatesPattern);
             return state;
         }
-        public static IGameState LoadLevel5(World world)
+        public static IGameState LoadLevel5(World world, ContentManager content)
         {
             Vector2 startPosition = new Vector2(300, 300);
 
             var state = new LocationState();
-            state.World = world;
+            state.LevelLoader = new LevelLoader(world, content);
+            state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
@@ -361,21 +368,21 @@ namespace VideoGame
             state.AddLayers(mainLayer, backgroundLayer, surfacesLayer, cloudsLayer, interfaceLayer, rightBottomBound, particlesFrontLayer, particlesBackLayer, leftTopBound);
 
             var a = new GameObject(state, "Element_Selector", "Default", new Rectangle(-11, -60, 44, 120), new Vector2(136, 85), rightBottomBound, false);
-            state.FPSCounter = new TextObject("a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
+            state.FPSCounter = new TextObject(content, "a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
 
-            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level4", surfacesLayer);
+            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level4", surfacesLayer, content);
 
-            CreateSkyAndClouds(backgroundLayer, cloudsLayer);
+            CreateSkyAndClouds(backgroundLayer, cloudsLayer, content);
 
             Family entities = new Family("Entities");
-            IPattern playerPattern = new Player(state.MainTileMap);
+            IPattern playerPattern = new Player(state.MainTileMap, new TextObject(content, "a", "heart", 0, 6f, 3f, state.Layers["LeftTopBound"], new Vector2(30, 30)));
             entities.AddPatterns(playerPattern);
 
             state.Player = playerPattern.CreateCopy(state, new Vector2(300, 300), mainLayer, true);
 
-            new TextObject("Congratulations", "pixel", 0, 3f, 3f, mainLayer, new Vector2(800, 400));
-            new TextObject("You Won", "pixel", 0, 3f, 3f, mainLayer, new Vector2(900, 450));
-            new TextObject("Thanks for playing", "pixel", 0, 3f, 3f, mainLayer, new Vector2(760, 500));
+            new TextObject(content, "Congratulations", "pixel", 0, 3f, 3f, mainLayer, new Vector2(800, 400));
+            new TextObject(content, "You Won", "pixel", 0, 3f, 3f, mainLayer, new Vector2(900, 450));
+            new TextObject(content, "Thanks for playing", "pixel", 0, 3f, 3f, mainLayer, new Vector2(760, 500));
 
             camera.LinkTo(state.Player);
             camera.SetOuterBorders(state.MainTileMap.Frame);

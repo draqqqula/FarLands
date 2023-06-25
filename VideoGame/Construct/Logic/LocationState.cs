@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Animations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +28,8 @@ namespace VideoGame
         public GameControls Controls { get; set; }
         public GameCamera Camera { get; set; }
         public List<IPattern> Patterns { get; set; }
-        public World World { get; set; }
+        public LevelLoader LevelLoader { get; set; }
+        public AnimationBuilder MainAnimationBuilder { get; set; }
 
         public TileMap MainTileMap;
 
@@ -48,7 +50,7 @@ namespace VideoGame
         {
             var dummy = Player.GetBehavior<Dummy>("Dummy");
             if (dummy.Health == 0)
-                World.LoadLevel(World.CurrentLevel.Name);
+                LevelLoader.RestartLevel();
             FPSCounter.Text = Convert.ToString(Math.Round(1/deltaTime.TotalSeconds));
         }
 

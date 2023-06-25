@@ -46,7 +46,6 @@ namespace VideoGame
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            Global.Variables.MainGame = this;
 
 
             _spriteBatch.Begin();
@@ -57,7 +56,7 @@ namespace VideoGame
             _world.AddLevel(new Level("Level3", LevelConstructors.LoadLevel3));
             _world.AddLevel(new Level("Level4", LevelConstructors.LoadLevel4));
             _world.AddLevel(new Level("Level5", LevelConstructors.LoadLevel5));
-            _world.LoadLevel("Level1");
+            _world.LoadLevel("Level1", Content);
 
 
             _spriteBatch.End();

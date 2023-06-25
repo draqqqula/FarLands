@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Animations;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +10,33 @@ using VideoGame.Construct;
 
 namespace VideoGame
 {
+    public class LevelLoader
+    {
+        private World World;
+        private ContentManager Content;
+        public void LoadLevel(string name)
+        {
+            World.LoadLevel(name, Content);
+        }
+        public void RestartLevel()
+        {
+            World.LoadLevel(World.CurrentLevel.Name, Content);
+        }
+
+        public LevelLoader(World world, ContentManager content)
+        {
+            World = world;
+            Content = content;
+        }
+    }
+
     /// <summary>
     /// состояние уровня
     /// </summary>
     public interface IGameState
     {
-        public World World { get; set; }
+        public AnimationBuilder MainAnimationBuilder { get; set; }
+        public LevelLoader LevelLoader { get; set; }
         /// <summary>
         /// поочерёдно вычёркивает удалённые объекты, обновляет поведения, обновляет анимации, обновляет паттерны,
         /// производит действия предусмотренные наследным классом

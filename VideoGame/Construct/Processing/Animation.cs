@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -119,8 +120,8 @@ namespace Animations
             }
         }
 
-        public Animator(string animationsFile, string initial) :
-            this(AnimationBuilder.BuildFromFiles(animationsFile), initial)
+        public Animator(string animationsFile, string initial, AnimationBuilder animationBuilder) :
+            this(animationBuilder.BuildFromFiles(animationsFile), initial)
         {
         }
     }
@@ -162,7 +163,7 @@ namespace Animations
 
             Looping = bool.Parse(property("Looping", "false"));
             NextAnimation = property("NextAnimation", null);
-            SpeedFactor = double.Parse(property("SpeedFactor", "1"));
+            SpeedFactor = double.Parse(property("SpeedFactor", "1"), CultureInfo.InvariantCulture);
 
             Frames = frames;
             Name = name;

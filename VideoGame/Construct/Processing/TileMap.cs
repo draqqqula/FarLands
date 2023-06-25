@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace VideoGame
@@ -47,11 +48,11 @@ namespace VideoGame
             }
         }
 
-        public TileMap(Vector2 position, string level, string fileName, Rectangle tileFrame, Layer layer, Vector2 scale, int tileCount, params Color[] colors) :
+        public TileMap(ContentManager content, Vector2 position, string level, string fileName, Rectangle tileFrame, Layer layer, Vector2 scale, int tileCount, params Color[] colors) :
             this(
                 position, 
-                new TileMapBuilder().BuildFromFiles(level), 
-                Global.Variables.MainContent.Load<Texture2D>(fileName), 
+                new TileMapBuilder().BuildFromFiles(level, content), 
+                content.Load<Texture2D>(fileName), 
                 tileFrame,
                 layer, 
                 scale,
@@ -75,11 +76,11 @@ namespace VideoGame
         {
         }
 
-        public TileMap(Vector2 position, string level, string fileName, Rectangle tileFrame, Layer layer, Vector2 scale, (Rectangle, Point, bool, Color)[] tiles) :
+        public TileMap(ContentManager content, Vector2 position, string level, string fileName, Rectangle tileFrame, Layer layer, Vector2 scale, (Rectangle, Point, bool, Color)[] tiles) :
     this(
         position,
-        new TileMapBuilder(tiles.Select(t => t.Item4).ToArray()).BuildFromFiles(level),
-        Global.Variables.MainContent.Load<Texture2D>(fileName),
+        new TileMapBuilder(tiles.Select(t => t.Item4).ToArray()).BuildFromFiles(level, content),
+        content.Load<Texture2D>(fileName),
         tileFrame,
         layer,
         scale,
