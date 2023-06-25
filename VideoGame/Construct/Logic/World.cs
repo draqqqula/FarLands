@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Nito.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,24 +16,16 @@ namespace VideoGame.Construct
     /// </summary>
     public class World
     {
-        public bool IsReadyToDisplay
+        public bool IsReady
         {
-            get => CurrentLevel != null;
-        }
-        private IEnumerable<Layer> Layers
-        {
-            get => CurrentLevel.GameState.Layers.Values;
+            get => CurrentLevels.Count > 0;
         }
 
-        public void RestartLevel(ContentManager content)
-        {
-            LoadLevel(CurrentLevel.Name, content);
-        }
         private readonly Dictionary<string, Level> Levels;
         /// <summary>
-        /// текущий уровень
+        /// текущие уровни, которые будут обновляться и отрисовываться
         /// </summary>
-        private Level CurrentLevel { get; set; }
+        private Dictionary<string,Level> CurrentLevels { get; set; }
         /// <summary>
         /// загружает уровень, инициализируя новое состояние
         /// </summary>
@@ -40,8 +33,11 @@ namespace VideoGame.Construct
         public void LoadLevel(string levelName, ContentManager content)
         {
             var level = Levels[levelName];
-            CurrentLevel = level;
-            level.GameState = level.Initialize(this, content);
+            if (!CurrentLevels.ContainsKey(levelName))
+            {
+                CurrentLevels.Add(levelName, level);
+            }
+            level.GameState = level.Initialize(this, content, levelName);
         }
         /// <summary>
         /// загружает уровень, используя существующее состояние
@@ -50,8 +46,14 @@ namespace VideoGame.Construct
         public void GoNext(string levelName, ContentManager content)
         {
             var level = Levels[levelName];
-            CurrentLevel = level;
-            if (level.GameState == null) level.Initialize(this, content);
+            CurrentLevels.Add(levelName, level);
+            if (level.GameState == null) level.Initialize(this, content, levelName);
+        }
+
+        public void Pass(string from, string to, ContentManager content)
+        {
+            Levels.Remove(from);
+            LoadLevel(to, content);
         }
 
         /// <summary>
@@ -65,23 +67,35 @@ namespace VideoGame.Construct
 
         public void Update(TimeSpan deltaTime, Rectangle clientBounds)
         {
-            if (CurrentLevel != null)
-                CurrentLevel.GameState.Update(deltaTime, clientBounds);
+            if (IsReady)
+            {
+                foreach(var level in CurrentLevels.Values.ToArray())
+                    level.GameState.Update(deltaTime, clientBounds);
+            }
         }
 
         public World()
         {
             Levels = new Dictionary<string, Level>();
+            CurrentLevels = new Dictionary<string, Level>();
         }
 
         public void Display(SpriteBatch spriteBatch)
         {
-            foreach (var layer in Layers)
+            foreach(var level in CurrentLevels.Values)
+            {
+                DisplayLevel(spriteBatch, level);
+            }
+        }
+
+        private void DisplayLevel(SpriteBatch spriteBatch, Level level)
+        {
+            foreach (var layer in level.GameState.Layers.Values)
             {
                 foreach (var drawable in layer.DrawBuffer.Values)
                     drawable.Draw(spriteBatch);
                 foreach (var tileMap in layer.TileMaps)
-                    tileMap.Draw(spriteBatch, CurrentLevel.GameState.Camera);
+                    tileMap.Draw(spriteBatch, level.GameState.Camera);
                 foreach (var text in layer.TextObjects)
                     text.Draw(spriteBatch);
                 layer.DrawBuffer.Clear();
@@ -102,9 +116,9 @@ namespace VideoGame.Construct
         /// <summary>
         /// функция, возвращающая новое состояние уровня
         /// </summary>
-        public readonly Func<World,ContentManager,IGameState> Initialize;
+        public readonly Func<World,ContentManager,string,IGameState> Initialize;
 
-        public Level(string name, Func<World,ContentManager,IGameState> initialize)
+        public Level(string name, Func<World,ContentManager,string,IGameState> initialize)
         {
             Name = name;
             Initialize = initialize;

@@ -12,21 +12,27 @@ namespace VideoGame
 {
     public class LevelLoader
     {
+        private string ThisLevel;
         private World World;
         private ContentManager Content;
         public void LoadLevel(string name)
         {
             World.LoadLevel(name, Content);
         }
+        public void Pass(string name)
+        {
+            World.Pass(ThisLevel, name, Content);
+        }
         public void RestartLevel()
         {
-            World.RestartLevel(Content);
+            World.LoadLevel(ThisLevel, Content);
         }
 
-        public LevelLoader(World world, ContentManager content)
+        public LevelLoader(World world, ContentManager content, string thisLevel)
         {
             World = world;
             Content = content;
+            ThisLevel = thisLevel;
         }
     }
 

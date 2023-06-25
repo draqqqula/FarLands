@@ -57,6 +57,7 @@ namespace VideoGame
             _world.AddLevel(new Level("Level4", LevelConstructors.LoadLevel4));
             _world.AddLevel(new Level("Level5", LevelConstructors.LoadLevel5));
             _world.LoadLevel("Level1", Content);
+            _world.LoadLevel("Level5", Content);
 
 
             _spriteBatch.End();
@@ -74,7 +75,7 @@ namespace VideoGame
 
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-            if (_world.IsReadyToDisplay)
+            if (_world.IsReady)
             {
                 _world.Display(_spriteBatch);
             }

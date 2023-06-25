@@ -70,13 +70,13 @@ namespace VideoGame
         /// Инициализирует третий уровень. На нём игрок встречается с первыми врагами.
         /// </summary>
         /// <returns></returns>
-        public static IGameState LoadLevel3(World world, ContentManager content)
+        public static IGameState LoadLevel3(World world, ContentManager content, string levelName)
         {
             Vector2 exitPosition = new Vector2(5950, 700);
             Vector2 startPosition = new Vector2(450, 200);
 
             var state = new LocationState();
-            state.LevelLoader = new LevelLoader(world, content);
+            state.LevelLoader = new LevelLoader(world, content, levelName);
             state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
@@ -137,10 +137,10 @@ namespace VideoGame
         /// Инициализирует второй уровень. На нём игрок учится пользоваться ветряным потоком.
         /// </summary>
         /// <returns></returns>
-        public static IGameState LoadLevel2(World world, ContentManager content)
+        public static IGameState LoadLevel2(World world, ContentManager content, string levelName)
         {
             var state = new LocationState();
-            state.LevelLoader = new LevelLoader(world, content);
+            state.LevelLoader = new LevelLoader(world, content, levelName);
             state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
@@ -223,13 +223,13 @@ namespace VideoGame
         /// Инициализирует первый уровень. На нём игрок обучается базовым механикам передвижения
         /// </summary>
         /// <returns></returns>
-        public static IGameState LoadLevel1(World world, ContentManager content)
+        public static IGameState LoadLevel1(World world, ContentManager content, string levelName)
         {
             Vector2 exitPosition = new Vector2(5800, 1200);
             Vector2 startPosition = new Vector2(300, 300);
 
             var state = new LocationState();
-            state.LevelLoader = new LevelLoader(world, content);
+            state.LevelLoader = new LevelLoader(world, content, levelName);
             state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
@@ -286,12 +286,12 @@ namespace VideoGame
             return state;
         }
 
-        public static IGameState LoadLevel4(World world, ContentManager content)
+        public static IGameState LoadLevel4(World world, ContentManager content, string levelName)
         {
             Vector2 startPosition = new Vector2(300, 300);
 
             var state = new LocationState();
-            state.LevelLoader = new LevelLoader(world, content);
+            state.LevelLoader = new LevelLoader(world, content, levelName);
             state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
@@ -342,12 +342,12 @@ namespace VideoGame
             state.AddPatterns(playerPattern, streamZonePattern, bossPattern, gatesPattern);
             return state;
         }
-        public static IGameState LoadLevel5(World world, ContentManager content)
+        public static IGameState LoadLevel5(World world, ContentManager content, string levelName)
         {
             Vector2 startPosition = new Vector2(300, 300);
 
             var state = new LocationState();
-            state.LevelLoader = new LevelLoader(world, content);
+            state.LevelLoader = new LevelLoader(world, content, levelName);
             state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
@@ -372,7 +372,7 @@ namespace VideoGame
 
             state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level4", surfacesLayer, content);
 
-            CreateSkyAndClouds(backgroundLayer, cloudsLayer, content);
+            //CreateSkyAndClouds(backgroundLayer, cloudsLayer, content);
 
             Family entities = new Family("Entities");
             IPattern playerPattern = new Player(state.MainTileMap, new TextObject(content, "a", "heart", 0, 6f, 3f, state.Layers["LeftTopBound"], new Vector2(30, 30)));
