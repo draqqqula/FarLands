@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,24 @@ namespace VideoGame.Construct
     /// </summary>
     public class World
     {
+        public bool IsReadyToDisplay
+        {
+            get => CurrentLevel != null;
+        }
+        private IEnumerable<Layer> Layers
+        {
+            get => CurrentLevel.GameState.Layers.Values;
+        }
+
+        public void RestartLevel(ContentManager content)
+        {
+            LoadLevel(CurrentLevel.Name, content);
+        }
         private readonly Dictionary<string, Level> Levels;
         /// <summary>
         /// текущий уровень
         /// </summary>
-        public Level CurrentLevel { get; private set; }
+        private Level CurrentLevel { get; set; }
         /// <summary>
         /// загружает уровень, инициализируя новое состояние
         /// </summary>
@@ -58,6 +72,20 @@ namespace VideoGame.Construct
         public World()
         {
             Levels = new Dictionary<string, Level>();
+        }
+
+        public void Display(SpriteBatch spriteBatch)
+        {
+            foreach (var layer in Layers)
+            {
+                foreach (var drawable in layer.DrawBuffer.Values)
+                    drawable.Draw(spriteBatch);
+                foreach (var tileMap in layer.TileMaps)
+                    tileMap.Draw(spriteBatch, CurrentLevel.GameState.Camera);
+                foreach (var text in layer.TextObjects)
+                    text.Draw(spriteBatch);
+                layer.DrawBuffer.Clear();
+            }
         }
     }
 

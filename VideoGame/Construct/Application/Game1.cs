@@ -74,18 +74,9 @@ namespace VideoGame
 
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-            if (_world.CurrentLevel != null)
+            if (_world.IsReadyToDisplay)
             {
-                foreach (var layer in _world.CurrentLevel.GameState.Layers.Values)
-                {
-                    foreach (var drawable in layer.DrawBuffer.Values)
-                        drawable.Draw(_spriteBatch);
-                    foreach (var tileMap in layer.TileMaps)
-                        tileMap.Draw(_spriteBatch, _world.CurrentLevel.GameState.Camera);
-                    foreach (var text in layer.TextObjects)
-                        text.Draw(_spriteBatch);
-                    layer.DrawBuffer.Clear();
-                }
+                _world.Display(_spriteBatch);
             }
 
             _spriteBatch.End();

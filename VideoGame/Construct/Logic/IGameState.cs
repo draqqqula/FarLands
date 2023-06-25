@@ -20,7 +20,7 @@ namespace VideoGame
         }
         public void RestartLevel()
         {
-            World.LoadLevel(World.CurrentLevel.Name, Content);
+            World.RestartLevel(Content);
         }
 
         public LevelLoader(World world, ContentManager content)
