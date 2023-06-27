@@ -7,18 +7,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Background;
 
 namespace VideoGame.Construct
 {
+    public class GameClient
+    {
+        public readonly GameWindow Window;
+
+        public GameClient(GameWindow window)
+        {
+            Window = window;
+        }
+    }
     /// <summary>
     /// Содержит все уровни.
     /// Позволяет переключаться между разными уровнями игры.
     /// </summary>
     public class World
     {
+        public readonly GameClient Client;
         public bool IsReady
         {
             get => CurrentLevels.Count > 0;
+        }
+
+        public bool IsLevelActive(Level level)
+        {
+            return CurrentLevels.ContainsValue(level);
+        }
+        public bool IsLevelActive(string levelName)
+        {
+            return CurrentLevels.ContainsKey(levelName);
         }
 
         private readonly Dictionary<string, Level> Levels;
@@ -30,7 +50,7 @@ namespace VideoGame.Construct
         /// загружает уровень, инициализируя новое состояние
         /// </summary>
         /// <param name="levelName"></param>
-        public void LoadLevel(string levelName, ContentManager content)
+        public Level LoadLevel(string levelName, ContentManager content)
         {
             var level = Levels[levelName];
             if (!CurrentLevels.ContainsKey(levelName))
@@ -38,6 +58,11 @@ namespace VideoGame.Construct
                 CurrentLevels.Add(levelName, level);
             }
             level.GameState = level.Initialize(this, content, levelName);
+            return level;
+        }
+        public void UnloadLevel(string levelName)
+        {
+            CurrentLevels.Remove(levelName);
         }
         /// <summary>
         /// загружает уровень, используя существующее состояние
@@ -52,7 +77,7 @@ namespace VideoGame.Construct
 
         public void Pass(string from, string to, ContentManager content)
         {
-            Levels.Remove(from);
+            UnloadLevel(from);
             LoadLevel(to, content);
         }
 
@@ -65,17 +90,18 @@ namespace VideoGame.Construct
             Levels.Add(level.Name, level);
         }
 
-        public void Update(TimeSpan deltaTime, Rectangle clientBounds)
+        public void Update(TimeSpan deltaTime)
         {
             if (IsReady)
             {
                 foreach(var level in CurrentLevels.Values.ToArray())
-                    level.GameState.Update(deltaTime, clientBounds);
+                    level.GameState.Update(deltaTime, level.OnPause);
             }
         }
 
-        public World()
+        public World(GameClient client)
         {
+            Client = client;
             Levels = new Dictionary<string, Level>();
             CurrentLevels = new Dictionary<string, Level>();
         }
@@ -101,6 +127,16 @@ namespace VideoGame.Construct
                 layer.DrawBuffer.Clear();
             }
         }
+
+        public void PauseLevel(string name)
+        {
+            CurrentLevels[name].Pause();
+        }
+
+        public void ResumeLevel(string name)
+        {
+            CurrentLevels[name].Resume();
+        }
     }
 
     /// <summary>
@@ -108,6 +144,19 @@ namespace VideoGame.Construct
     /// </summary>
     public class Level
     {
+        public bool OnPause { get; private set; }
+        public void Pause()
+        {
+            OnPause = true;
+        }
+        public void Resume()
+        {
+            OnPause = false;
+        }
+        public void TogglePause()
+        {
+            OnPause = !OnPause;
+        }
         /// <summary>
         /// текущее состояние уровня
         /// </summary>
@@ -122,6 +171,7 @@ namespace VideoGame.Construct
         {
             Name = name;
             Initialize = initialize;
+            OnPause = false;
         }
     }
 }

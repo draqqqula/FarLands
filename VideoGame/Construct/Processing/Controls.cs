@@ -14,7 +14,8 @@ namespace VideoGame
         left,
         right,
         jump,
-        dash
+        dash,
+        pause
     }
     /// <summary>
     /// содержит информацию о том, какая клавиша за какое действие отвечает

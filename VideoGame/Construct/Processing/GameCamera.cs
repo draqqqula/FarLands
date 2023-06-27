@@ -13,12 +13,14 @@ namespace VideoGame
     /// </summary>
     public class GameCamera
     {
+        private readonly GameWindow Window;
+
         public Vector2 Position { get; private set; }
 
-        public Vector2 LeftTopCorner { get { return new Vector2(Position.X - Window.Width / 2, Position.Y - Window.Height / 2); } }
-        public Vector2 RightTopCorner { get { return new Vector2(Position.X + Window.Width / 2, Position.Y - Window.Height / 2); } }
-        public Vector2 LeftBottomCorner { get { return new Vector2(Position.X - Window.Width / 2, Position.Y + Window.Height / 2); } }
-        public Vector2 RightBottomCorner { get { return new Vector2(Position.X + Window.Width / 2, Position.Y + Window.Height / 2); } }
+        public Vector2 LeftTopCorner { get { return new Vector2(Position.X - Area.Width / 2, Position.Y - Area.Height / 2); } }
+        public Vector2 RightTopCorner { get { return new Vector2(Position.X + Area.Width / 2, Position.Y - Area.Height / 2); } }
+        public Vector2 LeftBottomCorner { get { return new Vector2(Position.X - Area.Width / 2, Position.Y + Area.Height / 2); } }
+        public Vector2 RightBottomCorner { get { return new Vector2(Position.X + Area.Width / 2, Position.Y + Area.Height / 2); } }
 
         private const float CatchDistance = 0.4f;
 
@@ -48,7 +50,7 @@ namespace VideoGame
         /// <summary>
         /// область пространства, попадающая в поле зрения камеры
         /// </summary>
-        public Rectangle Window
+        public Rectangle Area
         {
             get
             {
@@ -62,17 +64,21 @@ namespace VideoGame
         /// <summary>
         /// границы экрана игрока
         /// </summary>
-        private Rectangle ClientBounds { get; set; }
+        private Rectangle ClientBounds
+        {
+            get => Window.ClientBounds;
+        }
 
         private float InterpolationFactor(float dt)
         {
             return 1f - MathF.Pow(1-0.95f, dt/0.4f);
         }
 
-        public GameCamera(Vector2 position, Rectangle borders)
+        public GameCamera(Vector2 position, Rectangle borders, GameWindow window)
         {
             Position = position;
             InnerBorders = borders;
+            Window = window;
         }
         /// <summary>
         /// устанавливает внешние границы пространства, в котором камера может видеть
@@ -90,7 +96,7 @@ namespace VideoGame
         /// <returns></returns>
         public bool Sees(GameObject obj)
         {
-            return Window.Intersects(obj.Layout);
+            return Area.Intersects(obj.Layout);
         }
 
         private Vector2 Lerp(Vector2 a, Vector2 b, float k)
@@ -118,24 +124,22 @@ namespace VideoGame
         /// <summary>
         /// обновляет позицию камеры, учитывая интерполяцию, внешние и внутренние границы
         /// </summary>
-        public void Update(TimeSpan deltaTime, Rectangle clientBounds)
+        public void Update(TimeSpan deltaTime)
         {
-            ClientBounds = clientBounds;
-            if ((TargetObject.Position - Position).Length() < CatchDistance)
-            {
-                Position = TargetObject.Position;
-                return;
-            }
             if (TargetObject != null)
             {
-
+                if ((TargetObject.Position - Position).Length() < CatchDistance)
+                {
+                    Position = TargetObject.Position;
+                    return;
+                }
                 var rawPos = FitInBorders(
                     Lerp(TargetObject.Position, Position, InterpolationFactor((float)deltaTime.TotalSeconds))
                     , TargetObject.Position, InnerBorders);
                 if (OuterBorders.HasValue)
                 {
                     var outer = OuterBorders.Value;
-                    Position = FitInBorders(rawPos, outer.Center.ToVector2(), new Rectangle(new Point(0, 0), new Point(outer.Width - Window.Width, outer.Height - Window.Height)));
+                    Position = FitInBorders(rawPos, outer.Center.ToVector2(), new Rectangle(new Point(0, 0), new Point(outer.Width - Area.Width, outer.Height - Area.Height)));
                 }
                 else
                     Position = rawPos;

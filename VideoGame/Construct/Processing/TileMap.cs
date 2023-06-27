@@ -118,7 +118,7 @@ namespace VideoGame
                         var tilePos = Layer.DrawingFunction(Position + new Vector2((i * TileFrame.Width - tileOffset.X) * Scale.Y, (j * TileFrame.Height - tileOffset.Y) * Scale.Y));
                         var tileLayout = new Rectangle(tilePos.ToPoint() + camera.LeftTopCorner.ToPoint(), 
                             new Point(tileSize.Width * (int)Scale.Y, tileSize.Height * (int)Scale.X));
-                        if (camera.Window.Intersects(tileLayout))
+                        if (camera.Area.Intersects(tileLayout))
                         {
                             spriteBatch.Draw(
                                 Sheet,

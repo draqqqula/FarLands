@@ -50,22 +50,20 @@ namespace VideoGame
 
             _spriteBatch.Begin();
 
-            _world = new World();
+            _world = new World(new GameClient(Window));
             _world.AddLevel(new Level("Level1", LevelConstructors.LoadLevel1));
             _world.AddLevel(new Level("Level2", LevelConstructors.LoadLevel2));
             _world.AddLevel(new Level("Level3", LevelConstructors.LoadLevel3));
             _world.AddLevel(new Level("Level4", LevelConstructors.LoadLevel4));
             _world.AddLevel(new Level("Level5", LevelConstructors.LoadLevel5));
+            _world.AddLevel(new Level("Menu", LevelConstructors.LoadMenu));
             _world.LoadLevel("Level1", Content);
-            _world.LoadLevel("Level5", Content);
-
-
             _spriteBatch.End();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            _world.Update(gameTime.ElapsedGameTime, Window.ClientBounds);
+            _world.Update(gameTime.ElapsedGameTime);
 
             base.Update(gameTime);
         }

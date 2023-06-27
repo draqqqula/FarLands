@@ -27,6 +27,7 @@ namespace VideoGame
             keyboard_controls.ChangeControl(Control.right, () => Keyboard.GetState().IsKeyDown(Keys.D));
             keyboard_controls.ChangeControl(Control.jump, () => Keyboard.GetState().IsKeyDown(Keys.Space));
             keyboard_controls.ChangeControl(Control.dash, () => Keyboard.GetState().IsKeyDown(Keys.LeftShift));
+            keyboard_controls.ChangeControl(Control.pause, () => Keyboard.GetState().IsKeyDown(Keys.Escape));
             return keyboard_controls;
         }
 
@@ -66,6 +67,18 @@ namespace VideoGame
                 });
         }
 
+
+
+        public static IGameState LoadMenu(World world, ContentManager content, string levelName)
+        {
+            var state = new MenuState();
+            state.LevelLoader = new LevelLoader(world, content, levelName);
+            state.MainAnimationBuilder = new AnimationBuilder(content);
+            state.Controls = CreateKeyBoardControls();
+            state.Camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600), world.Client.Window);
+            return state;
+        }
+
         /// <summary>
         /// Инициализирует третий уровень. На нём игрок встречается с первыми врагами.
         /// </summary>
@@ -80,7 +93,7 @@ namespace VideoGame
             state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
-            var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
+            var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600), world.Client.Window);
             state.Camera = camera;
             Layer mainLayer = new Layer("Main", a => camera.ApplyParalax(a, 1, 1), 0.5);
             Layer backgroundLayer = new Layer("BackGround", a => a, 0);
@@ -89,7 +102,7 @@ namespace VideoGame
             Layer particlesFrontLayer = new Layer("ParticlesFront", a => camera.ApplyParalax(a, 1, 1), 0.1);
             Layer particlesBackLayer = new Layer("ParticlesBack", a => camera.ApplyParalax(a, 1, 1), 0.6);
             Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
-            Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
+            Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Area.Width, camera.Area.Height) - a, 1);
             Layer leftTopBound = new Layer("LeftTopBound", a => a, 1);
             state.MainLayer = mainLayer;
             state.FrontParticlesLayer = particlesFrontLayer;
@@ -144,7 +157,7 @@ namespace VideoGame
             state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
-            var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
+            var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600), world.Client.Window);
             state.Camera = camera;
             Layer mainLayer = new Layer("Main", a => camera.ApplyParalax(a, 1, 1), 0.5);
             Layer backgroundLayer = new Layer("BackGround", a => a, 0);
@@ -154,7 +167,7 @@ namespace VideoGame
             Layer particlesFrontLayer = new Layer("ParticlesFront", a => camera.ApplyParalax(a, 1, 1), 0.16);
             Layer particlesBackLayer = new Layer("ParticlesBack", a => camera.ApplyParalax(a, 1, 1), 0.6);
             Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
-            Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
+            Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Area.Width, camera.Area.Height) - a, 1);
             Layer leftTopBound = new Layer("LeftTopBound", a => a, 1);
             state.MainLayer = mainLayer;
             state.FrontParticlesLayer = particlesFrontLayer;
@@ -233,7 +246,7 @@ namespace VideoGame
             state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
-            var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
+            var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600), world.Client.Window);
             state.Camera = camera;
             Layer mainLayer = new Layer("Main", a => camera.ApplyParalax(a, 1, 1), 0.5);
             Layer backgroundLayer = new Layer("BackGround", a => a, 0);
@@ -242,7 +255,7 @@ namespace VideoGame
             Layer particlesFrontLayer = new Layer("ParticlesFront", a => camera.ApplyParalax(a, 1, 1), 0.1);
             Layer particlesBackLayer = new Layer("ParticlesBack", a => camera.ApplyParalax(a, 1, 1), 0.6);
             Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
-            Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
+            Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Area.Width, camera.Area.Height) - a, 1);
             Layer leftTopBound = new Layer("LeftTopBound", a => a, 1);
             state.MainLayer = mainLayer;
             state.FrontParticlesLayer = particlesFrontLayer;
@@ -295,7 +308,7 @@ namespace VideoGame
             state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
-            var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
+            var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600), world.Client.Window);
             state.Camera = camera;
             Layer mainLayer = new Layer("Main", a => camera.ApplyParalax(a, 1, 1), 0.5);
             Layer backgroundLayer = new Layer("BackGround", a => a, 0);
@@ -304,7 +317,7 @@ namespace VideoGame
             Layer particlesFrontLayer = new Layer("ParticlesFront", a => camera.ApplyParalax(a, 1, 1), 0.1);
             Layer particlesBackLayer = new Layer("ParticlesBack", a => camera.ApplyParalax(a, 1, 1), 0.6);
             Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
-            Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
+            Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Area.Width, camera.Area.Height) - a, 1);
             Layer leftTopBound = new Layer("LeftTopBound", a => a, 1);
             state.MainLayer = particlesFrontLayer;
             state.FrontParticlesLayer = particlesFrontLayer;
@@ -351,7 +364,7 @@ namespace VideoGame
             state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
 
-            var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600));
+            var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600), world.Client.Window);
             state.Camera = camera;
             Layer mainLayer = new Layer("Main", a => camera.ApplyParalax(a, 1, 1), 0.5);
             Layer backgroundLayer = new Layer("BackGround", a => a, 0);
@@ -360,7 +373,7 @@ namespace VideoGame
             Layer particlesFrontLayer = new Layer("ParticlesFront", a => camera.ApplyParalax(a, 1, 1), 0.1);
             Layer particlesBackLayer = new Layer("ParticlesBack", a => camera.ApplyParalax(a, 1, 1), 0.6);
             Layer interfaceLayer = new Layer("TopLeftBound", a => a, 1);
-            Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Window.Width, camera.Window.Height) - a, 1);
+            Layer rightBottomBound = new Layer("RightBottomBound", a => new Vector2(camera.Area.Width, camera.Area.Height) - a, 1);
             Layer leftTopBound = new Layer("LeftTopBound", a => a, 1);
             state.MainLayer = particlesFrontLayer;
             state.FrontParticlesLayer = particlesFrontLayer;

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace VideoGame
 {
+
     /// <summary>
     /// Шаблон объекта, который позволяет перейти с уровня на уровень.
     /// </summary>

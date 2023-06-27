@@ -12,12 +12,18 @@ namespace VideoGame
 {
     public class LevelLoader
     {
+        private Level PauseHandler;
         private string ThisLevel;
         private World World;
         private ContentManager Content;
-        public void LoadLevel(string name)
+
+        public bool IsReadyToResume
         {
-            World.LoadLevel(name, Content);
+            get => PauseHandler is null || !World.IsLevelActive(PauseHandler);
+        }
+        public Level LoadLevel(string name)
+        {
+            return World.LoadLevel(name, Content);
         }
         public void Pass(string name)
         {
@@ -26,6 +32,22 @@ namespace VideoGame
         public void RestartLevel()
         {
             World.LoadLevel(ThisLevel, Content);
+        }
+
+        public void Pause(Level pauseHandler)
+        {
+            World.PauseLevel(ThisLevel);
+            PauseHandler = pauseHandler;
+        }
+
+        public void Resume()
+        {
+            World.ResumeLevel(ThisLevel);
+        }
+
+        public void Unload()
+        {
+            World.UnloadLevel(ThisLevel);
         }
 
         public LevelLoader(World world, ContentManager content, string thisLevel)
@@ -47,14 +69,24 @@ namespace VideoGame
         /// поочерёдно вычёркивает удалённые объекты, обновляет поведения, обновляет анимации, обновляет паттерны,
         /// производит действия предусмотренные наследным классом
         /// </summary>
-        public void Update(TimeSpan deltaTime, Rectangle clientBounds)
+        public void Update(TimeSpan deltaTime, bool paused)
         {
-            Camera.Update(deltaTime, clientBounds);
-            ExcludeDestroyed();
-            UpdateBehaviors(deltaTime);
-            UpdateAnimations(deltaTime);
-            UpdatePatterns(deltaTime);
-            LocalUpdate(deltaTime);
+            if (paused)
+            {
+                Camera.Update(TimeSpan.Zero);
+                UpdateAnimations(TimeSpan.Zero);
+                if (LevelLoader.IsReadyToResume)
+                    LevelLoader.Resume();
+            }
+            else
+            {
+                Camera.Update(deltaTime);
+                ExcludeDestroyed();
+                UpdateBehaviors(deltaTime);
+                UpdateAnimations(deltaTime);
+                UpdatePatterns(deltaTime);
+                LocalUpdate(deltaTime);
+            }
         }
 
         /// <summary>

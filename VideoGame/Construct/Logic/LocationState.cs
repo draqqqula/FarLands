@@ -48,6 +48,8 @@ namespace VideoGame
 
         public void LocalUpdate(TimeSpan deltaTime)
         {
+            if (Controls.OnPress(Control.pause))
+                LevelLoader.Pause(LevelLoader.LoadLevel("Menu"));
             var dummy = Player.GetBehavior<Dummy>("Dummy");
             if (dummy.Health == 0)
                 LevelLoader.RestartLevel();
