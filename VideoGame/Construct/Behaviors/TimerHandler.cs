@@ -47,7 +47,7 @@ namespace VideoGame
         private Dictionary<string, Timer> Timers { get; set; }
 
         public TimeSpan t;
-        public string Name => "TimerHandler";
+        public string DefaultName => "TimerHandler";
         private Dictionary<string, Timer> TimerBuffer { get; set; }
         private List<string> TurnOffBuffer { get; set; }
 

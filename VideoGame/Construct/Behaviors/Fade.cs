@@ -12,7 +12,7 @@ namespace VideoGame
     /// </summary>
     public class Fade : IBehavior
     {
-        public string Name => "Fade";
+        public string DefaultName => "Fade";
 
         public TimeSpan Delay { get; set; }
         public TimeSpan FadeDuration { get; set; }

@@ -13,7 +13,7 @@ namespace VideoGame
     /// </summary>
     public class Pin : IBehavior
     {
-        public string Name => "Pin";
+        public string DefaultName => "Pin";
 
         public GameObject Parent { get; set; }
         public bool Enabled { get; set; }

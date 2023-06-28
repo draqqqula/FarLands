@@ -14,7 +14,7 @@ namespace VideoGame
     /// </summary>
     public interface IBehavior
     {
-        public string Name { get; }
+        public string DefaultName { get; }
         /// <summary>
         /// объект, реализующий это поведение
         /// </summary>

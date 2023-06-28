@@ -65,7 +65,7 @@ namespace VideoGame
     /// </summary>
     public class Dummy : IBehavior
     {
-        public string Name => "Dummy";
+        public string DefaultName => "Dummy";
 
         public int MaxHealth { get; private set; }
         public int Health { get; private set; }

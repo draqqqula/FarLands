@@ -130,7 +130,13 @@ namespace VideoGame
         /// <param name="behavior"></param>
         public void AddBehavior(IBehavior behavior)
         {
-            Behaviors[behavior.Name] = behavior;
+            Behaviors[behavior.DefaultName] = behavior;
+            behavior.Parent = this;
+        }
+
+        public void AddBehavior(string name, IBehavior behavior)
+        {
+            Behaviors[name] = behavior;
             behavior.Parent = this;
         }
 
@@ -154,9 +160,12 @@ namespace VideoGame
         /// <returns></returns>
         public T GetBehavior<T>(string name) where T:IBehavior
         {
-            {
-                return (T)Behaviors[name];
-            }
+            return (T)Behaviors[name];
+        }
+
+        public T GetBehavior<T>() where T: class, IBehavior
+        {
+            return Behaviors.Where(it => it.Value is T).Select(it => it as T).First();
         }
 
         /// <summary>

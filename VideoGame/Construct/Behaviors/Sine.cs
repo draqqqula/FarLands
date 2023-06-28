@@ -18,7 +18,7 @@ namespace VideoGame
         public double Value { get { return Amplitude * Math.Sin(Factor * t); } }
         public Vector2 Direction { get; private set; }
         public double Factor { get; private set; }
-        public string Name => "Sine";
+        public string DefaultName => "Sine";
 
         public GameObject Parent { get; set; }
         public bool Enabled { get; set; }

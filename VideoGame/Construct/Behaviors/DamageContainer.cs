@@ -12,7 +12,7 @@ namespace VideoGame
     /// </summary>
     public class DamageContainer : IBehavior
     {
-        public string Name => "DamageContainer";
+        public string DefaultName => "DamageContainer";
 
         public GameObject Parent { get; set; }
         public bool Enabled { get; set; }

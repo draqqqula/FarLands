@@ -14,7 +14,7 @@ namespace VideoGame
     {
         const int MaxDashCount = 3;
         const double DashRecoverTime = 1;
-        public string Name => "Playable";
+        public string DefaultName => "Playable";
 
         public GameObject Parent { get; set; }
         public bool Enabled { get; set; }

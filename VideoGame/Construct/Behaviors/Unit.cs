@@ -71,7 +71,7 @@ namespace VideoGame
     public class Unit : IBehavior
     {
         private TimerHandler timerHandler;
-        public string Name => "Unit";
+        public string DefaultName => "Unit";
 
 
         private Dictionary<string, int> StepCooldowns { get; set; }

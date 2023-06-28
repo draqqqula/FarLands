@@ -14,7 +14,7 @@ namespace VideoGame.Construct.Behaviors
     public class Collider : IBehavior
     {
         private Vector2 LastKnownPosition;
-        public string Name => "Collider";
+        public string DefaultName => "Collider";
 
         public IEnumerable<Rectangle> Path;
         public int Accuracy;

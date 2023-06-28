@@ -75,7 +75,11 @@ namespace VideoGame
             state.LevelLoader = new LevelLoader(world, content, levelName);
             state.MainAnimationBuilder = new AnimationBuilder(content);
             state.Controls = CreateKeyBoardControls();
-            state.Camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600), world.Client.Window);
+            var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600), world.Client.Window);
+            state.Camera = camera;
+            Layer centerBound = new Layer("CenterBound", a => camera.ApplyParalax(a, 1, 1), 0.1);
+            new TextObject(content, "Paused", "pixel", 0, 3f, 3f, centerBound, new Vector2(0, 0));
+            state.Layers.Add("CenterBound", centerBound);
             return state;
         }
 
@@ -385,7 +389,7 @@ namespace VideoGame
 
             state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level4", surfacesLayer, content);
 
-            //CreateSkyAndClouds(backgroundLayer, cloudsLayer, content);
+            //CreateSkyAndClouds(backgroundLayer, centerBound, content);
 
             Family entities = new Family("Entities");
             IPattern playerPattern = new Player(state.MainTileMap, new TextObject(content, "a", "heart", 0, 6f, 3f, state.Layers["LeftTopBound"], new Vector2(30, 30)));

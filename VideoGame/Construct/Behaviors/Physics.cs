@@ -194,7 +194,7 @@ namespace VideoGame
             return (moving.Location - end.Location).ToVector2();
         }
 
-        public string Name { get => "Physics"; }
+        public string DefaultName { get => "Physics"; }
         public GameObject Parent { get; set; }
         public bool Enabled { get; set; }
 
