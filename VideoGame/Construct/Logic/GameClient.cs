@@ -15,12 +15,16 @@ namespace VideoGame
             Russian,
             English
         }
+
         public readonly GameLanguage Language;
+        public readonly GameControls Controls;
         public readonly GameWindow Window;
 
-        public GameClient(GameWindow window)
+        public GameClient(GameWindow window, GameControls controls, GameLanguage language)
         {
             Window = window;
+            Controls = controls;
+            Language = language;
         }
     }
 }

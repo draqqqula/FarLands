@@ -15,8 +15,7 @@ namespace VideoGame
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
-        private Texture2D HitBoxTexture;
+        private SpriteBatch _spriteBatch; 
         public World _world;
 
         public Game1()
@@ -48,15 +47,15 @@ namespace VideoGame
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-
             _spriteBatch.Begin();
 
-            _world = new World(new GameClient(Window));
+            _world = 
+                new World(
+                    new GameClient(Window, LevelConstructors.CreateKeyBoardControls(), GameClient.GameLanguage.English),
+                    new SpriteDrawer(GraphicsDevice, Content
+                ));
+
             _world.AddLevel(new Level("Level1", LevelConstructors.LoadLevel1));
-            _world.AddLevel(new Level("Level2", LevelConstructors.LoadLevel2));
-            _world.AddLevel(new Level("Level3", LevelConstructors.LoadLevel3));
-            _world.AddLevel(new Level("Level4", LevelConstructors.LoadLevel4));
-            _world.AddLevel(new Level("Level5", LevelConstructors.LoadLevel5));
             _world.AddLevel(new Level("Menu", LevelConstructors.LoadMenu));
             _world.LoadLevel("Level1", Content);
             _spriteBatch.End();

@@ -1,66 +1,58 @@
 ﻿using Animations;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VideoGame.Construct;
+using static System.Windows.Forms.AxHost;
 
 namespace VideoGame
 {
     /// <summary>
     /// описывает текущее состояние локации
     /// </summary>
-    public class LocationState : IGameState
+    public class LocationState : GameState
     {
-        public Dictionary<string, Layer> Layers { get; set; }
-
         public Layer MainLayer;
         public Layer FrontParticlesLayer;
         public Layer BackParticlesLayer;
-
-        public List<GameObject> AllObjects { get; set; }
-
-        public GameObject Player;
-
+        public List<Character> Players { get; init; } = new List<Character>();
         public TextObject FPSCounter;
-
-        public GameControls Controls { get; set; }
-        public GameCamera Camera { get; set; }
-        public List<IPattern> Patterns { get; set; }
-        public LevelLoader LevelLoader { get; set; }
-        public AnimationBuilder MainAnimationBuilder { get; set; }
-
         public TileMap MainTileMap;
 
-        public void AddLayers(params Layer[] layers)
+        public override void LocalUpdate(TimeSpan deltaTime)
         {
-            foreach (var layer in layers)
-                Layers.Add(layer.Name, layer);
-            Layers = Layers.OrderBy(e => e.Value.DrawingPriority).ToDictionary(e => e.Key, e => e.Value);
-        }
-
-        public void AddPatterns(params IPattern[] families)
-        {
-            foreach (var family in families)
-                Patterns.Add(family);
-        }
-
-        public void LocalUpdate(TimeSpan deltaTime)
-        {
-            if (Controls.OnPress(Control.pause))
-                LevelLoader.Pause(LevelLoader.LoadLevel("Menu"));
-            var dummy = Player.GetBehavior<Dummy>("Dummy");
-            if (dummy.Health == 0)
-                LevelLoader.RestartLevel();
             FPSCounter.Text = Convert.ToString(Math.Round(1/deltaTime.TotalSeconds));
         }
 
-        public LocationState()
+        protected override void OnConnect(GameClient client)
         {
-            Layers = new Dictionary<string, Layer>();
-            AllObjects = new List<GameObject>();
-            Patterns = new List<IPattern>();
+            Character character = new Character(
+                this,
+                new Vector2(300, 300),
+                MainLayer,
+                true,
+                client,
+                MainTileMap,
+                new TextObject(Content, "a", "heart", 0, 6f, 3f, Layers["LeftTopBound"],
+                new Vector2(30, 30)));
+            Players.Add(character);
+            var camera = GetCamera(client);
+            camera.SetOuterBorders(MainTileMap.Box);
+            camera.LinkTo(character);
+        }
+
+        protected override void OnDisconnect(GameClient client)
+        {
+            var character = Players.Where(it => it.Client == client).FirstOrDefault();
+            Players.Remove(character);
+            character.Dispose();
+        }
+
+        public LocationState(bool IsRemote) : base(IsRemote)
+        {
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using VideoGame.Construct;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 
@@ -16,47 +17,53 @@ namespace VideoGame
     /// <summary>
     /// текстовый объект
     /// </summary>
-    public class TextObject
+    public class TextObject : GameObject, IDisplayable
     {
         public string Text { get; set; }
 
         public SpriteFont Font { get; set; }
 
-        public Layer Layer { get; set; }
-
-        public Vector2 Position { get; set; }
-
-        public Rectangle Borders { get; set; }
-
-        public float Scale { get; set; }
+        public float TextScale { get; set; }
 
 
-        private DrawingParameters DrawingParameters
+        protected override DrawingParameters DisplayInfo
         {
             get
             {
                 return new DrawingParameters
                 {
-                    Position = Layer.DrawingFunction(this.Position),
+                    Position = this.Position,
                     Color = Color.White,
-                    Layer = Layer,
                 };
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        #region IDISPLAYABLE
+        public bool IsImmutable => false;
+
+        public void Draw(SpriteBatch spriteBatch, GameCamera camera, SpriteDrawer streamDrawer)
         {
-            spriteBatch.DrawString(Font, Text, DrawingParameters.Position, DrawingParameters.Color, 0, new Vector2(0, 0), Scale, SpriteEffects.None, 0);
+            var arguments = PresentLayer.DrawingFunction(DisplayInfo, camera);
+            spriteBatch.DrawString(Font, Text,
+                arguments.Position,
+                DisplayInfo.Color, 0, new Vector2(0, 0), TextScale, arguments.Mirroring, 0);
         }
+
+        public override IDisplayable GetVisualPart(GameCamera camera)
+        {
+            return this;
+        }
+
+        #endregion
 
         public TextObject(string text, SpriteFont font, Layer layer, Vector2 position, float scale)
         {
             Text = text;
             Font = font;
-            Layer = layer;
+            PresentLayer = layer;
             Position = position;
-            layer.TextObjects.Add(this);
-            Scale = scale;
+            layer.Add(this);
+            TextScale = scale;
         }
 
         public TextObject(ContentManager content, string text, string fontName, int lineSpacing, float charSpacing, float scale, Layer layer, Vector2 position, params (char letter, Rectangle border, Rectangle cropping)[] characters) :

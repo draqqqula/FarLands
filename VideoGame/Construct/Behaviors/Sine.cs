@@ -11,29 +11,25 @@ namespace VideoGame
     /// <summary>
     /// Описывает поведение объекта, который может колебаться в определённом направлении
     /// </summary>
-    public class Sine : IBehavior
+    public class Sine : Behavior
     {
         public double t { get; private set; }
         public double Amplitude { get; private set; }
         public double Value { get { return Amplitude * Math.Sin(Factor * t); } }
         public Vector2 Direction { get; private set; }
         public double Factor { get; private set; }
-        public string DefaultName => "Sine";
-
-        public GameObject Parent { get; set; }
-        public bool Enabled { get; set; }
 
         public void ChangeDirection(Vector2 direction)
         {
             Direction = direction;
         }
 
-        public void Act(TimeSpan deltaTime)
+        public override void Act(TimeSpan deltaTime)
         {
             t += deltaTime.TotalSeconds;
         }
 
-        public DrawingParameters ChangeAppearance(DrawingParameters parameters)
+        public override DrawingParameters ChangeAppearance(DrawingParameters parameters)
         {
             parameters.Position += (float)Value * Direction;
             return parameters;

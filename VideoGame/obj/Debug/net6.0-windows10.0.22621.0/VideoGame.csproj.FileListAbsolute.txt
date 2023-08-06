@@ -75,3 +75,4 @@ C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\obj\Debug\net6.0-windows10.0.
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\obj\Debug\net6.0-windows10.0.22621.0\VideoGame.genruntimeconfig.cache
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\obj\Debug\net6.0-windows10.0.22621.0\ref\VideoGame.dll
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0-windows10.0.22621.0\Nito.Collections.Deque.dll
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Debug\net6.0-windows10.0.22621.0\VideoGame.dll.config

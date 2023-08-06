@@ -2,10 +2,12 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,14 +18,13 @@ namespace Animations
     /// <summary>
     /// параметры, применяемые при отрисовке кадра
     /// </summary>
-    public struct DrawingParameters
+    public partial record struct DrawingParameters : IPackable
     {
         public Vector2 Position;
         public Color Color;
         public float Rotation;
         public Vector2 Scale;
         public SpriteEffects Mirroring;
-        public Layer Layer;
         public float Priority;
 
         public DrawingParameters()
@@ -33,8 +34,52 @@ namespace Animations
             Rotation = 0f;
             Scale = new Vector2(3, 3);
             Mirroring = SpriteEffects.None;
-            Layer = new Layer("new", a => a, 0);
             Priority = 0;
+        }
+
+        public DrawingParameters
+            (
+            Vector2 position,
+            Color color,
+            float rotation,
+            Vector2 scale,
+            SpriteEffects mirroring,
+            float priority
+            )
+        {
+            Position = position;
+            Color = color;
+            Rotation = rotation;
+            Scale = scale;
+            Mirroring = mirroring;
+            Priority = priority;
+        }
+
+        public static DrawingParameters operator +(DrawingParameters a, Vector2 b)
+        {
+            a.Position += b;
+            return a;
+        }
+
+        public static DrawingParameters operator +(Vector2 b, DrawingParameters a)
+        {
+            return a + b;
+        }
+
+        public static DrawingParameters operator -(DrawingParameters a, Vector2 b)
+        {
+            return a + (-b);
+        }
+
+        public static DrawingParameters operator -(Vector2 b, DrawingParameters a)
+        {
+            return b + (- a);
+        }
+
+        public static DrawingParameters operator -(DrawingParameters a)
+        {
+            a.Position = -a.Position;
+            return a;
         }
     }
 
@@ -58,22 +103,22 @@ namespace Animations
         /// в остальных случаях при завершении начинает проигрывание анимации Default
         /// </summary>
         /// <param name="arguments"></param>
-        public void Update(DrawingParameters arguments, TimeSpan deltaTime)
+        public void Update(TimeSpan deltaTime)
         {
             if (!OnPause)
             {
                 RunDuration += deltaTime;
             }
-            if (!Running.Run(RunDuration, arguments, this) && !OnPause)
+            if (!Running.Run(RunDuration) && !OnPause)
             {
                 if (Running.NextAnimation != null)
-                    ChangeAnimation(arguments, Running.NextAnimation, 0);
+                    ChangeAnimation(Running.NextAnimation, 0);
 
                 else if (Running.Looping)
-                    ChangeAnimation(arguments, Running.Name, 0);
+                    ChangeAnimation(Running.Name, 0);
 
                 else
-                    ChangeAnimation(arguments, "Default", 0);
+                    ChangeAnimation("Default", 0);
             }
         }
 
@@ -84,7 +129,7 @@ namespace Animations
         /// <param name="frame"></param>
         public void SetFrame(DrawingParameters arguments, int frame)
         {
-            ChangeAnimation(arguments, Running.Name, frame);
+            ChangeAnimation(Running.Name, frame);
         }
 
         public void Stop() => OnPause = true;
@@ -97,12 +142,17 @@ namespace Animations
         /// <param name="arguments"></param>
         /// <param name="animation"></param>
         /// <param name="initialFrame"></param>
-        public void ChangeAnimation(DrawingParameters arguments, string animation, int initialFrame)
+        public void ChangeAnimation(string animation, int initialFrame)
         {
             Running = Animations[animation];
             RunDuration = Running.Duration * Running.SpeedFactor * (initialFrame / (double)Running.FrameCount);
             Resume();
-            Update(arguments, TimeSpan.Zero);
+            Update(TimeSpan.Zero);
+        }
+
+        internal IDisplayable GetVisual(DrawingParameters arguments)
+        {
+            return Running.GetVisual(arguments);
         }
 
         public Animator(Dictionary<string, Animation> animations, string initial)
@@ -182,7 +232,7 @@ namespace Animations
         /// <param name="arguments"></param>
         /// <param name="animator"></param>
         /// <returns></returns>
-        public bool Run(double progress, DrawingParameters arguments, Animator animator)
+        public bool Run(double progress)
         {
             if (progress > 1 || progress < 0)
             {
@@ -190,7 +240,6 @@ namespace Animations
             }
 
             CurrentFrame = (int)Math.Round(progress * (Frames.Length - 1));
-            Frames[CurrentFrame].CreateDrawable(arguments, Sheet, animator);
             return true;
         }
 
@@ -202,32 +251,59 @@ namespace Animations
         /// <param name="arguments"></param>
         /// <param name="animator"></param>
         /// <returns></returns>
-        public bool Run(TimeSpan t, DrawingParameters arguments, Animator animator)
+        public bool Run(TimeSpan t)
         {
-            return Run(t / SpeedFactor / Duration, arguments, animator);
+            return Run(t / SpeedFactor / Duration);
+        }
+        
+        public IDisplayable GetVisual(DrawingParameters arguments)
+        {
+            return Frames[CurrentFrame].CreateDrawable(arguments, Sheet);
         }
     }
 
     /// <summary>
     /// служит для сохранения кадра в буфере отрисовки
     /// </summary>
-    public class DrawableElement
+    public partial struct FrameForm : IDisplayable, IPackable
     {
-        public AnimationFrame frame;
-        public DrawingParameters arguments;
-        public Texture2D sheet;
+        #region FIELDS
+        private readonly Rectangle Borders;
+        private readonly Vector2 Anchor;
+        private readonly DrawingParameters Arguments;
+        private readonly Texture2D Sheet;
+        #endregion
 
-        public DrawableElement(AnimationFrame frame, DrawingParameters arguments, Texture2D sheet)
+        #region CONSTRUCTORS
+        public FrameForm(Rectangle borders, Vector2 anchor, DrawingParameters arguments, Texture2D sheet)
         {
-            this.frame = frame;
-            this.arguments = arguments;
-            this.sheet = sheet;
+            Borders = borders;
+            Anchor = anchor;
+            Arguments = arguments;
+            Sheet = sheet;
         }
+        #endregion
 
-        public void Draw(SpriteBatch spriteBatch)
+        #region IDISPLAYABLE
+        public bool IsImmutable => false;
+        public void Draw(SpriteBatch spriteBatch, GameCamera camera, SpriteDrawer drawer)
         {
-            frame.Display(spriteBatch, arguments, sheet);
+            Vector2 offset = Vector2.Zero;
+            if (Arguments.Mirroring == SpriteEffects.FlipHorizontally)
+                offset = new Vector2(Anchor.X * 2 - Borders.Width, 0) * Arguments.Scale;
+            spriteBatch.Draw(
+                Sheet,
+                Arguments.Position+offset,
+                Borders,
+                Arguments.Color,
+                Arguments.Rotation,
+                Anchor,
+                Arguments.Scale,
+                Arguments.Mirroring,
+                Arguments.Priority
+                );
         }
+        #endregion
     }
 
     /// <summary>
@@ -267,32 +343,9 @@ namespace Animations
         /// <param name="arguments"></param>
         /// <param name="sheet"></param>
         /// <param name="animator"></param>
-        public void CreateDrawable(DrawingParameters arguments, Texture2D sheet, Animator animator)
+        public IDisplayable CreateDrawable(DrawingParameters arguments, Texture2D sheet)
         {
-            arguments.Layer.DrawBuffer[animator] = new DrawableElement(this, arguments, sheet);
-        }
-
-        /// <summary>
-        /// выводит кадр на экран
-        /// </summary>
-        /// <param name="arguments"></param>
-        /// <param name="sheet"></param>
-        public void Display(SpriteBatch spriteBatch,DrawingParameters arguments, Texture2D sheet)
-        {
-            Vector2 offset = Vector2.Zero;
-            if (arguments.Mirroring == SpriteEffects.FlipHorizontally)
-                offset = new Vector2(Anchor.X * 2 - Borders.Width, 0) * arguments.Scale;
-            spriteBatch.Draw(
-                sheet,
-                arguments.Position + offset,
-                Borders,
-                arguments.Color,
-                arguments.Rotation,
-                Anchor,
-                arguments.Scale,
-                arguments.Mirroring,
-                arguments.Priority
-                );
+            return new FrameForm(Borders, Anchor, arguments, sheet);
         }
     }
 }

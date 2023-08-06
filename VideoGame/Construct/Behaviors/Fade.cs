@@ -10,9 +10,8 @@ namespace VideoGame
     /// <summary>
     /// поведение объекта, который будет плавно исчезать
     /// </summary>
-    public class Fade : IBehavior
+    public class Fade : Behavior
     {
-        public string DefaultName => "Fade";
 
         public TimeSpan Delay { get; set; }
         public TimeSpan FadeDuration { get; set; }
@@ -28,17 +27,14 @@ namespace VideoGame
             }
         }
 
-        public GameObject Parent { get; set; }
-        public bool Enabled { get; set; }
-
-        public void Act(TimeSpan deltaTime)
+        public override void Act(TimeSpan deltaTime)
         {
             t += deltaTime;
             if (DestroyAfterFadeOut && CurrentOpacity == 0)
-                Parent.Destroy();
+                Parent.Dispose();
         }
 
-        public DrawingParameters ChangeAppearance(DrawingParameters parameters)
+        public override DrawingParameters ChangeAppearance(DrawingParameters parameters)
         {
             parameters.Color *= CurrentOpacity;
             return parameters;

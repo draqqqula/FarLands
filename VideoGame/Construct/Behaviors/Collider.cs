@@ -5,23 +5,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WinRT;
 
 namespace VideoGame.Construct.Behaviors
 {
     /// <summary>
     /// позволяет обрабатывать коллизии между объектами
     /// </summary>
-    public class Collider : IBehavior
+    public class Collider : Behavior
     {
         private Vector2 LastKnownPosition;
-        public string DefaultName => "Collider";
-
         public IEnumerable<Rectangle> Path;
         public int Accuracy;
-        public GameObject Parent { get; set; }
-        public bool Enabled { get; set; }
 
-        public void Act(TimeSpan deltaTime)
+        public override void Act(TimeSpan deltaTime)
         {
             if (LastKnownPosition == null)
             {
@@ -54,12 +51,9 @@ namespace VideoGame.Construct.Behaviors
 
         public bool Collides(Collider collider)
         {
+            if (collider.Path is null || this.Path is null)
+                return false;
             return collider.Path.Any(r1 => Path.Any(r2 => r1.Intersects(r2)));
-        }
-
-        public DrawingParameters ChangeAppearance(DrawingParameters parameters)
-        {
-            return parameters;
         }
 
         public Collider(int accuracy, bool enabled)

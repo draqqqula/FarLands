@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Private.ServiceModel" Version="4.10.2" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>

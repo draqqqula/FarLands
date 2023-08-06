@@ -18,6 +18,7 @@ namespace VideoGame
     public class World
     {
         public readonly GameClient Client;
+        public readonly SpriteDrawer Drawer;
         public bool IsReady
         {
             get => CurrentLevels.Count > 0;
@@ -90,11 +91,12 @@ namespace VideoGame
             }
         }
 
-        public World(GameClient client)
+        public World(GameClient client, SpriteDrawer drawer)
         {
             Client = client;
             Levels = new Dictionary<string, Level>();
             CurrentLevels = new Dictionary<string, Level>();
+            Drawer = drawer;
         }
 
         public void Display(SpriteBatch spriteBatch)
@@ -107,15 +109,10 @@ namespace VideoGame
 
         private void DisplayLevel(SpriteBatch spriteBatch, Level level)
         {
-            foreach (var layer in level.GameState.Layers.Values)
+            if (level.GameState.IsConnected(Client))
             {
-                foreach (var drawable in layer.DrawBuffer.Values)
-                    drawable.Draw(spriteBatch);
-                foreach (var tileMap in layer.TileMaps)
-                    tileMap.Draw(spriteBatch, level.GameState.Camera);
-                foreach (var text in layer.TextObjects)
-                    text.Draw(spriteBatch);
-                layer.DrawBuffer.Clear();
+                var camera = level.GameState.GetCamera(Client);
+                Drawer.Draw(level.GameState.Layers.Values, camera, spriteBatch);
             }
         }
 

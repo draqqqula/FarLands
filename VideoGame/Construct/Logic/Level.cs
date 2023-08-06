@@ -28,14 +28,14 @@ namespace VideoGame
         /// <summary>
         /// текущее состояние уровня
         /// </summary>
-        public IGameState GameState { get; set; }
+        public GameState GameState { get; set; }
         public readonly string Name;
         /// <summary>
         /// функция, возвращающая новое состояние уровня
         /// </summary>
-        public readonly Func<World, ContentManager, string, IGameState> Initialize;
+        public readonly Func<World, ContentManager, string, GameState> Initialize;
 
-        public Level(string name, Func<World, ContentManager, string, IGameState> initialize)
+        public Level(string name, Func<World, ContentManager, string, GameState> initialize)
         {
             Name = name;
             Initialize = initialize;

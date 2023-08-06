@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
@@ -15,9 +17,9 @@ namespace VideoGame
         /// </summary>
         /// <param name="entity"></param>
         /// <param name="entities"></param>
-        public static void ApplyContactDamage(this GameObject entity, Family entities)
+        public static void ApplyContactDamage(this Sprite entity, IEnumerable<Sprite> entities)
         {
-            var enities = entities.Members;
+            var enities = entities;
 
             var touched = entity.GetBehavior<Collider>("Collider")
                 .GetCollisions
@@ -40,10 +42,10 @@ namespace VideoGame
         /// <param name="sightRange"></param>
         /// <param name="stepCount"></param>
         /// <param name="entities"></param>
-        public static void SearchTarget(this GameObject entity, float sightRange, int stepCount, Family entities)
+        public static void SearchTarget<T>(this Sprite entity, float sightRange, int stepCount, IEnumerable<Sprite> entities) where T : Sprite
         {
-            var unit = entity.GetBehavior<Unit>("Unit");
-            var seen = entities.Members.Where(e => e.Position
+            var unit = entity.GetBehavior<Unit<T>>();
+            var seen = entities.Where(e => e.Position
             .HasLineOfSight
             (
             entity.Position,
@@ -51,7 +53,7 @@ namespace VideoGame
             sightRange, stepCount
             )
             )
-            .Where(e => e.GetBehavior<Dummy>("Dummy").Team != entity.GetBehavior<Dummy>("Dummy").Team).FirstOrDefault();
+            .FirstOrDefault();
             if (seen != null)
                 unit.SetTarget(seen.GetBehavior<Dummy>("Dummy"));
         }

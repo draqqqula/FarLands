@@ -11,30 +11,21 @@ namespace VideoGame
     /// <summary>
     /// Описывает поведение объекта, "приклеенного" к другому объекту
     /// </summary>
-    public class Pin : IBehavior
+    public class Pin : Behavior
     {
-        public string DefaultName => "Pin";
 
-        public GameObject Parent { get; set; }
-        public bool Enabled { get; set; }
-
-        private GameObject Board;
+        private Sprite Board;
         private Vector2 Offset;
         private Vector2 PinPosition { get => Board is null? Vector2.Zero: Board.Position + Offset; }
 
-        public void Act(TimeSpan deltaTime)
+        public override void Act(TimeSpan deltaTime)
         {
-            if (Board.ToDestroy) Board = null;
+            if (Board.Disposed) Board = null;
             if (!(Board is null))
-                Parent.Position = PinPosition;
+                Parent.Set(PinPosition);
         }
 
-        public DrawingParameters ChangeAppearance(DrawingParameters parameters)
-        {
-            return parameters;
-        }
-
-        public Pin(GameObject board, Vector2 offset, bool enabled)
+        public Pin(Sprite board, Vector2 offset, bool enabled)
         {
             Board = board;
             Offset = offset;

@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoGame", "VideoGame\VideoGame.csproj", "{0344B825-36D5-46A0-AAEE-320113B5799D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoGame", "VideoGame\VideoGame.csproj", "{0344B825-36D5-46A0-AAEE-320113B5799D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerHandler", "MultiplayerHandler\MultiplayerHandler.csproj", "{854F09BB-41B5-4152-A636-906C148F66EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTests", "GameTests\GameTests.csproj", "{77246F31-9BF3-48A6-BF07-01CE7E2F301E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{0344B825-36D5-46A0-AAEE-320113B5799D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0344B825-36D5-46A0-AAEE-320113B5799D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0344B825-36D5-46A0-AAEE-320113B5799D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{854F09BB-41B5-4152-A636-906C148F66EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{854F09BB-41B5-4152-A636-906C148F66EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{854F09BB-41B5-4152-A636-906C148F66EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{854F09BB-41B5-4152-A636-906C148F66EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77246F31-9BF3-48A6-BF07-01CE7E2F301E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77246F31-9BF3-48A6-BF07-01CE7E2F301E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77246F31-9BF3-48A6-BF07-01CE7E2F301E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77246F31-9BF3-48A6-BF07-01CE7E2F301E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

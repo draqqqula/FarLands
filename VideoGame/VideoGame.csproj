@@ -11,6 +11,13 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
     <UseWindowsForms>True</UseWindowsForms>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Icon.ico" />

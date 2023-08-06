@@ -10,7 +10,7 @@ namespace VideoGame
     public class Timer
     {
         public TimeSpan AlarmTime { get; set; }
-        public Action<GameObject> Alarm { get; set; }
+        public Action<Sprite> Alarm { get; set; }
         public bool IsOut { get; set; }
         public bool DeleteOnSurpass { get; set; }
         public double CheckProgress(TimeSpan time)
@@ -23,7 +23,7 @@ namespace VideoGame
             return time >= AlarmTime;
         }
 
-        public Timer(TimeSpan time, Action<GameObject> alarm, bool deleteOnSurpass)
+        public Timer(TimeSpan time, Action<Sprite> alarm, bool deleteOnSurpass)
         {
             AlarmTime = time;
             Alarm = alarm;
@@ -42,12 +42,11 @@ namespace VideoGame
     /// <summary>
     /// Предоставляет функционал для работы с таймерами
     /// </summary>
-    public class TimerHandler : IBehavior
+    public class TimerHandler : Behavior
     {
         private Dictionary<string, Timer> Timers { get; set; }
 
         public TimeSpan t;
-        public string DefaultName => "TimerHandler";
         private Dictionary<string, Timer> TimerBuffer { get; set; }
         private List<string> TurnOffBuffer { get; set; }
 
@@ -69,13 +68,21 @@ namespace VideoGame
             TurnOffBuffer.Clear();
         }
 
-        public void SetTimer(string name, TimeSpan duration, Action<GameObject> alarm, bool deleteOnSurpass)
+        public void SetTimer(string name, TimeSpan duration, Action<Sprite> alarm, bool deleteOnSurpass)
         {
             TimerBuffer[name] = new Timer(t + duration, alarm, deleteOnSurpass);
         }
         public void SetTimer(string name, TimeSpan duration, bool deleteOnSurpass)
         {
             SetTimer(name, duration, null, deleteOnSurpass);
+        }
+        public void SetTimer(string name, double duration, Action<Sprite> alarm, bool deleteOnSurpass)
+        {
+            SetTimer(name, TimeSpan.FromSeconds(duration), alarm, deleteOnSurpass);
+        }
+        public void SetTiemr(string name, double duration, bool deleteOnSurpass)
+        {
+            SetTimer(name, TimeSpan.FromSeconds(duration), deleteOnSurpass);
         }
         public bool TryGetProgress(string name, out double value)
         {
@@ -112,11 +119,17 @@ namespace VideoGame
             }
         }
 
-        public Action<GameObject> TurnOff(string name)
+        public Action<Sprite> TurnOff(string name)
         {
             if (Timers.ContainsKey(name))
                 TurnOffBuffer.Add(name);
             return Timers[name].Alarm;
+        }
+
+        public void Silence(string name)
+        {
+            if (Timers.ContainsKey(name))
+                TurnOffBuffer.Add(name);
         }
 
         public TimerState CheckAndDelay(string name, TimeSpan delay)
@@ -133,7 +146,7 @@ namespace VideoGame
                 Timers[name].AlarmTime = t + duration;
         }
 
-        public void Hold(string name, TimeSpan duration, Action<GameObject> alarm, bool deleteOnSurpass)
+        public void Hold(string name, TimeSpan duration, Action<Sprite> alarm, bool deleteOnSurpass)
         {
             if (Check(name) == TimerState.Running)
                 Timers[name].AlarmTime = t + duration;
@@ -149,7 +162,7 @@ namespace VideoGame
                 SetTimer(name, duration, deleteOnSurpass);
         }
 
-        public TimerState CheckLooping(string name, TimeSpan delay, Action<GameObject> alarm)
+        public TimerState CheckLooping(string name, TimeSpan delay, Action<Sprite> alarm)
         {
             var timerState = CheckAndDelay(name, delay);
             if (timerState == TimerState.NotExists)
@@ -157,15 +170,12 @@ namespace VideoGame
             return timerState;
         }
 
-        public bool OnLoop(string name, TimeSpan delay, Action<GameObject> alarm)
+        public bool OnLoop(string name, TimeSpan delay, Action<Sprite> alarm)
         {
             return CheckLooping(name, delay, alarm) != TimerState.Running;
         }
 
-        public GameObject Parent { get; set; }
-        public bool Enabled { get; set; }
-
-        public void Act(TimeSpan deltaTime)
+        public override void Act(TimeSpan deltaTime)
         {
             RemoveTimers();
             AddTimers();
@@ -179,11 +189,6 @@ namespace VideoGame
                     timer.Alarm(Parent);
             }
             Timers = Timers.Where(timer => !(timer.Value.IsOut && timer.Value.DeleteOnSurpass)).ToDictionary(e => e.Key, e => e.Value);
-        }
-
-        public DrawingParameters ChangeAppearance(DrawingParameters parameters)
-        {
-            return parameters;
         }
 
         public TimerHandler(bool enabled)

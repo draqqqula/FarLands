@@ -1,76 +1,140 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VideoGame.Construct.Behaviors;
+using VideoGame.Construct.Families;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace VideoGame
 {
-    public class HoodEnemy : IPattern
+    #region UNITMOVES
+    [EndlessMove]
+    [MoveFreeSpan(0.2)]
+    public class HoodGoForward : UnitMove<Hood>
+    {
+        public override int GetAttraction(Hood unit, Dummy target)
+        {
+             return 1;
+        }
+        public override void OnStart(Hood unit, Dummy target)
+        {
+            var physics = unit.GetBehavior<Physics>();
+            physics.AddVector("Forward", new MovementVector(-Vector2.Normalize(unit.Position - target.Parent.Position) * 5, 0, TimeSpan.Zero, true));
+            unit.SetAnimation("Forward", 0);
+            unit.TurnTo(target.Parent.Position, true);
+        }
+        public override bool Continue(Hood unit, Dummy target)
+        {
+            var physics = unit.GetBehavior<Physics>();
+            physics.DirectVector("Forward", target.Parent.Position - unit.Position);
+            if (Vector2.Distance(unit.Position, target.Parent.Position) > 300)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public override void OnEnd(Hood unit, Dummy target)
+        {
+            var physics = unit.GetBehavior<Physics>();
+            physics.RemoveVector("Forward");
+            unit.SetAnimation("Default", 0);
+            unit.TurnTo(target.Parent.Position, true);
+        }
+
+        public override void OnForcedBreak(Hood unit, Dummy target, UnitMove<Hood> breaker)
+        {
+            OnEnd(unit, target);
+        }
+    }
+
+    [MoveDuration(1)]
+    [MoveFreeSpan(0.2)]
+    [MovePriority(2)]
+    public class HoodFireStreamAttack : UnitMove<Hood>
+    {
+        public override int GetAttraction(Hood unit, Dummy target)
+        {
+            if (Vector2.Distance(unit.Position, target.Parent.Position) > 300)
+            {
+                return 0;
+            }
+            return 2;
+        }
+
+        public override void OnStart(Hood unit, Dummy target)
+        {
+            
+        }
+
+        public override void OnEnd(Hood unit, Dummy target)
+        {
+
+        }
+
+        public override bool Continue(Hood unit, Dummy target)
+        {
+            return true;
+        }
+    }
+
+    [EndlessMove]
+    [MoveFreeSpan(0.2)]
+    [MovePriority(3)]
+    public class HoodDashBackwardsMove : UnitMove<Hood>
+    {
+        public override int GetAttraction(Hood unit, Dummy target)
+        {
+            return -1;
+        }
+
+        public override void OnStart(Hood unit, Dummy target)
+        {
+            var physics = unit.GetBehavior<Physics>();
+            unit.TurnTo(target.Parent.Position, true);
+            physics.AddVector("Backward", new MovementVector(-Vector2.Normalize(unit.Position - target.Parent.Position) * -5, -5, TimeSpan.Zero, true));
+        }
+
+        public override bool Continue(Hood unit, Dummy target)
+        {
+            var physics = unit.GetBehavior<Physics>();
+            return physics.ActiveVectors.ContainsKey("Backward");
+        }
+    }
+    #endregion
+
+    [SpriteSheet("Hood")]
+    [Box(30)]
+    [MemberShip("Entity")]
+    public class Hood : Sprite
     {
         public TileMap Surfaces { private get; set; }
-
-        public string AnimatorName => "Hood";
-
-        public string InitialAnimation => "Default";
-
-        public Rectangle Hitbox => new Rectangle(-30, -30, 60, 60);
-
-        public List<GameObject> Editions { get; set; }
-
-        public bool IsHitBoxOnly => false;
-
-        private Family Entities;
-
-        public GameObject InitializeMember(IGameState state, GameObject member)
+        private Entity Entities;
+        public Hood(GameState state, Vector2 position, Layer layer, bool isMirrored, TileMap surfaces, Entity entities) :
+            base(state, position, layer, isMirrored)
         {
+            Surfaces = surfaces;
+            Entities = entities;
             Sine sine = new Sine(0, 12, new Vector2(0, 1), 2, true);
 
             Collider collider = new Collider(18, true);
 
-            Physics physics = new Physics(Surfaces.VerticalSurfaceMap, Surfaces.TileFrame.Width * (int)Surfaces.Scale.X, true);
+            Physics physics = new Physics(Surfaces.VerticalSurfaceMap, Surfaces.TileFrame.Width * (int)Surfaces.PictureScale.X, true);
 
             Dummy dummy = new Dummy(30, new Dictionary<DamageType, int>(), Team.enemy, null, null, 1, true);
 
             TimerHandler timerHandler = new TimerHandler(true);
 
-            Unit unit = new Unit(timerHandler, true);
+            Unit<Hood> unit = new Unit<Hood>(timerHandler, true,  new HoodGoForward(), new HoodFireStreamAttack(), new HoodDashBackwardsMove());
 
-            member.AddBehaviors(sine, collider, physics, dummy, timerHandler, unit);
+            AddBehaviors(sine, collider, physics, dummy, timerHandler, unit);
 
-            UnitAction goForward = new UnitAction(
-                TimeSpan.FromSeconds(0.3), TimeSpan.FromSeconds(0.3),
-                (unit) => 
-                {
-                    var target = member.GetBehavior<Unit>("Unit").Target.Parent;
-                    if (target.Position.X < member.Position.X)
-                        member.IsMirrored = true;
-                    else
-                        member.IsMirrored = false;
-                    physics.AddVector("Forward", new MovementVector(Vector2.Normalize(-member.Position + target.Position) * 5, 0, TimeSpan.FromSeconds(0.4), false));
-                },
-                (unit, target) => true,
-                (unit) => { },
-                null, null, true,
-                (unit, target) => ((target.Parent.Position - unit.Parent.Position).Length() > 300) ? 2 : 0
-                );
-            UnitAction shoot = new UnitAction(
-                TimeSpan.FromSeconds(0.5), TimeSpan.FromSeconds(1),
-
-                (unit) => { },
-                (unit, target) => true,
-                (unit) => { },
-
-                null, null, true,
-                (unit, target) => 1
-                );
-
-            unit.AddActions(("GoForward", goForward), ("Shoot", shoot));
-            member.AddBehavior(unit);
+            AddBehavior(unit);
 
             var contact = new DamageInstance(
                         new Dictionary<DamageType, int>()
@@ -79,32 +143,30 @@ namespace VideoGame
                         },
                         Team.enemy,
                         new HashSet<string>(),
-                        "Contact",
-                        member.GetBehavior<Dummy>("Dummy"),
+            "Contact",
+                        GetBehavior<Dummy>("Dummy"),
                         new List<Func<Dummy, DamageInstance, bool>>() { (dummy, damage) => {
                             if (dummy.Parent.Behaviors.ContainsKey("Physics"))
                                 return !dummy.Parent.GetBehavior<Physics>("Physics").Vectors.ContainsKey("Dash");
                             else return false; } },
                         null,
                         TimeSpan.FromSeconds(1)
-                        );
+            );
 
-            member.AddBehavior(new DamageContainer(true, ("Contact", contact)));
+            AddBehavior(new DamageContainer(true, ("Contact", contact)));
 
-            return member;
+            OnAssembled(this);
         }
 
-        public void UpdateMember(GameObject member, IGameState state)
+        public override void OnTick(GameState state, TimeSpan deltaTime)
         {
-            member.ApplyContactDamage(Entities);
-            member.SearchTarget(400, 40, Entities);
-        }
-
-        public HoodEnemy(TileMap surfaces, Family entities)
-        {
-            Editions = new List<GameObject>();
-            Surfaces = surfaces;
-            Entities = entities;
+            var unit = GetBehavior<Unit<Hood>>();
+            if (unit.HasTarget && Math.Abs(Position.X-unit.Target.Parent.Position.X) < 40)
+            {
+                unit.ReactWith<HoodDashBackwardsMove>();
+            }
+            this.ApplyContactDamage(Entities.GetFoes(this));
+            this.SearchTarget<Hood>(400, 40, Entities.GetFoes(this));
         }
     }
 }

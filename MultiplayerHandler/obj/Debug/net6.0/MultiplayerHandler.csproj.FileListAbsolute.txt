@@ -1,0 +1,15 @@
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\bin\Debug\net6.0\MultiplayerHandler.exe
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\bin\Debug\net6.0\MultiplayerHandler.deps.json
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\bin\Debug\net6.0\MultiplayerHandler.runtimeconfig.json
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\bin\Debug\net6.0\MultiplayerHandler.dll
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\bin\Debug\net6.0\MultiplayerHandler.pdb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\obj\Debug\net6.0\MultiplayerHandler.csproj.AssemblyReference.cache
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\obj\Debug\net6.0\MultiplayerHandler.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\obj\Debug\net6.0\MultiplayerHandler.AssemblyInfoInputs.cache
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\obj\Debug\net6.0\MultiplayerHandler.AssemblyInfo.cs
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\obj\Debug\net6.0\MultiplayerHandler.csproj.CoreCompileInputs.cache
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\obj\Debug\net6.0\MultiplayerHandler.dll
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\obj\Debug\net6.0\refint\MultiplayerHandler.dll
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\obj\Debug\net6.0\MultiplayerHandler.pdb
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\obj\Debug\net6.0\MultiplayerHandler.genruntimeconfig.cache
+C:\Users\BogdanPC\Desktop\Game\VideoGame\MultiplayerHandler\obj\Debug\net6.0\ref\MultiplayerHandler.dll

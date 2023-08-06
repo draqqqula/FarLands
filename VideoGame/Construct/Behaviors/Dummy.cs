@@ -13,7 +13,8 @@ namespace VideoGame
     public enum Team
     {
         player,
-        enemy
+        enemy,
+        empty
     }
     public enum DamageType
     {
@@ -63,10 +64,8 @@ namespace VideoGame
     /// <summary>
     /// поведение объекта, которму может быть нанесён урон
     /// </summary>
-    public class Dummy : IBehavior
+    public class Dummy : Behavior
     {
-        public string DefaultName => "Dummy";
-
         public int MaxHealth { get; private set; }
         public int Health { get; private set; }
         public bool IsAlive { get { return Health > 0; } }
@@ -77,10 +76,7 @@ namespace VideoGame
         public Dictionary<string, TimeSpan> InvincibilityFrames { get; private set; }
         public double InvincibilityFactor { get; private set; }
 
-        public GameObject Parent { get; set; }
-        public bool Enabled { get; set; }
-
-        public void Act(TimeSpan deltaTime)
+        public override void Act(TimeSpan deltaTime)
         {
             foreach (var invinibilityInstance in InvincibilityFrames)
             {
@@ -89,7 +85,7 @@ namespace VideoGame
             InvincibilityFrames = InvincibilityFrames.Where(t => t.Value > TimeSpan.Zero).ToDictionary(t => t.Key, t => t.Value);
         }
 
-        private void SpawnParticles(IGameState state, int count, Layer layer)
+        private void SpawnParticles(GameState state, int count, Layer layer)
         {
             var random = new Random();
             for (int i = 0; i < count; i++)
@@ -102,10 +98,10 @@ namespace VideoGame
             }
         }
 
-        private void SpawnParticle(IGameState state, Layer layer, float angle, float power, float decceleration, TimeSpan delay)
+        private void SpawnParticle(GameState state, Layer layer, float angle, float power, float decceleration, TimeSpan delay)
         {
            var damageParticle = 
-                new GameObject(state,
+                new Sprite(state,
                 "damage_particle",
                 "Default",
                 new Rectangle(9, 9, 3, 3),
@@ -129,7 +125,7 @@ namespace VideoGame
                 (particle) =>
                 {
                     var timer = particle.GetBehavior<TimerHandler>("TimerHandler");
-                    timer.SetTimer("Destroy", TimeSpan.FromSeconds(0.3), (particle) => particle.Destroy(), true);
+                    timer.SetTimer("Destroy", TimeSpan.FromSeconds(0.3), (particle) => particle.Dispose(), true);
                     particle.ChangeAnimation("Fade", 0);
                 }
                 , true);
@@ -143,7 +139,7 @@ namespace VideoGame
                 if (allConditions.Count() == 0 || allConditions.All(condition => condition(this, damage)))
                 {
                     var fullDamage = damage.ApplyResistance(Resistances).Sum(t => t.Value);
-                    SpawnParticles(Parent.GameState, fullDamage, Parent.Layer);
+                    SpawnParticles(Parent.GameState, fullDamage, Parent.PresentLayer);
                     Health = Math.Max(Health - fullDamage, 0);
                     InvincibilityFrames[damage.MainTag] = damage.InvincibilityGift * InvincibilityFactor;
 
@@ -156,11 +152,6 @@ namespace VideoGame
                 }
             }
             return false;
-        }
-
-        public DrawingParameters ChangeAppearance(DrawingParameters parameters)
-        {
-            return parameters;
         }
 
         public Dummy(int maxHealth, Dictionary<DamageType, int> resistances, Team team, List<Condition> conditions, List<DamageEvent> events, double invincibilityFactor, bool enabled)

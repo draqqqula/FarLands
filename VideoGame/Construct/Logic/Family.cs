@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,39 +13,52 @@ namespace VideoGame
     /// семья объектов
     /// позволяет вручную сгруппировать ряд объектов
     /// </summary>
-    public class Family
+    public abstract class Family : IEnumerable<Sprite>
     {
-        public string Name { get; set; }
-        
-        /// <summary>
-        /// паттерны, объекты которых включены в семью
-        /// </summary>
-        public readonly List<IPattern> Patterns;
+        public static readonly ImmutableDictionary<string, Type> AllFamilies =
+            Assembly.GetAssembly(typeof(Family))
+            .GetTypes()
+            .Where(type => type.IsSubclassOf(typeof(Family)))
+            .ToDictionary(it => it.Name, it => it).ToImmutableDictionary();
 
-        /// <summary>
-        /// члены семьи
-        /// </summary>
-        public List<GameObject> Members
+        protected List<Sprite> Members = new List<Sprite>();
+
+        public virtual void CommonUpdate(TimeSpan deltaTime)
         {
-            get
-            {
-                return Patterns.SelectMany(pattern => pattern.Editions).ToList();
-            }
         }
 
-        public Family(string name)
+        public virtual void Initialize(Sprite member)
         {
-            Name = name;
-            Patterns = new List<IPattern>();
         }
 
-        /// <summary>
-        /// пополняет семью паттернами, объекты которых будут включены в семью
-        /// </summary>
-        /// <param name="patterns"></param>
-        public void AddPatterns(params IPattern[] patterns)
+        public virtual void OnReplenishment(Sprite member)
         {
-            Patterns.AddRange(patterns);
+        }
+
+        public virtual void OnAbandonment(Sprite member)
+        {
+        }
+
+        public void AddMember(Sprite member)
+        {
+            Members.Add(member);
+            OnReplenishment(member);
+        }
+
+        public void RemoveMember(Sprite member)
+        {
+            Members.Remove(member);
+            OnAbandonment(member);
+        }
+
+        IEnumerator<Sprite> IEnumerable<Sprite>.GetEnumerator()
+        {
+            return Members.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Members.GetEnumerator();
         }
     }
 }

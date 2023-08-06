@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using System.Globalization;
 using Microsoft.Xna.Framework.Content;
+using VideoGame;
 
 namespace Animations
 {
@@ -18,7 +19,7 @@ namespace Animations
     /// </summary>
     public class AnimationBuilder
     {
-        private ContentManager Content;
+        private readonly SpriteDrawer Drawer;
 
         private static AnimationFrame BuildFrame(string line)
         {
@@ -37,11 +38,11 @@ namespace Animations
             return properties.ToDictionary(e => Regex.Split(e, "=")[0], e => Regex.Split(e, "=")[1]);
         }
 
-        private static Animation BuildAnimation(Match match, Texture2D sheet)
+        private Animation BuildAnimation(Match match, string sheet)
         {
             var animationProperties = BuildAnimationProperties(match.Groups["Settings"].Captures.Select(v => v.Value).ToArray());
 
-            return new Animation(match.Groups["Name"].Value, sheet,
+            return new Animation(match.Groups["Name"].Value, Drawer.GetSprite(sheet),
                 match.Groups["Frames"].Captures.Select(v => BuildFrame(v.Value)).ToArray(),
                 animationProperties);
         }
@@ -54,7 +55,6 @@ namespace Animations
         public Dictionary<string, Animation> BuildFromFiles(string name)
         {
             var animations = new Dictionary<string, Animation>();
-            var sheet = Content.Load<Texture2D>(name);
 
             var path = Path.Combine(Environment.CurrentDirectory, string.Concat(name, "_properties.txt"));
             var rawProperties = string.Join(' ', File.ReadAllLines(path));
@@ -62,15 +62,15 @@ namespace Animations
 
             foreach (Match match in properties)
             {
-                animations.Add(match.Groups["Name"].Value, BuildAnimation(match, sheet));
+                animations.Add(match.Groups["Name"].Value, BuildAnimation(match, name));
             }
 
             return animations;
         }
 
-        public AnimationBuilder(ContentManager content)
+        public AnimationBuilder(SpriteDrawer drawer)
         {
-            Content = content;
+            Drawer = drawer;
         }
     }
 }

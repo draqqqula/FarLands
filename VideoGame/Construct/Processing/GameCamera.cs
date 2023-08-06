@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Animations;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,14 +14,18 @@ namespace VideoGame
     /// </summary>
     public class GameCamera
     {
-        private readonly GameWindow Window;
+        private GameWindow Window
+        {
+            get => Viewer.Window;
+        }
 
+        public readonly GameClient Viewer;
         public Vector2 Position { get; private set; }
 
-        public Vector2 LeftTopCorner { get { return new Vector2(Position.X - Area.Width / 2, Position.Y - Area.Height / 2); } }
-        public Vector2 RightTopCorner { get { return new Vector2(Position.X + Area.Width / 2, Position.Y - Area.Height / 2); } }
-        public Vector2 LeftBottomCorner { get { return new Vector2(Position.X - Area.Width / 2, Position.Y + Area.Height / 2); } }
-        public Vector2 RightBottomCorner { get { return new Vector2(Position.X + Area.Width / 2, Position.Y + Area.Height / 2); } }
+        public Vector2 LeftTopCorner { get { return new Vector2(Position.X - ViewPort.Width / 2, Position.Y - ViewPort.Height / 2); } }
+        public Vector2 RightTopCorner { get { return new Vector2(Position.X + ViewPort.Width / 2, Position.Y - ViewPort.Height / 2); } }
+        public Vector2 LeftBottomCorner { get { return new Vector2(Position.X - ViewPort.Width / 2, Position.Y + ViewPort.Height / 2); } }
+        public Vector2 RightBottomCorner { get { return new Vector2(Position.X + ViewPort.Width / 2, Position.Y + ViewPort.Height / 2); } }
 
         private const float CatchDistance = 0.4f;
 
@@ -33,11 +38,12 @@ namespace VideoGame
         /// <param name="dx"></param>
         /// <param name="dy"></param>
         /// <returns></returns>
-        public Vector2 ApplyParalax(Vector2 position, float dx, float dy)
+        public DrawingParameters ApplyParalax(DrawingParameters arguments, float dx, float dy)
         {
-            return position - new Vector2((int)(LeftTopCorner.X * dx), (int)(LeftTopCorner.Y * dy));
+            return arguments with { Position = arguments.Position - new Vector2((int)(LeftTopCorner.X * dx), (int)(LeftTopCorner.Y * dy)) };
         }
-        public GameObject TargetObject { get; private set; }
+
+        public Sprite TargetObject { get; private set; }
         /// <summary>
         /// внутренние границы, закреплены на цели
         /// положение камеры не может выйти за их пределы
@@ -50,7 +56,7 @@ namespace VideoGame
         /// <summary>
         /// область пространства, попадающая в поле зрения камеры
         /// </summary>
-        public Rectangle Area
+        public Rectangle ViewPort
         {
             get
             {
@@ -64,7 +70,7 @@ namespace VideoGame
         /// <summary>
         /// границы экрана игрока
         /// </summary>
-        private Rectangle ClientBounds
+        public Rectangle ClientBounds
         {
             get => Window.ClientBounds;
         }
@@ -74,11 +80,11 @@ namespace VideoGame
             return 1f - MathF.Pow(1-0.95f, dt/0.4f);
         }
 
-        public GameCamera(Vector2 position, Rectangle borders, GameWindow window)
+        public GameCamera(Vector2 position, Rectangle borders, GameClient viewer)
         {
             Position = position;
             InnerBorders = borders;
-            Window = window;
+            Viewer = viewer;
         }
         /// <summary>
         /// устанавливает внешние границы пространства, в котором камера может видеть
@@ -94,9 +100,9 @@ namespace VideoGame
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public bool Sees(GameObject obj)
+        public bool Sees(Sprite obj)
         {
-            return Area.Intersects(obj.Layout);
+            return ViewPort.Intersects(obj.Layout);
         }
 
         private Vector2 Lerp(Vector2 a, Vector2 b, float k)
@@ -116,7 +122,7 @@ namespace VideoGame
         /// заставляет камеру следовать за объектом
         /// </summary>
         /// <param name="targetObject"></param>
-        public void LinkTo(GameObject targetObject)
+        public void LinkTo(Sprite targetObject)
         {
             this.TargetObject = targetObject;
         }
@@ -139,7 +145,7 @@ namespace VideoGame
                 if (OuterBorders.HasValue)
                 {
                     var outer = OuterBorders.Value;
-                    Position = FitInBorders(rawPos, outer.Center.ToVector2(), new Rectangle(new Point(0, 0), new Point(outer.Width - Area.Width, outer.Height - Area.Height)));
+                    Position = FitInBorders(rawPos, outer.Center.ToVector2(), new Rectangle(new Point(0, 0), new Point(outer.Width - ViewPort.Width, outer.Height - ViewPort.Height)));
                 }
                 else
                     Position = rawPos;

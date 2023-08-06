@@ -10,27 +10,13 @@ namespace VideoGame
     /// <summary>
     /// содержит информацию об уроне объекта
     /// </summary>
-    public class DamageContainer : IBehavior
+    public class DamageContainer : Behavior
     {
-        public string DefaultName => "DamageContainer";
-
-        public GameObject Parent { get; set; }
-        public bool Enabled { get; set; }
-
-        public void Act(TimeSpan deltaTime)
-        {
-        }
-
         private Dictionary<string, DamageInstance> Instances;
 
         public DamageInstance GetDamage(string title)
         {
             return Instances[title];
-        }
-
-        public DrawingParameters ChangeAppearance(DrawingParameters parameters)
-        {
-            return parameters;
         }
 
         public DamageContainer(bool enabled, params (string title, DamageInstance unit)[] instances)

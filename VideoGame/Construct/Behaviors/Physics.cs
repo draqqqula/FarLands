@@ -33,7 +33,7 @@ namespace VideoGame
         public float Acceleration;
         public float MaxModule;
         public float MinModule;
-        private float OriginalModule;
+        private readonly float OriginalModule;
         public bool Enabled;
 
         public TimeSpan LifeTime;
@@ -43,6 +43,12 @@ namespace VideoGame
         public void Originalize()
         {
             Module = OriginalModule;
+        }
+
+        public void Direct(Vector2 directon)
+        {
+            directon.Normalize();
+            Direction = directon;
         }
 
         public bool Update(TimeSpan deltaTime)
@@ -116,7 +122,7 @@ namespace VideoGame
     /// <summary>
     /// Описывает поведение объекта, подверженного физике
     /// </summary>
-    public class Physics : IBehavior
+    public class Physics : Behavior
     {
         public readonly Rectangle[][] SurfaceMap;
         public readonly int SurfaceWidth;
@@ -131,6 +137,11 @@ namespace VideoGame
         public void OriginalizeVector(string name)
         {
             Vectors[name].Originalize();
+        }
+
+        public void DirectVector(string name, Vector2 direction)
+        {
+            Vectors[name].Direct(direction);
         }
 
         public void AddVector(string name, MovementVector vector)
@@ -194,19 +205,9 @@ namespace VideoGame
             return (moving.Location - end.Location).ToVector2();
         }
 
-        public string DefaultName { get => "Physics"; }
-        public GameObject Parent { get; set; }
-        public bool Enabled { get; set; }
-
-        public void Act(TimeSpan deltaTime)
+        public override void Act(TimeSpan deltaTime)
         {
-            Vector2 resultingVector = Vector2.Zero;
-            foreach (var vector in ActiveVectors)
-            {
-                resultingVector += vector.Value.Vector * (float)(deltaTime.TotalSeconds * 60);
-                if (!vector.Value.Update(deltaTime))
-                    Vectors.Remove(vector.Key);
-            }
+            Vector2 resultingVector = HalfUpdateVectors(deltaTime);
             var resultingLength = resultingVector.Length();
             var direction = Vector2.Normalize(resultingVector);
             var allowedSpeed = SurfaceWidth/4;
@@ -220,13 +221,23 @@ namespace VideoGame
                 var futurePosition = Parent.PredictLayout(vectorSequence);
                 var mapSegment = GetMapSegment(Math.Min(pastPosition.Left, futurePosition.Left), Math.Max(pastPosition.Right, futurePosition.Right));
                 var collisionFactor = ApplyCollision(pastPosition, mapSegment, futurePosition);
-                Parent.Position += vectorSequence + collisionFactor;
+
+                Parent.Move(vectorSequence + collisionFactor);
             }
+
+            HalfUpdateVectors(deltaTime);
         }
 
-        public DrawingParameters ChangeAppearance(DrawingParameters parameters)
+        private Vector2 HalfUpdateVectors(TimeSpan deltaTime)
         {
-            return parameters;
+            Vector2 resultingVector = Vector2.Zero;
+            foreach (var vector in ActiveVectors)
+            {
+                resultingVector += vector.Value.Vector * (float)(deltaTime.TotalSeconds * 60);
+                if (!vector.Value.Update(deltaTime / 2))
+                    Vectors.Remove(vector.Key);
+            }
+            return resultingVector;
         }
 
         public Physics(Rectangle[][] surfaceMap, int surfaceWidth, bool enabled)
