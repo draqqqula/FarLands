@@ -11,11 +11,11 @@ namespace VideoGame
     public class MenuState : GameState
     {
 
-        public override void LocalUpdate(TimeSpan deltaTime)
+        public override void OnTick(TimeSpan deltaTime)
         {
         }
 
-        public MenuState(bool isRemote) : base(isRemote) 
+        public MenuState() : base(true, true, true, true, true, true) 
         {
         }
     }

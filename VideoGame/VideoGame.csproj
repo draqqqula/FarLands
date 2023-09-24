@@ -30,14 +30,19 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
-    <PackageReference Include="Nito.Collections.Deque" Version="1.1.1" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+    <PackageReference Include="OpenGL.Net" Version="0.8.4" />
+    <PackageReference Include="Ryan.MonoGame.Framework.DesktopGL" Version="3.7.200" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\obj\DesktopGL\net6.0\Content\Textures\" />
+    <Folder Include="Gameplay\" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Adress.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="arrow_properties.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

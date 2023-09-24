@@ -79,19 +79,6 @@
           "build/netstandard2.0/NETStandard.Library.targets": {}
         }
       },
-      "Nito.Collections.Deque/1.1.1": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/Nito.Collections.Deque.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/Nito.Collections.Deque.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "NUnit/3.13.3": {
         "type": "package",
         "dependencies": {
@@ -115,6 +102,66 @@
         "type": "package",
         "build": {
           "build/netcoreapp3.1/NUnit3TestAdapter.props": {}
+        }
+      },
+      "OpenGL.Net/0.8.4": {
+        "type": "package",
+        "compile": {
+          "lib/net461/OpenGL.Net.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net461/OpenGL.Net.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "Ryan.MonoGame.Framework.DesktopGL/3.7.200": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/MonoGame.Framework.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/MonoGame.Framework.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libSDL2-2.0.so.0": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/linux-x64/native/libopenal.so.1": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/osx/native/libSDL2-2.0.0.dylib": {
+            "assetType": "native",
+            "rid": "osx"
+          },
+          "runtimes/osx/native/libopenal.1.dylib": {
+            "assetType": "native",
+            "rid": "osx"
+          },
+          "runtimes/win-x64/native/SDL2.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/soft_oal.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x86/native/SDL2.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          },
+          "runtimes/win-x86/native/soft_oal.dll": {
+            "assetType": "native",
+            "rid": "win-x86"
+          }
         }
       }
     }
@@ -301,24 +348,6 @@
         "netstandard.library.nuspec"
       ]
     },
-    "Nito.Collections.Deque/1.1.1": {
-      "sha512": "CU0/Iuv5VDynK8I8pDLwkgF0rZhbQoZahtodfL0M3x2gFkpBRApKs8RyMyNlAi1mwExE4gsmqQXk4aFVvW9a4Q==",
-      "type": "package",
-      "path": "nito.collections.deque/1.1.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "icon.png",
-        "lib/net461/Nito.Collections.Deque.dll",
-        "lib/net461/Nito.Collections.Deque.xml",
-        "lib/netstandard1.0/Nito.Collections.Deque.dll",
-        "lib/netstandard1.0/Nito.Collections.Deque.xml",
-        "lib/netstandard2.0/Nito.Collections.Deque.dll",
-        "lib/netstandard2.0/Nito.Collections.Deque.xml",
-        "nito.collections.deque.1.1.1.nupkg.sha512",
-        "nito.collections.deque.nuspec"
-      ]
-    },
     "NUnit/3.13.3": {
       "sha512": "KNPDpls6EfHwC3+nnA67fh5wpxeLb3VLFAfLxrug6JMYDLHH6InaQIWR7Sc3y75d/9IKzMksH/gi08W7XWbmnQ==",
       "type": "package",
@@ -369,6 +398,49 @@
         "nunit3testadapter.nuspec",
         "nunit_256.png"
       ]
+    },
+    "OpenGL.Net/0.8.4": {
+      "sha512": "F7o2KkIrz9rrtBY7+VRgPKnf2mV8pt3h4/o/CWPt86oIocjzKTQFNo2qH4zVYSWyy/T9rS0xBpu9t75MS6wM8Q==",
+      "type": "package",
+      "path": "opengl.net/0.8.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/monoandroid/OpenGL.Net.dll",
+        "lib/monoandroid/OpenGL.Net.xml",
+        "lib/net35/OpenGL.Net.dll",
+        "lib/net35/OpenGL.Net.pdb",
+        "lib/net35/OpenGL.Net.xml",
+        "lib/net461/OpenGL.Net.dll",
+        "lib/net461/OpenGL.Net.pdb",
+        "lib/net461/OpenGL.Net.xml",
+        "opengl.net.0.8.4.nupkg.sha512",
+        "opengl.net.nuspec"
+      ]
+    },
+    "Ryan.MonoGame.Framework.DesktopGL/3.7.200": {
+      "sha512": "KM3rnwkwUR3d+IVd4aKpRl4Kjxpoe/vSDMpsTgYtu6MgHQdn9cRG6C3NIjHAMS0EtSllxMr4CC4hpwOmHnV1tQ==",
+      "type": "package",
+      "path": "ryan.monogame.framework.desktopgl/3.7.200",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/MonoGame.Framework.DesktopGL.targets",
+        "lib/net452/MonoGame.Framework.dll",
+        "lib/net452/MonoGame.Framework.xml",
+        "lib/netstandard2.0/MonoGame.Framework.dll",
+        "lib/netstandard2.0/MonoGame.Framework.xml",
+        "runtimes/linux-x64/native/libSDL2-2.0.so.0",
+        "runtimes/linux-x64/native/libopenal.so.1",
+        "runtimes/osx/native/libSDL2-2.0.0.dylib",
+        "runtimes/osx/native/libopenal.1.dylib",
+        "runtimes/win-x64/native/SDL2.dll",
+        "runtimes/win-x64/native/soft_oal.dll",
+        "runtimes/win-x86/native/SDL2.dll",
+        "runtimes/win-x86/native/soft_oal.dll",
+        "ryan.monogame.framework.desktopgl.3.7.200.nupkg.sha512",
+        "ryan.monogame.framework.desktopgl.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
@@ -377,7 +449,8 @@
       "MonoGame.Framework.DesktopGL >= 3.8.1.303",
       "NUnit >= 3.13.3",
       "NUnit3TestAdapter >= 4.5.0",
-      "Nito.Collections.Deque >= 1.1.1"
+      "OpenGL.Net >= 0.8.4",
+      "Ryan.MonoGame.Framework.DesktopGL >= 3.7.200"
     ]
   },
   "packageFolders": {
@@ -441,9 +514,13 @@
             "target": "Package",
             "version": "[4.5.0, )"
           },
-          "Nito.Collections.Deque": {
+          "OpenGL.Net": {
             "target": "Package",
-            "version": "[1.1.1, )"
+            "version": "[0.8.4, )"
+          },
+          "Ryan.MonoGame.Framework.DesktopGL": {
+            "target": "Package",
+            "version": "[3.7.200, )"
           }
         },
         "imports": [
@@ -477,5 +554,17 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Пакет \"OpenGL.Net 0.8.4\" был восстановлен с помощью \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\", а не целевой платформы проекта \"net6.0-windows10.0.22621\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "libraryId": "OpenGL.Net",
+      "targetGraphs": [
+        "net6.0-windows10.0.22621"
+      ]
+    }
+  ]
 }

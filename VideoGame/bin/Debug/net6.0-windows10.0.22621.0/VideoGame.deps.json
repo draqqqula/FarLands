@@ -12,7 +12,8 @@
           "MonoGame.Framework.DesktopGL": "3.8.1.303",
           "NUnit": "3.13.3",
           "NUnit3TestAdapter": "4.5.0",
-          "Nito.Collections.Deque": "1.1.1",
+          "OpenGL.Net": "0.8.4",
+          "Ryan.MonoGame.Framework.DesktopGL": "3.7.200",
           "runtimepack.Microsoft.Windows.SDK.NET.Ref": "10.0.22621.26"
         },
         "runtime": {
@@ -88,14 +89,6 @@
           "Microsoft.NETCore.Platforms": "1.1.0"
         }
       },
-      "Nito.Collections.Deque/1.1.1": {
-        "runtime": {
-          "lib/netstandard2.0/Nito.Collections.Deque.dll": {
-            "assemblyVersion": "1.1.1.0",
-            "fileVersion": "1.1.1.0"
-          }
-        }
-      },
       "NUnit/3.13.3": {
         "dependencies": {
           "NETStandard.Library": "2.0.0"
@@ -107,7 +100,24 @@
           }
         }
       },
-      "NUnit3TestAdapter/4.5.0": {}
+      "NUnit3TestAdapter/4.5.0": {},
+      "OpenGL.Net/0.8.4": {
+        "runtime": {
+          "lib/net461/OpenGL.Net.dll": {
+            "assemblyVersion": "0.8.4.0",
+            "fileVersion": "0.8.4.0"
+          }
+        }
+      },
+      "Ryan.MonoGame.Framework.DesktopGL/3.7.200": {
+        "runtimeTargets": {
+          "runtimes/osx/native/libSDL2-2.0.0.dylib": {
+            "rid": "osx",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      }
     }
   },
   "libraries": {
@@ -149,13 +159,6 @@
       "path": "netstandard.library/2.0.0",
       "hashPath": "netstandard.library.2.0.0.nupkg.sha512"
     },
-    "Nito.Collections.Deque/1.1.1": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-CU0/Iuv5VDynK8I8pDLwkgF0rZhbQoZahtodfL0M3x2gFkpBRApKs8RyMyNlAi1mwExE4gsmqQXk4aFVvW9a4Q==",
-      "path": "nito.collections.deque/1.1.1",
-      "hashPath": "nito.collections.deque.1.1.1.nupkg.sha512"
-    },
     "NUnit/3.13.3": {
       "type": "package",
       "serviceable": true,
@@ -169,6 +172,20 @@
       "sha512": "sha512-s8JpqTe9bI2f49Pfr3dFRfoVSuFQyraTj68c3XXjIS/MRGvvkLnrg6RLqnTjdShX+AdFUCCU/4Xex58AdUfs6A==",
       "path": "nunit3testadapter/4.5.0",
       "hashPath": "nunit3testadapter.4.5.0.nupkg.sha512"
+    },
+    "OpenGL.Net/0.8.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-F7o2KkIrz9rrtBY7+VRgPKnf2mV8pt3h4/o/CWPt86oIocjzKTQFNo2qH4zVYSWyy/T9rS0xBpu9t75MS6wM8Q==",
+      "path": "opengl.net/0.8.4",
+      "hashPath": "opengl.net.0.8.4.nupkg.sha512"
+    },
+    "Ryan.MonoGame.Framework.DesktopGL/3.7.200": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KM3rnwkwUR3d+IVd4aKpRl4Kjxpoe/vSDMpsTgYtu6MgHQdn9cRG6C3NIjHAMS0EtSllxMr4CC4hpwOmHnV1tQ==",
+      "path": "ryan.monogame.framework.desktopgl/3.7.200",
+      "hashPath": "ryan.monogame.framework.desktopgl.3.7.200.nupkg.sha512"
     }
   }
 }

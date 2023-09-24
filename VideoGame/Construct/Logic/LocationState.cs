@@ -22,7 +22,7 @@ namespace VideoGame
         public TextObject FPSCounter;
         public TileMap MainTileMap;
 
-        public override void LocalUpdate(TimeSpan deltaTime)
+        public override void OnTick(TimeSpan deltaTime)
         {
             FPSCounter.Text = Convert.ToString(Math.Round(1/deltaTime.TotalSeconds));
         }
@@ -39,6 +39,11 @@ namespace VideoGame
                 new TextObject(Content, "a", "heart", 0, 6f, 3f, Layers["LeftTopBound"],
                 new Vector2(30, 30)));
             Players.Add(character);
+
+            var sword = new PrerenderedModel(new Vector2(300, 300), new Point(72, 72), MathF.PI / 6, "sword", ContentStorage);
+            MainLayer.PlaceBelow(sword, character);
+            character.PickUpWeapon(sword);
+
             var camera = GetCamera(client);
             camera.SetOuterBorders(MainTileMap.Box);
             camera.LinkTo(character);
@@ -51,7 +56,7 @@ namespace VideoGame
             character.Dispose();
         }
 
-        public LocationState(bool IsRemote) : base(IsRemote)
+        public LocationState() : base(true, true, true, true, true, true)
         {
         }
     }

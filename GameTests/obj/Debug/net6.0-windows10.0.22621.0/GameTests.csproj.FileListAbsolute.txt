@@ -158,3 +158,4 @@ C:\Users\BogdanPC\Desktop\Game\VideoGame\GameTests\obj\Debug\net6.0-windows10.0.
 C:\Users\BogdanPC\Desktop\Game\VideoGame\GameTests\obj\Debug\net6.0-windows10.0.22621.0\GameTests.pdb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\GameTests\obj\Debug\net6.0-windows10.0.22621.0\GameTests.genruntimeconfig.cache
 C:\Users\BogdanPC\Desktop\Game\VideoGame\GameTests\obj\Debug\net6.0-windows10.0.22621.0\ref\GameTests.dll
+C:\Users\BogdanPC\Desktop\Game\VideoGame\GameTests\bin\Debug\net6.0-windows10.0.22621.0\Adress.txt

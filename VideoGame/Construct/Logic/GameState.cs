@@ -1,10 +1,15 @@
 ﻿using Animations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,42 +21,47 @@ namespace VideoGame
     /// <summary>
     /// состояние уровня
     /// </summary>
-    public abstract class GameState
+    public abstract partial class GameState
     {
 
         #region HOST
+        public ContentStorage ContentStorage;
 
-        public ContentManager Content;
+        //should be deleted \/
+        public ContentManager Content { get; set; }
 
         public AnimationBuilder MainAnimationBuilder { get; set; }
 
         public LevelLoader LevelLoader { get; set; }
 
+        public readonly bool CameraUpdateToggled;
+        public readonly bool DestroyedExcluderToggled;
+        public readonly bool BehaviorUpdateToggled;
+        public readonly bool ObjectUpdateToggled;
+        public readonly bool PictureUpdateToggled;
+        public readonly bool FamilyUpdateToggled;
         public void Update(TimeSpan deltaTime, bool paused)
         {
-            if (IsRemote)
+            if (paused)
             {
-                //...
+                if (CameraUpdateToggled) UpdateCameras(TimeSpan.Zero);
+                if (PictureUpdateToggled) UpdatePicture(TimeSpan.Zero);
+                if (LevelLoader.IsReadyToResume)
+                    LevelLoader.Resume();
+                SendPictures();
             }
             else
             {
-                if (paused)
-                {
-                    UpdateCameras(TimeSpan.Zero);
-                    UpdatePicture(TimeSpan.Zero);
-                    if (LevelLoader.IsReadyToResume)
-                        LevelLoader.Resume();
-                }
-                else
-                {
-                    UpdateCameras(deltaTime);
-                    ExcludeDestroyed();
-                        UpdateBehaviors(deltaTime);
-                            UpdateObjects(deltaTime);
-                                UpdatePicture(deltaTime);
+                if (RequestRecieveToggled) { CheckConnectionRequests(); RecieveDataFromConnectedUsers(); }
+                if (CameraUpdateToggled) UpdateCameras(deltaTime);
+                if (DestroyedExcluderToggled) ExcludeDestroyed();
+                if (BehaviorUpdateToggled) UpdateBehaviors(deltaTime);
+                if (ObjectUpdateToggled) UpdateObjects(deltaTime);
+                if (PictureUpdateToggled) UpdatePicture(deltaTime);
+                if (FamilyUpdateToggled) UpdateFamilies(deltaTime);
+                SendPictures();
 
-                    LocalUpdate(deltaTime);
-                }
+                OnTick(deltaTime);
             }
         }
 
@@ -62,12 +72,17 @@ namespace VideoGame
             Layers = Layers.OrderBy(it => it.Value.DrawingPriority).ToDictionary(it => it.Key, it => it.Value);
         }
 
-        protected GameState(bool isRemote)
+        protected GameState(bool cameraUpdate, bool destroyedExcluder, bool behaviorUpdate, bool objectUpdate, bool pictureUpdate, bool familyUpdate)
         {
-            IsRemote = isRemote;
+            CameraUpdateToggled = cameraUpdate;
+            DestroyedExcluderToggled = destroyedExcluder;
+            BehaviorUpdateToggled = behaviorUpdate;
+            ObjectUpdateToggled = objectUpdate;
+            PictureUpdateToggled = pictureUpdate;
+            FamilyUpdateToggled = familyUpdate;
         }
 
-        public abstract void LocalUpdate(TimeSpan deltaTime);
+        public abstract void OnTick(TimeSpan deltaTime);
 
         public Dictionary<string, Layer> Layers { get; set; } = new Dictionary<string, Layer>();
 
@@ -97,7 +112,53 @@ namespace VideoGame
 
         #region CONNECTION
 
-        public readonly bool IsRemote;
+        private UdpClient RequestReciever;
+        private Task<UdpReceiveResult> recieveTask;
+        private bool RequestRecieveToggled = false;
+
+        public void StartRecieveConnectionRequests(int port)
+        {
+            RequestReciever = new UdpClient(port);
+            recieveTask = RequestReciever.ReceiveAsync();
+            RequestRecieveToggled = true;
+        }
+
+        private void RecieveDataFromConnectedUsers()
+        {
+            foreach (var client in Clients.Where(it => it.IsRemote))
+            {
+                client.CheckForData();
+            }
+        }
+
+        private void CheckConnectionRequests()
+        {
+            if (recieveTask.IsCompletedSuccessfully)
+            {
+                MakeClient(recieveTask.Result.RemoteEndPoint, recieveTask.Result.Buffer);
+            }
+            if (recieveTask.IsCanceled || recieveTask.IsCompleted || recieveTask.IsFaulted)
+            {
+                recieveTask = RequestReciever.ReceiveAsync();
+            }
+        }
+
+        private void MakeClient(IPEndPoint remoteHost, byte[] initialPack)
+        {
+            GameControls controls = new ();
+            ReadOnlySpan<byte> bytes = initialPack.AsSpan();
+
+            Rectangle window = new Rectangle(
+                BinaryPrimitives.ReadInt32LittleEndian(bytes),
+                BinaryPrimitives.ReadInt32LittleEndian(bytes[4..]),
+                BinaryPrimitives.ReadInt32LittleEndian(bytes[8..]),
+                BinaryPrimitives.ReadInt32LittleEndian(bytes[12..])
+                );
+            var client = new GameClient(window, controls, GameClient.GameLanguage.Russian, remoteHost);
+            Connect(client);
+            client.SendData(GetInitialPack(ContentStorage).ToArray());
+        }
+
         protected virtual void OnConnect(GameClient client) { }
             protected virtual void OnDisconnect(GameClient client) { }
             public void Connect(GameClient client)
@@ -145,11 +206,18 @@ namespace VideoGame
                     camera.Update(deltaTime);
                 }
             }
-            #endregion
+        #endregion
 
         #endregion
 
         #region UPDATES
+        private void SendPictures()
+        {
+            foreach (var client in Clients.Where(it => it.IsRemote))
+            {
+                client.SendData(GetPack(client).ToArray());
+            }
+        }
         private void UpdateObjects(TimeSpan deltaTime)
         {
             foreach (var sprite in AllObjects.ToArray())
@@ -190,13 +258,15 @@ namespace VideoGame
             AllObjects.RemoveAll(e => e.Disposed);
             foreach (var layer in Layers.Values)
             {
-                foreach (var obj in layer)
+                foreach (var obj in layer.ToArray())
                 {
                     if (obj.Disposed)
                         layer.Remove(obj);
                 }
             }
         }
+
         #endregion
+
     }
 }

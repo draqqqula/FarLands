@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Condition = System.Func<VideoGame.Dummy, VideoGame.DamageInstance, bool>;
 using DamageEvent = System.Func<VideoGame.Dummy, VideoGame.DamageInstance, VideoGame.DamageInstance>;
+using VideoGame.Construct.Sprites;
 
 namespace VideoGame
 {
@@ -91,8 +92,8 @@ namespace VideoGame
             for (int i = 0; i < count; i++)
             {
                 float angle = (float)-(Math.PI/4 + random.NextDouble() * Math.PI/2);
-                float power = (1 + (float)random.NextDouble()) * 8;
-                float decceleration = -(1 + (float)random.NextDouble()) * 24;
+                float power = (2 + (float)random.NextDouble()) * 5;
+                float decceleration = -(1 + (float)random.NextDouble()) * 17;
                 TimeSpan delay = TimeSpan.FromSeconds(0.2 + random.NextDouble() * 0.1);
                 SpawnParticle(state, layer, angle, power, decceleration, delay);
             }
@@ -100,35 +101,7 @@ namespace VideoGame
 
         private void SpawnParticle(GameState state, Layer layer, float angle, float power, float decceleration, TimeSpan delay)
         {
-           var damageParticle = 
-                new Sprite(state,
-                "damage_particle",
-                "Default",
-                new Rectangle(9, 9, 3, 3),
-                Parent.Position,
-                layer,
-                false
-                );
-            var ParentPhysics = Parent.GetBehavior<Physics>("Physics");
-            var particlePhysics = new Physics(new Rectangle[0][], 15, ParentPhysics.Enabled);
-            damageParticle.AddBehavior(particlePhysics);
-            particlePhysics.AddVector("Gravity", new MovementVector(new Vector2(0, 1), 4, TimeSpan.Zero, true));
-
-            particlePhysics.AddVector(
-                "Impulse", 
-                new MovementVector(
-                    new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * power, decceleration, TimeSpan.Zero, true));
-
-            var particleTimer = new TimerHandler(true);
-            damageParticle.AddBehavior(particleTimer);
-            particleTimer.SetTimer("DelayDuration", delay, 
-                (particle) =>
-                {
-                    var timer = particle.GetBehavior<TimerHandler>("TimerHandler");
-                    timer.SetTimer("Destroy", TimeSpan.FromSeconds(0.3), (particle) => particle.Dispose(), true);
-                    particle.ChangeAnimation("Fade", 0);
-                }
-                , true);
+            new DamageParticle(state, Parent.Position, layer, angle, power, decceleration, delay);
         }
 
         public bool TakeDamage(DamageInstance damage)

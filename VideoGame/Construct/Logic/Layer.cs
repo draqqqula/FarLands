@@ -14,7 +14,7 @@ namespace VideoGame
     /// <summary>
     /// слой, на котором могут распологаться объекты, карты тайлов и текст
     /// </summary>
-    public class Layer : List<GameObject>
+    public class Layer : RelativeCollection<GameObject>
     {
         public readonly string Name;
 
@@ -55,7 +55,10 @@ namespace VideoGame
                     {
                         if (obj.IsVisibleFor(view.Key.Viewer))
                         {
-                            view.Value.AddPicture(obj.GetVisualPart(view.Key));
+                            foreach (var display in obj.GetDisplay(view.Key, this))
+                            {
+                                view.Value.AddPicture(display);
+                            }
                         }
                     }
 

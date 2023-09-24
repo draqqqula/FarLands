@@ -1,0 +1,6 @@
+#undef OutlineDepthThreshold
+#undef OutlineFadeStart
+#undef OutlineFadeCurve
+#undef OutlineUseFading
+#undef OutlineUseDepthThreshold
+

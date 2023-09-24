@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "rCkbstjfxm/yVPeF9Az40+/0Qg/OLvsjpwJlW+hrLlkZBUOXGzOZakRVt0G/okluWXCi5A5lWXBOBOF/oIv6/A==",
+  "dgSpecHash": "4GMjKUsQ3q85CQK65fbeB8h8Zt4TwQXeb3lPkIsulSxZzg2c8zL7+Nm5Jlq7wkxe+E8GBFQXraukLh0B+1U/Ew==",
   "success": true,
   "projectFilePath": "C:\\Users\\BogdanPC\\Desktop\\Game\\VideoGame\\GameTests\\GameTests.csproj",
   "expectedPackageFiles": [
@@ -13,12 +13,24 @@
     "C:\\Users\\BogdanPC\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.1.303\\monogame.framework.desktopgl.3.8.1.303.nupkg.sha512",
     "C:\\Users\\BogdanPC\\.nuget\\packages\\netstandard.library\\2.0.0\\netstandard.library.2.0.0.nupkg.sha512",
     "C:\\Users\\BogdanPC\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
-    "C:\\Users\\BogdanPC\\.nuget\\packages\\nito.collections.deque\\1.1.1\\nito.collections.deque.1.1.1.nupkg.sha512",
     "C:\\Users\\BogdanPC\\.nuget\\packages\\nuget.frameworks\\6.5.0\\nuget.frameworks.6.5.0.nupkg.sha512",
     "C:\\Users\\BogdanPC\\.nuget\\packages\\nunit\\3.13.3\\nunit.3.13.3.nupkg.sha512",
     "C:\\Users\\BogdanPC\\.nuget\\packages\\nunit3testadapter\\4.5.0\\nunit3testadapter.4.5.0.nupkg.sha512",
+    "C:\\Users\\BogdanPC\\.nuget\\packages\\opengl.net\\0.8.4\\opengl.net.0.8.4.nupkg.sha512",
+    "C:\\Users\\BogdanPC\\.nuget\\packages\\ryan.monogame.framework.desktopgl\\3.7.200\\ryan.monogame.framework.desktopgl.3.7.200.nupkg.sha512",
     "C:\\Users\\BogdanPC\\.nuget\\packages\\system.reflection.metadata\\1.6.0\\system.reflection.metadata.1.6.0.nupkg.sha512",
     "C:\\Users\\BogdanPC\\.nuget\\packages\\microsoft.windows.sdk.net.ref\\10.0.22621.26\\microsoft.windows.sdk.net.ref.10.0.22621.26.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Пакет \"OpenGL.Net 0.8.4\" был восстановлен с помощью \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\", а не целевой платформы проекта \"net6.0-windows10.0.22621\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "libraryId": "OpenGL.Net",
+      "targetGraphs": [
+        "net6.0-windows10.0.22621"
+      ]
+    }
+  ]
 }

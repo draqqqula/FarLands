@@ -1,0 +1,100 @@
+// Vertex input structure
+struct VertexShaderInput
+{
+    float4 Pos : POSITION0;
+    float3 Normal : NORMAL0;
+};
+
+// Vertex output structure
+struct VertexShaderOutput
+{
+    float4 Pos : POSITION0;
+    float4 PosOut : TEXCOORD0;
+    float3 Normal : TEXCOORD1;
+};
+
+// Shader parameters
+float4x4 World;
+float4x4 View;
+float4x4 Projection;
+sampler2D TextureSampler : register(s0);
+float2 resolution;
+
+// Vertex shader function (Shader Model 3.0)
+VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+{
+    VertexShaderOutput output;
+
+    // Calculate the position of the vertex in world space
+    output.Pos = mul(input.Pos, World);
+
+    // Transform to view space
+    output.Pos = mul(output.Pos, View);
+
+    // Transform to projection space
+    output.Pos = mul(output.Pos, Projection);
+
+    // Pass the vertex position to the pixel shader
+    output.PosOut = output.Pos;
+
+    // Pass the vertex normal to the pixel shader
+    output.Normal = input.Normal;
+
+    return output;
+}
+
+// Pixel shader function
+float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
+{
+    // Calculate the screen coordinates of the current pixel
+    float2 screenPos = input.PosOut.xy / input.PosOut.w;
+
+    // Calculate the size of each pixel in screen space
+    float2 pixelSize = 1.0 / resolution;
+
+    // Calculate the position of the nearest pixel center
+    float2 pixelCenter = floor(screenPos / pixelSize) * pixelSize;
+
+    // Sample the texture at the nearest pixel center
+    float4 color = tex2D(TextureSampler, pixelCenter);
+
+    // Initialize the outline color to black
+    float4 outlineColor = float4(0, 0, 0, 1);
+
+    // Check the neighboring pixels and add white color to the bordering pixels
+    for (float x = -1; x <= 1; x++)
+    {
+        for (float y = -1; y <= 1; y++)
+        {
+            // Skip the current pixel
+            if (x == 0 && y == 0)
+                continue;
+
+            // Calculate the position of the neighboring pixel
+            float2 neighborPos = pixelCenter + float2(x, y) * pixelSize;
+
+            // Sample the texture at the neighboring pixel
+            float4 neighborColor = tex2D(TextureSampler, neighborPos);
+
+            // If the neighboring pixel is different from the current pixel, it's part of the border
+            if (any(neighborColor.rgb != color.rgb))
+            {
+                // Add white color to the outline
+                outlineColor.rgb = float3(1, 1, 1);
+            }
+        }
+    }
+    // If the pixel is part of the border, set it to the outline color, otherwise use the original color
+    color.rgb = outlineColor.rgb;
+
+    return color;
+}
+
+technique Technique1
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_3_0 VertexShaderFunction();
+        PixelShader = compile ps_3_0 PixelShaderFunction();
+    }
+}

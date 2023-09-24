@@ -14,10 +14,6 @@ namespace VideoGame
     /// </summary>
     public class GameCamera
     {
-        private GameWindow Window
-        {
-            get => Viewer.Window;
-        }
 
         public readonly GameClient Viewer;
         public Vector2 Position { get; private set; }
@@ -72,7 +68,7 @@ namespace VideoGame
         /// </summary>
         public Rectangle ClientBounds
         {
-            get => Window.ClientBounds;
+            get => Viewer.Window;
         }
 
         private float InterpolationFactor(float dt)

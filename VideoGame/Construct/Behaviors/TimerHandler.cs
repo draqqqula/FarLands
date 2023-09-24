@@ -80,7 +80,7 @@ namespace VideoGame
         {
             SetTimer(name, TimeSpan.FromSeconds(duration), alarm, deleteOnSurpass);
         }
-        public void SetTiemr(string name, double duration, bool deleteOnSurpass)
+        public void SetTimer(string name, double duration, bool deleteOnSurpass)
         {
             SetTimer(name, TimeSpan.FromSeconds(duration), deleteOnSurpass);
         }
@@ -160,6 +160,34 @@ namespace VideoGame
                 Timers[name].AlarmTime = t + duration;
             else
                 SetTimer(name, duration, deleteOnSurpass);
+        }
+
+        public bool When(string name, TimeSpan duration)
+        {
+            var state = CheckAndTurnOff(name);
+            if (state is TimerState.IsOut)
+            {
+                return true;
+            }
+            else if (state is TimerState.NotExists)
+            {
+                SetTimer(name, duration, false);
+            }
+            return false;
+        }
+
+        public bool When(string name, double duration)
+        {
+            var state = CheckAndTurnOff(name);
+            if (state is TimerState.IsOut)
+            {
+                return true;
+            }
+            else if (state is TimerState.NotExists)
+            {
+                SetTimer(name, duration, false);
+            }
+            return false;
         }
 
         public TimerState CheckLooping(string name, TimeSpan delay, Action<Sprite> alarm)

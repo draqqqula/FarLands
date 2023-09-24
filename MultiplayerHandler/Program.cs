@@ -1,45 +1,20 @@
-﻿using System.Net;
+﻿using System.Buffers.Binary;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-var tcpListener = new TcpListener(IPAddress.Parse("26.181.15.68"), 8888);
 
-try
+using UdpClient udpclient = new UdpClient(8001);
+IPEndPoint ep = IPEndPoint.Parse("26.189.235.213:8001");
+int c = 0;
+while (true)
 {
-    tcpListener.Start();
-    Console.WriteLine("Сервер запущен. Ожидание подключений... ");
+    byte[] result = udpclient.Receive(ref ep);
 
-    while (true)
+    foreach (byte b in result)
     {
-        // получаем подключение в виде TcpClient
-        using var tcpClient = await tcpListener.AcceptTcpClientAsync();
-        // получаем объект NetworkStream для взаимодействия с клиентом
-        var stream = tcpClient.GetStream();
-        // буфер для входящих данных
-        var buffer = new List<byte>();
-        int bytesRead = 10;
-        while (true)
-        {
-            // считываем данные до конечного символа
-            while ((bytesRead = stream.ReadByte()) != '\n')
-            {
-                // добавляем в буфер
-                buffer.Add((byte)bytesRead);
-            }
-            var message = Encoding.UTF8.GetString(buffer.ToArray());
-            // если прислан маркер окончания взаимодействия,
-            // выходим из цикла и завершаем взаимодействие с клиентом
-            if (message == "END") break;
-            Console.WriteLine($"Получено сообщение: {message}");
-            buffer.Clear();
-
-            byte[] data = Encoding.UTF8.GetBytes(DateTime.Now.ToLongTimeString());
-            await stream.WriteAsync(data);
-            Console.WriteLine($"Клиенту {tcpClient.Client.RemoteEndPoint} отправлены данные");
-        }
+        var a = b + 1;
     }
-}
-finally
-{
-    tcpListener.Stop();
+    c += 1;
+    Console.WriteLine(c);
 }

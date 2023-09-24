@@ -19,7 +19,7 @@ namespace Animations
     /// </summary>
     public class AnimationBuilder
     {
-        private readonly SpriteDrawer Drawer;
+        private readonly ContentStorage ContentStorage;
 
         private static AnimationFrame BuildFrame(string line)
         {
@@ -42,7 +42,7 @@ namespace Animations
         {
             var animationProperties = BuildAnimationProperties(match.Groups["Settings"].Captures.Select(v => v.Value).ToArray());
 
-            return new Animation(match.Groups["Name"].Value, Drawer.GetSprite(sheet),
+            return new Animation(match.Groups["Name"].Value, ContentStorage.GetAsset<Texture2D>(sheet),
                 match.Groups["Frames"].Captures.Select(v => BuildFrame(v.Value)).ToArray(),
                 animationProperties);
         }
@@ -68,9 +68,9 @@ namespace Animations
             return animations;
         }
 
-        public AnimationBuilder(SpriteDrawer drawer)
+        public AnimationBuilder(ContentStorage contentStorage)
         {
-            Drawer = drawer;
+            ContentStorage = contentStorage;
         }
     }
 }

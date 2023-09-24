@@ -20,9 +20,9 @@ namespace VideoGame
         /// </summary>
         /// <param name="level"></param>
         /// <returns></returns>
-        public byte[,] BuildFromFiles(string level, ContentManager content)
+        public byte[,] BuildFromFiles(string level, ContentStorage contentStorage)
         {
-            var mapImage = content.Load<Texture2D>(level);
+            var mapImage = contentStorage.GetAsset<Texture2D>(level);
             Color[] colorMap = new Color[mapImage.Width * mapImage.Height];
             mapImage.GetData(colorMap);
             var rawResult = colorMap.Select(color => ColorByteExchanger[color]).ToArray();

@@ -17,6 +17,7 @@ namespace VideoGame
         const double BlinkTime = 0.1;
 
         private Dummy Dummy;
+        private float HealthDelta;
         private TimerHandler TimerHandler;
         private TextObject HealthBar;
         private Sprite DashBar;
@@ -44,16 +45,35 @@ namespace VideoGame
             TimerHandler.SetTimer("RecoverDash", TimeSpan.FromSeconds(DashRecoverTime), (obj) => RecoverDash(), true);
         }
 
+        private const double DecayTime = 0.1;
+        private bool IsOnDecay = false;
         public override void Act(TimeSpan deltaTime)
         {
             StringBuilder healthText = new StringBuilder();
-            for (int i = 0; i < Dummy.MaxHealth; i++)
-                healthText.Append(i < Dummy.Health ? 'a' : 'b');
+            for (int i = 1; i <= Dummy.MaxHealth; i++)
+                healthText.Append(i <= Dummy.Health ? 'a' : (i <= HealthDelta ? 'c' : 'b'));
             HealthBar.Text = healthText.ToString();
             if (DashCount > 0)
                 DashBar.SetAnimation(string.Concat("Bar", DashCount), 0);
             else
                 DashBar.SetAnimation("Default", 0);
+
+            if (HealthDelta > Dummy.Health)
+            {
+                if (!IsOnDecay && TimerHandler.When("HealthBarDecay", DecayTime))
+                    IsOnDecay = true;
+                else if (IsOnDecay)
+                    HealthDelta = MathEx.Catch(MathEx.Lerp(HealthDelta, Dummy.Health, 0.2f, deltaTime), Dummy.Health, 0.04f);
+            }
+            else if (HealthDelta < Dummy.Health)
+            {
+                HealthDelta = Dummy.Health;
+                IsOnDecay = false;
+            }
+            else
+            {
+                IsOnDecay = false;
+            }
         }
 
         public Playable(Dummy dummy, TimerHandler timerHandler, TextObject healthBar, Sprite dashBar, bool enabled)
@@ -64,6 +84,7 @@ namespace VideoGame
             DashBar = dashBar;
             DashCount = 3;
             Enabled = enabled;
+            HealthDelta = dummy.Health;
 
             onDashRecovered += (n) =>
             {

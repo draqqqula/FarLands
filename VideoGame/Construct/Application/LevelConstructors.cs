@@ -19,6 +19,8 @@ using Windows.Networking.Connectivity;
 using System.Runtime.CompilerServices;
 using VideoGame.Construct.Families;
 using VideoGame.Construct.Patterns;
+using System.Net;
+using System.IO;
 
 namespace VideoGame
 {
@@ -35,14 +37,14 @@ namespace VideoGame
             return keyboard_controls;
         }
 
-        public static void CreateSkyAndClouds(Layer skyLayer, Layer cloudsLayer, Layer cloudsBackLayer, ContentManager content)
+        public static void CreateSkyAndClouds(Layer skyLayer, Layer cloudsLayer, Layer cloudsBackLayer, ContentStorage contentStorage)
         {
             new TileMap(Vector2.Zero, new byte[4, 4] {
                 { 2, 1, 3, 3 },
                 { 2, 1, 3, 3 },
                 { 2, 1, 3, 3 },
                 { 2, 1, 3, 3 } },
-                content.Load<Texture2D>("Sky"),
+                contentStorage.GetAsset<Texture2D>("Sky"), contentStorage,
             new Rectangle(0, 0, 396, 100), skyLayer, new Vector2(3, 3), 3);
 
             new TileMap(new Vector2(0, 400), new byte[4, 1] {
@@ -50,7 +52,7 @@ namespace VideoGame
                 { 1 },
                 { 1 },
                 { 1 } },
-                content.Load<Texture2D>("Clouds"),
+                contentStorage.GetAsset<Texture2D>("Clouds"), contentStorage,
                 new Rectangle(0, 0, 439, 115), cloudsLayer, new Vector2(3, 3), 3);
 
             new TileMap(new Vector2(-150, 496), new byte[4, 1] {
@@ -58,13 +60,13 @@ namespace VideoGame
                 { 1 },
                 { 1 },
                 { 1 } },
-                content.Load<Texture2D>("Clouds"),
+                contentStorage.GetAsset<Texture2D>("Clouds"), contentStorage,
                 new Rectangle(0, 0, 439, 115), cloudsBackLayer, new Vector2(3, 3), 3);
         }
 
-        public static TileMap CreateForestTilemap(Vector2 position, string levelName, Layer layer, ContentManager content)
+        public static TileMap CreateForestTilemap(Vector2 position, string levelName, Layer layer, ContentStorage contentStorage)
         {
-            return new TileMap(content, position, levelName, "rocks", new Rectangle(0, 0, 12, 12), layer, new Vector2(3, 3),
+            return new TileMap(contentStorage, position, levelName, "rocks", new Rectangle(0, 0, 12, 12), layer, new Vector2(3, 3),
                 new (Rectangle, Point, bool, Color)[]
                 {
                     (new Rectangle(0, 0, 12, 12), new Point(0, 0), true, Color.Black),
@@ -75,7 +77,47 @@ namespace VideoGame
                     (new Rectangle(224, 0, 18, 85), new Point(9, 85 - 12), false, new Color(185, 122, 87)),
                     (new Rectangle(252, 5, 46, 78), new Point(23, 78 - 12), false, new Color(82, 82, 82)),
                     (new Rectangle(162, 12, 51, 71), new Point(25, 71 - 12), false, new Color(226, 226, 226)),
-                    (new Rectangle(307, 8, 50, 75), new Point(25, 75 - 12), false, new Color(53, 53, 53))
+                    (new Rectangle(307, 8, 50, 75), new Point(25, 75 - 12), false, new Color(53, 53, 53)),
+                    (new Rectangle(383, 0, 12, 12), new Point(0, 0), true, new Color(255, 100, 100)),
+                    (new Rectangle(396, 0, 12, 12), new Point(0, 0), true, new Color(255, 99, 100)),
+                    (new Rectangle(409, 0, 12, 12), new Point(0, 0), true, new Color(255, 98, 100)),
+                    (new Rectangle(370, 13, 12, 12), new Point(0, 0), true, new Color(255, 97, 100)),
+                    (new Rectangle(383, 13, 12, 12), new Point(0, 0), true, new Color(255, 96, 100)),
+                    (new Rectangle(396, 13, 12, 12), new Point(0, 0), true, new Color(255, 95, 100)),
+                    (new Rectangle(409, 13, 12, 12), new Point(0, 0), true, new Color(255, 94, 100)),
+                    (new Rectangle(422, 13, 12, 12), new Point(0, 0), true, new Color(255, 93, 100)),
+                    (new Rectangle(370, 26, 12, 12), new Point(0, 0), true, new Color(255, 92, 100)),
+                    (new Rectangle(383, 26, 12, 12), new Point(0, 0), true, new Color(255, 91, 100)),
+                    (new Rectangle(396, 26, 12, 12), new Point(0, 0), true, new Color(255, 90, 100)),
+                    (new Rectangle(409, 26, 12, 12), new Point(0, 0), true, new Color(255, 89, 100)),
+                    (new Rectangle(422, 26, 12, 12), new Point(0, 0), true, new Color(255, 88, 100)),
+                    (new Rectangle(370, 39, 12, 12), new Point(0, 0), true, new Color(255, 87, 100)),
+                    (new Rectangle(383, 39, 12, 12), new Point(0, 0), true, new Color(255, 86, 100)),
+                    (new Rectangle(396, 39, 12, 12), new Point(0, 0), true, new Color(255, 85, 100)),
+                    (new Rectangle(409, 39, 12, 12), new Point(0, 0), true, new Color(255, 84, 100)),
+                    (new Rectangle(422, 39, 12, 12), new Point(0, 0), true, new Color(255, 83, 100)),
+                    (new Rectangle(383, 52, 12, 12), new Point(0, 0), true, new Color(255, 82, 100)),
+                    (new Rectangle(409, 52, 12, 12), new Point(0, 0), true, new Color(255, 81, 100)),
+
+                    (new Rectangle(518, 0, 12, 12), new Point(0, 0), true, new Color(255, 100, 99)),
+                    (new Rectangle(531, 0, 12, 12), new Point(0, 0), true, new Color(255, 100, 98)),
+                    (new Rectangle(544, 0, 12, 12), new Point(0, 0), true, new Color(255, 100, 97)),
+
+                    (new Rectangle(505, 13, 12, 12), new Point(0, 0), true, new Color(255, 100, 96)),
+                    (new Rectangle(518, 13, 12, 12), new Point(0, 0), true, new Color(255, 100, 95)),
+                    (new Rectangle(531, 13, 12, 12), new Point(0, 0), true, new Color(255, 100, 94)),
+                    (new Rectangle(544, 13, 12, 12), new Point(0, 0), true, new Color(255, 100, 93)),
+
+                    (new Rectangle(505, 26, 12, 12), new Point(0, 0), true, new Color(255, 100, 92)),
+                    (new Rectangle(518, 26, 12, 12), new Point(0, 0), true, new Color(255, 100, 91)),
+                    (new Rectangle(531, 26, 12, 12), new Point(0, 0), true, new Color(255, 100, 90)),
+                    (new Rectangle(544, 26, 12, 12), new Point(0, 0), true, new Color(255, 100, 89)),
+
+                    (new Rectangle(505, 39, 12, 12), new Point(0, 0), true, new Color(255, 100, 88)),
+                    (new Rectangle(518, 39, 12, 12), new Point(0, 0), true, new Color(255, 100, 87)),
+                    (new Rectangle(531, 39, 12, 12), new Point(0, 0), true, new Color(255, 100, 86)),
+                    (new Rectangle(544, 39, 12, 12), new Point(0, 0), true, new Color(255, 100, 85))
+
                 });
         }
 
@@ -83,9 +125,10 @@ namespace VideoGame
 
         public static GameState LoadMenu(World world, ContentManager content, string levelName)
         {
-            var state = new MenuState(false);
+            var state = new MenuState();
+            state.ContentStorage = world.contentStorge;
             state.LevelLoader = new LevelLoader(world, content, levelName);
-            state.MainAnimationBuilder = new AnimationBuilder(world.Drawer);
+            state.MainAnimationBuilder = new AnimationBuilder(world.contentStorge);
             var camera = new GameCamera(new Vector2(0, 0), new Rectangle(0, 0, 600, 600), world.Client);
             Layer centerBound = new Layer("CenterBound", (pos, cam) => cam.ApplyParalax(pos, 1, 1), 0.1);
             new TextObject(content, "Paused", "pixel", 0, 3f, 3f, centerBound, new Vector2(0, 0));
@@ -102,10 +145,11 @@ namespace VideoGame
             Vector2 exitPosition = new Vector2(5800, 1200);
             Vector2 startPosition = new Vector2(300, 300);
 
-            var state = new LocationState(false);
+            var state = new LocationState();
+            state.ContentStorage = world.contentStorge;
             state.Content = content;
             state.LevelLoader = new LevelLoader(world, content, levelName);
-            state.MainAnimationBuilder = new AnimationBuilder(world.Drawer);
+            state.MainAnimationBuilder = new AnimationBuilder(world.contentStorge);
 
             Layer mainLayer = new Layer("Main", (pos, cam) => cam.ApplyParalax(pos, 1, 1), 0.5);
             Layer backgroundLayer = new Layer("BackGround", (pos, cam) => pos, 0);
@@ -125,14 +169,14 @@ namespace VideoGame
 
             state.FPSCounter = new TextObject(content, "a", "pixel", 0, 3f, 3f, leftTopBound, new Vector2(30, 75));
 
-            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level1", surfacesLayer, content);
+            state.MainTileMap = CreateForestTilemap(Vector2.Zero, "level1", surfacesLayer, world.contentStorge);
 
-            CreateSkyAndClouds(backgroundLayer, cloudsLayer, cloudsBackLayer, content);
+            CreateSkyAndClouds(backgroundLayer, cloudsLayer, cloudsBackLayer, world.contentStorge);
 
             var entities = state.GetFamily<Entity>();
 
             Hood hood = new Hood(state, new Vector2(4000, 1000), mainLayer, true, state.MainTileMap, entities);
-            Gate gate = new Gate(state, exitPosition, new Rectangle(-2, -250, 5, 500), mainLayer, "Level2", state.Players);
+            Gate gate = new Gate(state, exitPosition, new Rectangle(-2, -250, 5, 500), mainLayer, "Remote Room", state.Players);
 
             new TextObject(content, "Controls", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 500));
             new TextObject(content, "A Left", "pixel", 0, 3f, 3f, mainLayer, new Vector2(650, 550));
@@ -142,17 +186,18 @@ namespace VideoGame
 
             var arrow = new Sprite(state, "arrow", "Default", new Rectangle(0, 0, 0, 0), new Vector2(-100, 0) + exitPosition, mainLayer, false);
             arrow.AddBehavior(new Sine(0, 10, new Vector2(1, 0), 10, true));
+            
 
             state.Connect(world.Client);
-            GameControls secondControls = new GameControls();
-            secondControls.ChangeControl(Control.left, () => Keyboard.GetState().IsKeyDown(Keys.H));
-            secondControls.ChangeControl(Control.right, () => Keyboard.GetState().IsKeyDown(Keys.K));
-            secondControls.ChangeControl(Control.jump, () => Keyboard.GetState().IsKeyDown(Keys.U));
-            secondControls.ChangeControl(Control.dash, () => Keyboard.GetState().IsKeyDown(Keys.J));
-            secondControls.ChangeControl(Control.pause, () => Keyboard.GetState().IsKeyDown(Keys.I));
-            state.Players.First().GetBehavior<TimerHandler>("TimerHandler")
-                .SetTimer("spawnNew", TimeSpan.FromSeconds(3), (t) => state.Connect(new GameClient(world.Client.Window, secondControls, world.Client.Language)), true);
+            state.StartRecieveConnectionRequests(8001);
+            return state;
+        }
 
+        public static GameState LoadRemoteRoom(World world, ContentManager content, string levelName)
+        {
+            var path = Path.Combine(Environment.CurrentDirectory, "Adress.txt");
+            var state = new ViewerState(world.contentStorge, File.ReadAllText(path));
+            state.Connect(world.Client);
             return state;
         }
     }

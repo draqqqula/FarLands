@@ -34,8 +34,43 @@ namespace VideoGame
         {
             get
             {
-                return Controls[control]();
+                if (Controls.ContainsKey(control))
+                    return Controls[control]();
+                return false;
             }
+        }
+
+        public bool OnAny()
+        {
+            foreach(var control in LastFrameControls)
+            {
+                if (control.Value != Controls[control.Key]())
+                {
+                    LastFrameControls[control.Key] = this[control.Key];
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public byte GetMap()
+        {
+            return ConvertBoolArrayToByte(Controls.OrderBy(it => it.Key).Select(it => it.Value()).ToArray());
+        }
+
+        private byte ConvertBoolArrayToByte(bool[] boolArray)
+        {
+            byte result = 0;
+
+            for (int i = 0; i < boolArray.Length; i++)
+            {
+                if (boolArray[i])
+                {
+                    result |= (byte)(1 << i);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -45,13 +80,16 @@ namespace VideoGame
         /// <returns></returns>
         public bool OnPress(Control control)
         {
-            if (this[control] != LastFrameControls[control])
+            if (Controls.ContainsKey(control))
             {
-                LastFrameControls[control] = this[control];
-                return this[control];
+                if (this[control] != LastFrameControls[control])
+                {
+                    LastFrameControls[control] = this[control];
+                    return this[control];
+                }
+                return false;
             }
-            return false;
-
+            else return false;
         }
 
         /// <summary>
@@ -61,13 +99,16 @@ namespace VideoGame
         /// <returns></returns>
         public bool OnRelease(Control control)
         {
-            if (this[control] != LastFrameControls[control])
+            if (Controls.ContainsKey(control))
             {
-                LastFrameControls[control] = this[control];
-                return !this[control];
+                if (this[control] != LastFrameControls[control])
+                {
+                    LastFrameControls[control] = this[control];
+                    return !this[control];
+                }
+                return false;
             }
-            return false;
-
+            else return false;
         }
 
         /// <summary>

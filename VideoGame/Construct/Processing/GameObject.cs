@@ -55,7 +55,7 @@ namespace VideoGame
                 return new DrawingParameters() { Position = this.Position };
             }
         }
-        public abstract IDisplayable GetVisualPart(GameCamera camera);
+        public abstract IEnumerable<IDisplayable> GetDisplay(GameCamera camera, Layer layer);
 
         public readonly bool HasVisual;
         #endregion
@@ -149,36 +149,6 @@ namespace VideoGame
         }
         #endregion
 
-        #region LAYER ORDER
-
-        public void PlaceAbove(GameObject obj)
-        {
-            var layer = obj.PresentLayer;
-            PresentLayer.Remove(this);
-            layer.Insert(layer.IndexOf(obj)+1, this);
-        }
-
-        public void PlaceBelow(GameObject obj)
-        {
-            var layer = obj.PresentLayer;
-            PresentLayer.Remove(this);
-            layer.Insert(layer.IndexOf(obj), this);
-        }
-
-        public void PlaceTop()
-        {
-            PresentLayer.Remove(this);
-            PresentLayer.Add(this);
-        }
-
-        public void PlaceBottom()
-        {
-            PresentLayer.Remove(this);
-            PresentLayer.Insert(0, this);
-        }
-
-        #endregion
-
         #region CONSTRUCTORS
 
         public GameObject()
@@ -216,6 +186,18 @@ namespace VideoGame
                     cloneable = true;
                 }
             }
+        }
+
+        #endregion
+
+        #region NETWORK
+
+        public byte[] LinkedID { get; private set; }
+
+        public void Link(byte[] bytes)
+        {
+            if (bytes.Length != 16) throw new ArgumentException("Invalid length of LinkID");
+            LinkedID = bytes;
         }
 
         #endregion

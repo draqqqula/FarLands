@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,32 +10,31 @@ namespace VideoGame
 {
     public class LevelLoader
     {
-        private Level PauseHandler;
-        private string ThisLevel;
+        private Level ThisLevel;
         private World World;
         private ContentManager Content;
 
         public bool IsReadyToResume
         {
-            get => PauseHandler is null || !World.IsLevelActive(PauseHandler);
+            get => true;
         }
         public Level LoadLevel(string name)
         {
-            return World.LoadLevel(name, Content);
+            return World.LoadRootLevel(name);
         }
+
         public void Pass(string name)
         {
             World.Pass(ThisLevel, name, Content);
         }
         public void RestartLevel()
         {
-            World.LoadLevel(ThisLevel, Content);
+            World.LoadRootLevel(ThisLevel, Content);
         }
 
         public void Pause(Level pauseHandler)
         {
             World.PauseLevel(ThisLevel);
-            PauseHandler = pauseHandler;
         }
 
         public void Resume()
@@ -47,7 +47,7 @@ namespace VideoGame
             World.UnloadLevel(ThisLevel);
         }
 
-        public LevelLoader(World world, ContentManager content, string thisLevel)
+        public LevelLoader(World world, ContentManager content, Level thisLevel)
         {
             World = world;
             Content = content;

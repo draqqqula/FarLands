@@ -61,9 +61,13 @@
               "target": "Package",
               "version": "[4.5.0, )"
             },
-            "Nito.Collections.Deque": {
+            "OpenGL.Net": {
               "target": "Package",
-              "version": "[1.1.1, )"
+              "version": "[0.8.4, )"
+            },
+            "Ryan.MonoGame.Framework.DesktopGL": {
+              "target": "Package",
+              "version": "[3.7.200, )"
             }
           },
           "imports": [

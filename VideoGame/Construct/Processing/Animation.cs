@@ -285,8 +285,7 @@ namespace Animations
         #endregion
 
         #region IDISPLAYABLE
-        public bool IsImmutable => false;
-        public void Draw(SpriteBatch spriteBatch, GameCamera camera, SpriteDrawer drawer)
+        public void Draw(SpriteBatch spriteBatch, GameCamera camera, ContentStorage contentStorage)
         {
             Vector2 offset = Vector2.Zero;
             if (Arguments.Mirroring == SpriteEffects.FlipHorizontally)
@@ -300,7 +299,7 @@ namespace Animations
                 Anchor,
                 Arguments.Scale,
                 Arguments.Mirroring,
-                Arguments.Priority
+                new Random().NextSingle()
                 );
         }
         #endregion

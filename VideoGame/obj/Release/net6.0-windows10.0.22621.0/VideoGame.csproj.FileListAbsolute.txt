@@ -10,7 +10,6 @@ C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\Element_Selector.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\forest_background.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\heart.xnb
-C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\hitbox.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\Hood.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\idol.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\level1.xnb
@@ -25,9 +24,7 @@ C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\runnin.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\Sky.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\SkyGround.xnb
-C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\Textures\cube.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\Textures\level4.xnb
-C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\Textures\runnin.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Content\wind_particles.xnb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\NUnit3.TestAdapter.dll
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\NUnit3.TestAdapter.pdb
@@ -77,3 +74,6 @@ C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\obj\Release\net6.0-windows10.
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\obj\Release\net6.0-windows10.0.22621.0\VideoGame.pdb
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\obj\Release\net6.0-windows10.0.22621.0\VideoGame.genruntimeconfig.cache
 C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\obj\Release\net6.0-windows10.0.22621.0\ref\VideoGame.dll
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\VideoGame.dll.config
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Nito.Collections.Deque.dll
+C:\Users\BogdanPC\Desktop\Game\VideoGame\VideoGame\bin\Release\net6.0-windows10.0.22621.0\Adress.txt

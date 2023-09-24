@@ -10,9 +10,17 @@ namespace VideoGame
 {
     public interface IPackable
     {
-        public byte[] Pack();
+        public IEnumerable<byte> Pack(ContentStorage contentStorage);
 
-        [RequiresPreviewFeatures]
-        public abstract static IPackable Unpack(ReadOnlySpan<byte> bytes);
+    }
+
+    public class ByteKeyAttribute : Attribute
+    {
+        public byte value;
+
+        public ByteKeyAttribute(byte value)
+        {
+            this.value = value;
+        }
     }
 }
